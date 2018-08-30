@@ -29,7 +29,7 @@ const Container = styled.div`
 `
 
 function createHexagonMap(): IHexagonMap {
-  const radius = 50
+  const radius = 25
   const coordinates = new HexCoord(0, 0).area(radius)
   const tiles = zipObj(
     coordinates.map(c => c.id),
@@ -45,11 +45,10 @@ function createHexagonMapTile(
   const r = ((coord.a / radius + 1) / 2) * 255
   const g = ((coord.b / radius + 1) / 2) * 255
   const b = ((coord.c / radius + 1) / 2) * 255
-  const color = Color({ r, g, b }).toString()
 
   return {
     id: coord.id,
     coord,
-    color,
+    color: Color({ r, g, b }).toString(),
   }
 }
