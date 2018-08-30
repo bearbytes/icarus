@@ -1,30 +1,31 @@
 import * as React from 'react'
-import { HexCoord, IHexagonMap, IHexagonMapTile } from '../types'
-import { formatPoints } from '../lib/svg'
+import { formatPoints, formatRect } from '../lib/svg'
+import HexagonMapTile from './HexagonMapTile'
+import { IHexagonMap, HexCoord, Rect } from '../types'
 
-export default function HexagonMap(props: { map: IHexagonMap }) {
+interface HexagonMapProps {
+  map: IHexagonMap
+  tileSize: number
+  viewRect: Rect
+}
+
+export default function HexagonMap({
+  map,
+  viewRect,
+  tileSize,
+}: HexagonMapProps) {
   return (
-    <svg viewBox={'-800 -800 1600 1600'}>
+    <svg viewBox={formatRect(viewRect)}>
       <defs>
         <polygon
           id={'hexagon'}
-          points={formatPoints(HexCoord.corners(95))}
-          strokeWidth={5}
+          points={formatPoints(HexCoord.corners(tileSize * 0.95))}
+          strokeWidth={tileSize * 0.05}
         />
       </defs>
-      {Object.keys(props.map.tiles).map(id => (
-        <HexagonMapTile key={id} tile={props.map.tiles[id]} />
+      {Object.keys(map.tiles).map(id => (
+        <HexagonMapTile key={id} tile={map.tiles[id]} tileSize={tileSize} />
       ))}
     </svg>
-  )
-}
-
-function HexagonMapTile(props: { tile: IHexagonMapTile }) {
-  const pos = props.tile.coord.toPixel(100)
-
-  return (
-    <g id={props.tile.id} transform={`translate(${pos.x}, ${pos.y})`}>
-      <use xlinkHref={'#hexagon'} />
-    </g>
   )
 }

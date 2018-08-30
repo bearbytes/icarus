@@ -6,6 +6,16 @@ export interface Point {
   y: number
 }
 
+export interface Size {
+  w: number
+  h: number
+}
+
+export interface Rect {
+  topLeft: Point
+  size: Size
+}
+
 export interface IHexagonMapTile {
   id: string
   coord: HexCoord
