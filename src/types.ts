@@ -19,6 +19,7 @@ export interface Rect {
 export interface IHexagonMapTile {
   id: string
   coord: HexCoord
+  color: string
 }
 
 export interface IHexagonMap {

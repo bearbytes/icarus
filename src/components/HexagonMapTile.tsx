@@ -14,7 +14,7 @@ export default function HexagonMapTile({
 
   return (
     <g id={tile.id} transform={`translate(${pos.x}, ${pos.y})`}>
-      <use xlinkHref={'#hexagon'} />
+      <use xlinkHref={'#hexagon'} fill={tile.color} stroke={'black'} />
     </g>
   )
 }

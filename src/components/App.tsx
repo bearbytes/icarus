@@ -3,6 +3,7 @@ import HexagonMap from './HexagonMap'
 import { IHexagonMap, IHexagonMapTile, HexCoord } from '../types'
 import { zipObj } from 'ramda'
 import styled from 'styled-components'
+import * as Color from 'color'
 
 export default function App() {
   const hexagonMap = createHexagonMap()
@@ -28,17 +29,27 @@ const Container = styled.div`
 `
 
 function createHexagonMap(): IHexagonMap {
-  const coordinates = new HexCoord(0, 0).area(50)
+  const radius = 50
+  const coordinates = new HexCoord(0, 0).area(radius)
   const tiles = zipObj(
     coordinates.map(c => c.id),
-    coordinates.map(c => createHexagonMapTile(c)),
+    coordinates.map(c => createHexagonMapTile(c, radius)),
   )
   return { tiles }
 }
 
-function createHexagonMapTile(coord: HexCoord): IHexagonMapTile {
+function createHexagonMapTile(
+  coord: HexCoord,
+  radius: number,
+): IHexagonMapTile {
+  const r = ((coord.a / radius + 1) / 2) * 255
+  const g = ((coord.b / radius + 1) / 2) * 255
+  const b = ((coord.c / radius + 1) / 2) * 255
+  const color = Color({ r, g, b }).toString()
+
   return {
     id: coord.id,
     coord,
+    color,
   }
 }

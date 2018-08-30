@@ -9,13 +9,46 @@ interface HexagonMapProps {
   viewRect: Rect
 }
 
+interface StateWrapperProps<S> {
+  defaultState: S
+  children: (
+    state: S,
+    setState: (state: Pick<S, keyof S> | S) => void,
+  ) => React.ReactNode
+}
+
+class StateWrapper<T> extends React.Component<StateWrapperProps<T>, T> {
+  state = this.props.defaultState
+
+  render() {
+    return this.props.children(this.state, newState => this.setState(newState))
+  }
+}
+
+interface ZoomableSvgProps {
+  initialViewRect: Rect
+  children: React.ReactNode
+}
+
+function ZoomableSvg({ initialViewRect, children }: ZoomableSvgProps) {
+  return (
+    <StateWrapper defaultState={initialViewRect}>
+      {(viewRect, setViewRect) => (
+        <svg viewBox={formatRect(viewRect)} onWheel={e => console.log(e)}>
+          {children}
+        </svg>
+      )}
+    </StateWrapper>
+  )
+}
+
 export default function HexagonMap({
   map,
   viewRect,
   tileSize,
 }: HexagonMapProps) {
   return (
-    <svg viewBox={formatRect(viewRect)}>
+    <ZoomableSvg initialViewRect={viewRect}>
       <defs>
         <polygon
           id={'hexagon'}
@@ -26,6 +59,6 @@ export default function HexagonMap({
       {Object.keys(map.tiles).map(id => (
         <HexagonMapTile key={id} tile={map.tiles[id]} tileSize={tileSize} />
       ))}
-    </svg>
+    </ZoomableSvg>
   )
 }
