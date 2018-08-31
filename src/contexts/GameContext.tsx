@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { IGameState } from '../types'
-import { createGameState } from '../state/createGameState'
 import { UserAction } from '../actions'
+import StateWrapper from '../components/StateWrapper'
+import ServerConnection from '../ServerConnection'
 
 export interface IGameContext {
   game: IGameState
@@ -11,14 +12,17 @@ export interface IGameContext {
 export const GameContext = React.createContext<IGameContext>(null as any)
 
 export function GameContextProvider(props: { children: React.ReactNode }) {
+  const { value, subscribe, submitAction } = ServerConnection
   return (
-    <GameContext.Provider
-      value={{
-        game: createGameState(),
-        submitAction: action => {},
+    <StateWrapper defaultState={value}>
+      {(game, setGame) => {
+        subscribe(setGame)
+        return (
+          <GameContext.Provider value={{ game, submitAction }}>
+            {props.children}
+          </GameContext.Provider>
+        )
       }}
-    >
-      {props.children}
-    </GameContext.Provider>
+    </StateWrapper>
   )
 }

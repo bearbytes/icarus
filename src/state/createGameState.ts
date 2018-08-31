@@ -9,7 +9,7 @@ export function createGameState(): IGameState {
 }
 
 export function createHexagonMap(): IHexagonMap {
-  const radius = 25
+  const radius = 15
   const coordinates = new HexCoord(0, 0).area(radius)
   const tiles = zipObj(
     coordinates.map(c => c.id),

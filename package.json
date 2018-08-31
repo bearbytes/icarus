@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "baconjs": "^2.0.9",
     "color": "^3.0.0",
     "ramda": "^0.25.0",
     "react": "^16.4.2",
@@ -18,6 +19,7 @@
     "eject": "react-scripts-ts eject"
   },
   "devDependencies": {
+    "@types/baconjs": "^0.7.33",
     "@types/color": "^3.0.0",
     "@types/jest": "^23.3.1",
     "@types/node": "^10.9.4",
