@@ -18,6 +18,9 @@ export interface Rect {
 
 export interface IGameState {
   map: IHexagonMap
+  units: { [unitId: string]: IUnit }
+
+  selectedUnitId: string | null
 }
 
 export interface IHexagonMap {
@@ -28,7 +31,7 @@ export interface IHexagonMapTile {
   id: string
   coord: HexCoord
   color: string
-  unit?: IUnit
+  unitId?: string
 }
 
 export interface IUnit {}

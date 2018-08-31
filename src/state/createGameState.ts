@@ -4,7 +4,8 @@ import * as Color from 'color'
 
 export function createGameState(): IGameState {
   const map = createHexagonMap()
-  return { map }
+  const units = {}
+  return { map, units, selectedUnitId: null }
 }
 
 export function createHexagonMap(): IHexagonMap {
@@ -14,7 +15,6 @@ export function createHexagonMap(): IHexagonMap {
     coordinates.map(c => c.id),
     coordinates.map(c => createHexagonMapTile(c, radius)),
   )
-  tiles['0 0 0'].unit = {}
   return { tiles }
 }
 

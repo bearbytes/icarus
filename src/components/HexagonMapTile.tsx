@@ -23,7 +23,7 @@ export default function HexagonMapTile(props: HexagonMapTileProps) {
             onMouseEnter={() => setState({ hovered: true })}
             onMouseLeave={() => setState({ hovered: false })}
           />
-          {tile.unit && <MapUnit unit={tile.unit} />}
+          {tile.unitId && <MapUnit unit={tile.unitId} />}
         </g>
       )}
     </StateWrapper>
