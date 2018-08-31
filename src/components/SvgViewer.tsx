@@ -1,17 +1,20 @@
 import * as React from 'react'
-import { Rect, Point } from '../types'
+import { Rect, Point, Size } from '../types'
 import StateWrapper from './StateWrapper'
 import { formatRect } from '../lib/svg'
+import { clamp } from 'ramda'
 
-interface ZoomableSvgProps {
+export interface SvgViewerProps {
+  minViewSize: Size
+  maxViewSize: Size
   initialViewRect: Rect
-  children: React.ReactNode
 }
 
-export default function ZoomableSvg({
-  initialViewRect,
-  children,
-}: ZoomableSvgProps) {
+export default function SvgViewer(
+  props: SvgViewerProps & { children: React.ReactNode },
+) {
+  const { initialViewRect, children, minViewSize, maxViewSize } = props
+
   return (
     <StateWrapper
       defaultState={{
@@ -24,7 +27,14 @@ export default function ZoomableSvg({
           e.preventDefault()
           const worldPos = worldPosFromEvent(e)
           const zoomFactor = e.deltaY > 0 ? 1.2 : 1 / 1.2
-          const viewRect = zoomedViewRect(state.viewRect, worldPos, zoomFactor)
+          let { viewRect } = state
+          viewRect = zoomViewRect(
+            viewRect,
+            worldPos,
+            zoomFactor,
+            minViewSize,
+            maxViewSize,
+          )
           setState({ viewRect })
         }
 
@@ -34,13 +44,15 @@ export default function ZoomableSvg({
         }
 
         function onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
+          if (e.buttons != 1) return
+
           const { lastScreenPos } = state
           if (!lastScreenPos) return
 
           const screenPos = screenPosFromEvent(e)
           const svg = e.currentTarget
 
-          const viewRect = draggedViewRect(
+          const viewRect = dragViewRect(
             state.viewRect,
             worldPosFromScreenPos(svg, lastScreenPos),
             worldPosFromScreenPos(svg, screenPos),
@@ -58,8 +70,8 @@ export default function ZoomableSvg({
             viewBox={formatRect(state.viewRect)}
             onWheel={onWheel}
             onMouseDownCapture={onMouseDown}
-            onMouseMove={onMouseMove}
-            onMouseUp={onMouseUp}
+            onMouseMoveCapture={onMouseMove}
+            onMouseUpCapture={onMouseUp}
           >
             {children}
           </svg>
@@ -84,14 +96,26 @@ function worldPosFromScreenPos(svg: SVGSVGElement, { x, y }: Point) {
   return screenPos.matrixTransform(svg.getScreenCTM()!.inverse())
 }
 
-function zoomedViewRect(
+function zoomViewRect(
   viewRect: Rect,
   worldPos: DOMPoint,
   zoomFactor: number,
+  minSize: Size,
+  maxSize: Size,
 ): Rect {
+  if (
+    (zoomFactor < 1 &&
+      (viewRect.size.w < minSize.w || viewRect.size.h < minSize.h)) ||
+    (zoomFactor > 1 &&
+      (viewRect.size.w > maxSize.w || viewRect.size.h > maxSize.h))
+  ) {
+    return viewRect
+  }
+
   function moveCoordinate(tl: number, wp: number) {
     return tl + (wp - tl) * (1 - zoomFactor)
   }
+
   const topLeft = {
     x: moveCoordinate(viewRect.topLeft.x, worldPos.x),
     y: moveCoordinate(viewRect.topLeft.y, worldPos.y),
@@ -104,7 +128,7 @@ function zoomedViewRect(
   return { topLeft, size }
 }
 
-function draggedViewRect(
+function dragViewRect(
   viewRect: Rect,
   lastDragPos: DOMPoint,
   dragPos: DOMPoint,

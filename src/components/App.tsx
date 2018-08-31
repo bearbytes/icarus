@@ -12,9 +12,13 @@ export default function App() {
       <HexagonMap
         map={hexagonMap}
         tileSize={100}
-        viewRect={{
-          topLeft: { x: -10000, y: -10000 },
-          size: { w: 20000, h: 20000 },
+        viewerProps={{
+          initialViewRect: {
+            topLeft: { x: -1750, y: -1750 },
+            size: { w: 3500, h: 3500 },
+          },
+          minViewSize: { w: 2000, h: 2000 },
+          maxViewSize: { w: 5000, h: 5000 },
         }}
       />
     </Container>

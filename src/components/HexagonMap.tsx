@@ -1,22 +1,20 @@
 import * as React from 'react'
 import { formatPoints } from '../lib/svg'
 import HexagonMapTile from './HexagonMapTile'
-import { IHexagonMap, HexCoord, Rect } from '../types'
-import ZoomableSvg from './ZoomableSvg'
+import { IHexagonMap, HexCoord } from '../types'
+import SvgViewer, { SvgViewerProps } from './SvgViewer'
 
 interface HexagonMapProps {
   map: IHexagonMap
   tileSize: number
-  viewRect: Rect
+  viewerProps: SvgViewerProps
 }
 
-export default function HexagonMap({
-  map,
-  viewRect,
-  tileSize,
-}: HexagonMapProps) {
+export default function HexagonMap(props: HexagonMapProps) {
+  const { map, tileSize, viewerProps } = props
+
   return (
-    <ZoomableSvg initialViewRect={viewRect}>
+    <SvgViewer {...viewerProps}>
       <defs>
         <polygon
           id={'hexagon'}
@@ -27,6 +25,6 @@ export default function HexagonMap({
       {Object.keys(map.tiles).map(id => (
         <HexagonMapTile key={id} tile={map.tiles[id]} tileSize={tileSize} />
       ))}
-    </ZoomableSvg>
+    </SvgViewer>
   )
 }
