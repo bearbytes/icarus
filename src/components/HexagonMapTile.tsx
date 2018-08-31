@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { IHexagonMapTile } from '../types'
+import StateWrapper from './StateWrapper'
 
 interface HexagonMapTileProps {
   tile: IHexagonMapTile
@@ -13,8 +14,18 @@ export default function HexagonMapTile({
   const pos = tile.coord.toPixel(tileSize)
 
   return (
-    <g id={tile.id} transform={`translate(${pos.x}, ${pos.y})`}>
-      <use xlinkHref={'#hexagon'} fill={tile.color} stroke={'black'} />
-    </g>
+    <StateWrapper defaultState={{ hovered: false }}>
+      {(state, setState) => (
+        <g id={tile.id} transform={`translate(${pos.x}, ${pos.y})`}>
+          <use
+            xlinkHref={'#hexagon'}
+            fill={tile.color}
+            stroke={state.hovered ? 'white' : 'black'}
+            onMouseEnter={() => setState({ hovered: true })}
+            onMouseLeave={() => setState({ hovered: false })}
+          />
+        </g>
+      )}
+    </StateWrapper>
   )
 }
