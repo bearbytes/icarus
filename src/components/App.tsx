@@ -14,11 +14,11 @@ export default function App() {
         tileSize={100}
         viewerProps={{
           initialViewRect: {
-            topLeft: { x: -1750, y: -1750 },
-            size: { w: 3500, h: 3500 },
+            topLeft: { x: -1250, y: -1250 },
+            size: { w: 2500, h: 2500 },
           },
           minViewSize: { w: 2000, h: 2000 },
-          maxViewSize: { w: 5000, h: 5000 },
+          maxViewSize: { w: 3000, h: 3000 },
         }}
       />
     </Container>
@@ -39,6 +39,7 @@ function createHexagonMap(): IHexagonMap {
     coordinates.map(c => c.id),
     coordinates.map(c => createHexagonMapTile(c, radius)),
   )
+  tiles['0 0 0'].unit = {}
   return { tiles }
 }
 

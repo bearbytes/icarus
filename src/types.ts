@@ -16,12 +16,19 @@ export interface Rect {
   size: Size
 }
 
-export interface IHexagonMapTile {
-  id: string
-  coord: HexCoord
-  color: string
+export interface IAppState {
+  map: IHexagonMap
 }
 
 export interface IHexagonMap {
   tiles: { [id: string]: IHexagonMapTile }
 }
+
+export interface IHexagonMapTile {
+  id: string
+  coord: HexCoord
+  color: string
+  unit?: IUnit
+}
+
+export interface IUnit {}

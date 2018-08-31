@@ -5,6 +5,8 @@ export class HexCoord {
   readonly a: number
   readonly b: number
 
+  static Zero = new HexCoord(0, 0)
+
   constructor(a: number, b: number) {
     this.a = a
     this.b = b
@@ -23,7 +25,12 @@ export class HexCoord {
   }
 
   distance(other: HexCoord): number {
-    return 0.5 * (Math.abs(this.a - other.a) + Math.abs(this.b - other.b) + Math.abs(this.c - other.c))
+    return (
+      0.5 *
+      (Math.abs(this.a - other.a) +
+        Math.abs(this.b - other.b) +
+        Math.abs(this.c - other.c))
+    )
   }
 
   add(other: HexCoord): HexCoord {
