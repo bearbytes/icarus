@@ -1,16 +1,15 @@
 import * as React from 'react'
-import { IHexagonMapTile } from '../types'
+import { IHexagonMapTile, IUnit } from '../types'
 import StateWrapper from './StateWrapper'
+import MapUnit from './MapUnit'
 
 interface HexagonMapTileProps {
   tile: IHexagonMapTile
   tileSize: number
 }
 
-export default function HexagonMapTile({
-  tile,
-  tileSize,
-}: HexagonMapTileProps) {
+export default function HexagonMapTile(props: HexagonMapTileProps) {
+  const { tile, tileSize } = props
   const pos = tile.coord.toPixel(tileSize)
 
   return (
@@ -24,6 +23,7 @@ export default function HexagonMapTile({
             onMouseEnter={() => setState({ hovered: true })}
             onMouseLeave={() => setState({ hovered: false })}
           />
+          {tile.unit && <MapUnit unit={tile.unit} />}
         </g>
       )}
     </StateWrapper>
