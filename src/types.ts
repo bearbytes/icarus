@@ -16,7 +16,7 @@ export interface Rect {
   size: Size
 }
 
-export interface IAppState {
+export interface IGameState {
   map: IHexagonMap
 }
 
