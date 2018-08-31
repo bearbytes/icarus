@@ -1,17 +1,18 @@
 import { createGameState } from '../state/createGameState'
 import { UserAction } from '../actions'
 import { IGameState } from '../types'
-import * as Bacon from 'baconjs'
 
-const defaultValue = createGameState()
-const GameStateObservable = Bacon.constant(defaultValue)
+let value = createGameState()
 
-function subscribe(listener: (value: IGameState) => void) {
-  GameStateObservable.changes().onValue(listener)
+type Listener = (value: IGameState) => void
+const listeners = [] as Listener[]
+
+function subscribe(listener: Listener) {
+  listeners.push(listener)
 }
 
 function submitAction(action: UserAction) {
   console.log('submitted action', action)
 }
 
-export default { defaultValue, subscribe, submitAction }
+export default { value, subscribe, submitAction }

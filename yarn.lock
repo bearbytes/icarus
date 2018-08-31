@@ -96,13 +96,6 @@
     lodash "^4.17.5"
     to-fast-properties "^2.0.0"
 
-"@types/baconjs@^0.7.33":
-  version "0.7.33"
-  resolved "https://registry.yarnpkg.com/@types/baconjs/-/baconjs-0.7.33.tgz#4f6d0afb702636d109768b6ebde2d71f8b2d9648"
-  dependencies:
-    "@types/jquery" "*"
-    "@types/node" "*"
-
 "@types/color-convert@*":
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@types/color-convert/-/color-convert-1.9.0.tgz#bfa8203e41e7c65471e9841d7e306a7cd8b5172d"
@@ -122,10 +115,6 @@
 "@types/jest@^23.3.1":
   version "23.3.1"
   resolved "https://registry.yarnpkg.com/@types/jest/-/jest-23.3.1.tgz#a4319aedb071d478e6f407d1c4578ec8156829cf"
-
-"@types/jquery@*":
-  version "3.3.6"
-  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.3.6.tgz#5932ead926307ca21e5b36808257f7c926b06565"
 
 "@types/json5@^0.0.29":
   version "0.0.29"
@@ -1109,10 +1098,6 @@ babel-types@^6.18.0, babel-types@^6.19.0, babel-types@^6.24.1, babel-types@^6.26
 babylon@^6.18.0:
   version "6.18.0"
   resolved "https://registry.yarnpkg.com/babylon/-/babylon-6.18.0.tgz#af2f3b88fa6f5c1e4c634d1a0f8eac4f55b395e3"
-
-baconjs@^2.0.9:
-  version "2.0.9"
-  resolved "https://registry.yarnpkg.com/baconjs/-/baconjs-2.0.9.tgz#6b2fd25dbebc751b531585deac2a79e2868752cd"
 
 balanced-match@^0.4.2:
   version "0.4.2"

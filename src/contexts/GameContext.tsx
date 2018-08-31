@@ -12,11 +12,11 @@ export interface IGameContext {
 export const GameContext = React.createContext<IGameContext>(null as any)
 
 export function GameContextProvider(props: { children: React.ReactNode }) {
-  const { defaultValue, subscribe, submitAction } = ServerConnection
+  const { value, subscribe, submitAction } = ServerConnection
   return (
-    <StateWrapper defaultState={defaultValue}>
+    <StateWrapper defaultState={value}>
       {(game, setGame) => {
-        subscribe(setGame)
+        subscribe(setGame) // TODO memory leak, fix plx
         return (
           <GameContext.Provider value={{ game, submitAction }}>
             {props.children}
