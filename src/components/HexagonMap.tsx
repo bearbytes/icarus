@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { formatPoints } from '../lib/svg'
 import HexagonMapTile from './HexagonMapTile'
-import { IHexagonMap, HexCoord } from '../types'
+import { HexCoord } from '../types'
 import SvgViewer, { SvgViewerProps } from './SvgViewer'
 import { GameContext } from '../contexts/GameContext'
 

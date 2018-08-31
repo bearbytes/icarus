@@ -35,3 +35,7 @@ export interface IHexagonMapTile {
 }
 
 export interface IUnit {}
+
+export interface IAction {
+  type: string
+}

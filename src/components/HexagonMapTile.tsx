@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { IHexagonMapTile, IUnit } from '../types'
+import { IHexagonMapTile } from '../types'
 import StateWrapper from './StateWrapper'
 import MapUnit from './MapUnit'
 
