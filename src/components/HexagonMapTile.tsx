@@ -2,7 +2,7 @@ import * as React from 'react'
 import { IHexagonMapTile } from '../types'
 import { withState } from './hoc/withState'
 import MapUnit from './MapUnit'
-import { withSubmitAction } from './hoc/withGameState'
+import { withDispatch } from './hoc/withGameState'
 
 interface HexagonMapTileProps {
   tile: IHexagonMapTile
@@ -13,7 +13,7 @@ export default function HexagonMapTile(props: HexagonMapTileProps) {
   const { tile, tileSize } = props
   const pos = tile.coord.toPixel(tileSize)
 
-  return withSubmitAction(submitAction =>
+  return withDispatch(dispatch =>
     withState({ hovered: false }, (state, setState) => (
       <g id={tile.id} transform={`translate(${pos.x}, ${pos.y})`}>
         <use
@@ -23,7 +23,7 @@ export default function HexagonMapTile(props: HexagonMapTileProps) {
           onMouseEnter={() => setState({ hovered: true })}
           onMouseLeave={() => setState({ hovered: false })}
           onClick={() =>
-            submitAction({
+            dispatch({
               type: 'ClickOnTile',
               tileId: tile.id,
             })

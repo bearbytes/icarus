@@ -17,13 +17,13 @@ export function withGameState<S>(
   )
 }
 
-export function withSubmitAction(
-  render: (submitAction: (action: UserAction) => void) => React.ReactNode,
+export function withDispatch(
+  render: (dispatch: (action: UserAction) => void) => React.ReactNode,
 ) {
   return (
     <GameContext.Consumer>
       {ctx => {
-        return render(ctx.submitAction)
+        return render(ctx.dispatch)
       }}
     </GameContext.Consumer>
   )

@@ -6,15 +6,15 @@ import ServerConnection from '../server/ServerConnection'
 
 export interface IGameContext {
   game: IGameState
-  submitAction(action: UserAction): void
+  dispatch(action: UserAction): void
 }
 
 export const GameContext = React.createContext<IGameContext>(null as any)
 
 export function GameContextProvider(props: { children: React.ReactNode }) {
-  const { gameObservable, submitAction } = ServerConnection
+  const { gameObservable, dispatch } = ServerConnection
   return withStateFromObservable(gameObservable, game => (
-    <GameContext.Provider value={{ game, submitAction }}>
+    <GameContext.Provider value={{ game, dispatch }}>
       {props.children}
     </GameContext.Provider>
   ))

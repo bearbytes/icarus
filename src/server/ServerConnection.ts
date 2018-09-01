@@ -5,11 +5,11 @@ import { BehaviorSubject, Observable } from 'rxjs'
 
 const gameSubject = new BehaviorSubject(createGameState())
 
-function submitAction(action: UserAction) {
+function dispatch(action: UserAction) {
   console.log('submitted action', action)
 }
 
 export default {
   gameObservable: gameSubject as Observable<IGameState>,
-  submitAction,
+  dispatch,
 }
