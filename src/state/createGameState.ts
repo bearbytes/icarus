@@ -19,6 +19,7 @@ export function createGameState(): IGameState {
     players,
     localPlayerId: player.playerId,
     activePlayerId: player.playerId,
+    highlightedTileIds: [],
   }
 }
 

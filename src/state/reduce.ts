@@ -1,7 +1,13 @@
 import { UserAction, ClickOnTile } from '../actions/UserActions'
 import { IGameState, IUnit } from '../models'
 import { createId } from '../lib/createId'
-import { addUnit, updateTile, updatePlayer, getUnitOnTile } from './helpers'
+import {
+  addUnit,
+  updateTile,
+  updatePlayer,
+  getUnitOnTile,
+  getTileOfUnit,
+} from './helpers'
 
 export function reduce(
   s: IGameState,
@@ -40,6 +46,7 @@ function spawnUnit(
   const unit: IUnit = {
     unitId,
     playerId,
+    tileId: a.tileId,
   }
   s = addUnit(s, unit)
   s = updateTile(s, a.tileId, { unitId })
@@ -51,5 +58,19 @@ function selectUnit(
   unitId: string,
   playerId: string,
 ): IGameState {
-  return updatePlayer(s, playerId, { selectedUnitId: unitId })
+  s = updatePlayer(s, playerId, { selectedUnitId: unitId })
+
+  // Highlight tiles where unit can move
+  const unitTile = getTileOfUnit(s, unitId)
+  const highlightedTileIds = []
+  const area = unitTile.coord.area(2)
+  for (const coord of area) {
+    const tileId = coord.id
+    if (tileId != unitTile.tileId) {
+      highlightedTileIds.push(tileId)
+    }
+  }
+
+  s = { ...s, highlightedTileIds }
+  return s
 }

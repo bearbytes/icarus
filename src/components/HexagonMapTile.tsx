@@ -2,6 +2,7 @@ import * as React from 'react'
 import { withState } from './hoc/withState'
 import { withDispatch, withGameState } from './hoc/withGameState'
 import MapUnit from './MapUnit'
+import { IGameState } from '../models'
 
 interface HexagonMapTileProps {
   tileId: string
@@ -13,25 +14,31 @@ export default function HexagonMapTile(props: HexagonMapTileProps) {
 
   return withDispatch(dispatch =>
     withGameState(
-      s => s.map.tiles[tileId],
-      tile => {
-        const pos = tile.coord.toPixel(tileSize)
+      s => ({
+        tile: s.map.tiles[tileId],
+        isHighlighted: s.highlightedTileIds.find(id => id == tileId) != null,
+      }),
+      s => {
+        const pos = s.tile.coord.toPixel(tileSize)
+        console.log('render', tileId)
         return withState({ hovered: false }, (state, setState) => (
           <g id={tileId} transform={`translate(${pos.x}, ${pos.y})`}>
             <use
               xlinkHref={'#hexagon'}
-              fill={tile.color}
-              stroke={state.hovered ? 'white' : 'black'}
+              fill={s.tile.color}
+              stroke={
+                state.hovered ? 'white' : s.isHighlighted ? 'gray' : 'black'
+              }
               onMouseEnter={() => setState({ hovered: true })}
               onMouseLeave={() => setState({ hovered: false })}
               onClick={() =>
                 dispatch({
                   type: 'ClickOnTile',
-                  tileId: tile.tileId,
+                  tileId: s.tile.tileId,
                 })
               }
             />
-            {tile.unitId && <MapUnit unitId={tile.unitId} />}
+            {s.tile.unitId && <MapUnit unitId={s.tile.unitId} />}
           </g>
         ))
       },

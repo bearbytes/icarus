@@ -11,6 +11,7 @@ export interface IGameState {
 
   localPlayerId: string
   activePlayerId: string
+  highlightedTileIds: string[]
 }
 
 export interface IPlayer {
@@ -33,4 +34,5 @@ export interface IHexagonMapTile {
 export interface IUnit {
   unitId: string
   playerId: string
+  tileId: string
 }

@@ -12,8 +12,6 @@ interface HexagonMapProps {
 }
 
 export default function HexagonMap(props: HexagonMapProps) {
-  const { tileSize, viewerProps } = props
-
   return withGameState(s => s.map, map => <Wrapper map={map} {...props} />)
 }
 

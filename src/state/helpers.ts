@@ -35,3 +35,8 @@ export function getUnitOnTile(s: IGameState, tileId: string): IUnit | null {
   if (!unitId) return null
   return s.units[unitId]
 }
+
+export function getTileOfUnit(s: IGameState, unitId: string): IHexagonMapTile {
+  const unit = s.units[unitId]
+  return s.map.tiles[unit.tileId]
+}
