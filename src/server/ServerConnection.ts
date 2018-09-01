@@ -13,9 +13,12 @@ if (devToolsConnection) {
   devToolsConnection.init(gameSubject.value)
 }
 
-function dispatch(action: UserAction) {
+function dispatch(
+  action: UserAction,
+  executingPlayerId: string = 'player:todo', // get id from client
+) {
   const prevState = gameSubject.value
-  const nextState = reduce(prevState, action)
+  const nextState = reduce(prevState, action, executingPlayerId)
 
   if (devToolsConnection) {
     devToolsConnection.send(action, nextState)

@@ -17,7 +17,7 @@ export function createGameState(): IGameState {
 }
 
 function createPlayer(): IPlayer {
-  const playerId = createId('player')
+  const playerId = 'player:todo' //createId('player')
   return { playerId, selectedUnitId: null }
 }
 
