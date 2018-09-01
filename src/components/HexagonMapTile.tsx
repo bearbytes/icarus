@@ -27,7 +27,7 @@ export default function HexagonMapTile(props: HexagonMapTileProps) {
               xlinkHref={'#hexagon'}
               fill={s.tile.color}
               stroke={
-                state.hovered ? 'white' : s.isHighlighted ? 'gray' : 'black'
+                state.hovered ? 'white' : s.isHighlighted ? 'black' : 'gray'
               }
               onMouseEnter={() => setState({ hovered: true })}
               onMouseLeave={() => setState({ hovered: false })}
