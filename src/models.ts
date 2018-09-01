@@ -31,4 +31,5 @@ export interface IHexagonMapTile {
 
 export interface IUnit {
   unitId: string
+  playerId: string
 }

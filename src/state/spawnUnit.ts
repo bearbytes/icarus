@@ -5,7 +5,10 @@ import { IGameState, IUnit } from '../models'
 
 export function spawnUnit(s: IGameState, a: ClickOnTile): IGameState {
   const unitId = createId('unit')
-  const unit: IUnit = { unitId }
+  const unit: IUnit = {
+    unitId,
+    playerId: s.activePlayerId,
+  }
   s = addUnit(s, unit)
   s = updateTile(s, a.tileId, { unitId })
   return s
