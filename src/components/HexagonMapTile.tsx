@@ -29,7 +29,7 @@ export default function HexagonMapTile(props: HexagonMapTileProps) {
             })
           }
         />
-        {tile.unitId && <MapUnit unit={tile.unitId} />}
+        {tile.unitId && <MapUnit unitId={tile.unitId} />}
       </g>
     )),
   )

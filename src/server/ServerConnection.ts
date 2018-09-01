@@ -2,6 +2,7 @@ import { createGameState } from '../state/createGameState'
 import { UserAction } from '../actions'
 import { IGameState } from '../types'
 import { BehaviorSubject, Observable } from 'rxjs'
+import { reduce } from '../state/reduce'
 
 const gameSubject = new BehaviorSubject(createGameState())
 
@@ -21,10 +22,6 @@ function dispatch(action: UserAction) {
   }
 
   gameSubject.next(nextState)
-}
-
-function reduce(s: IGameState, a: UserAction): IGameState {
-  return s
 }
 
 export default {
