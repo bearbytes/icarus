@@ -1,14 +1,27 @@
-import { IHexagonMap, HexCoord, IHexagonMapTile, IGameState } from '../types'
 import { zipObj } from 'ramda'
 import * as Color from 'color'
+import { HexCoord } from '../types'
+import { IHexagonMap, IHexagonMapTile, IGameState, IPlayer } from '../models'
+import { createId } from '../lib/createId'
 
 export function createGameState(): IGameState {
   const map = createHexagonMap()
+
   const units = {}
-  return { map, units, selectedUnitId: null }
+
+  const players = {}
+  const player = createPlayer()
+  players[player.playerId] = player
+
+  return { map, units, players, activePlayerId: player.playerId }
 }
 
-export function createHexagonMap(): IHexagonMap {
+function createPlayer(): IPlayer {
+  const playerId = createId('player')
+  return { playerId, selectedUnitId: null }
+}
+
+function createHexagonMap(): IHexagonMap {
   const radius = 15
   const coordinates = new HexCoord(0, 0).area(radius)
   const tiles = zipObj(
@@ -18,7 +31,7 @@ export function createHexagonMap(): IHexagonMap {
   return { tiles }
 }
 
-export function createHexagonMapTile(
+function createHexagonMapTile(
   coord: HexCoord,
   radius: number,
 ): IHexagonMapTile {

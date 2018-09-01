@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { IHexagonMapTile } from '../types'
 import { withState } from './hoc/withState'
-import MapUnit from './MapUnit'
 import { withDispatch } from './hoc/withGameState'
+import MapUnit from './MapUnit'
+import { IHexagonMapTile } from '../models'
 
 interface HexagonMapTileProps {
   tile: IHexagonMapTile

@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { IUnit } from '../types'
 import { withGameState } from './hoc/withGameState'
 
 interface MapUnitProps {

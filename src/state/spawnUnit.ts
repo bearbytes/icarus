@@ -1,7 +1,7 @@
-import { IGameState, IUnit } from '../types'
-import { ClickOnTile } from '../actions'
+import { ClickOnTile } from '../actions/UserActions'
 import { addUnit, updateTile } from './helpers'
 import { createId } from '../lib/createId'
+import { IGameState, IUnit } from '../models'
 
 export function spawnUnit(s: IGameState, a: ClickOnTile): IGameState {
   const unitId = createId('unit')

@@ -1,4 +1,4 @@
-import { IGameState, IUnit, IHexagonMapTile } from '../types'
+import { IGameState, IUnit, IHexagonMapTile } from '../models'
 
 export function addUnit(s: IGameState, unit: IUnit) {
   let units = s.units

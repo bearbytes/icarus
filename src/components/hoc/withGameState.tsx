@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { IGameState } from '../../types'
 import { GameContext } from '../../contexts/GameContext'
-import { UserAction } from '../../actions'
+import { UserAction } from '../../actions/UserActions'
+import { IGameState } from '../../models'
 
 export function withGameState<S>(
   selectState: (gameState: IGameState) => S,

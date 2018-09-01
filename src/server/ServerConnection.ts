@@ -1,8 +1,8 @@
 import { createGameState } from '../state/createGameState'
-import { UserAction } from '../actions'
-import { IGameState } from '../types'
+import { UserAction } from '../actions/UserActions'
 import { BehaviorSubject, Observable } from 'rxjs'
 import { reduce } from '../state/reduce'
+import { IGameState } from '../models'
 
 const gameSubject = new BehaviorSubject(createGameState())
 

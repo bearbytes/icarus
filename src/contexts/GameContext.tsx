@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { IGameState } from '../types'
-import { UserAction } from '../actions'
+import { UserAction } from '../actions/UserActions'
 import { withStateFromObservable } from '../components/hoc/withState'
 import ServerConnection from '../server/ServerConnection'
+import { IGameState } from '../models'
 
 export interface IGameContext {
   game: IGameState
