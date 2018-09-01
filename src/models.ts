@@ -9,6 +9,7 @@ export interface IGameState {
   units: { [unitId: string]: IUnit }
   players: { [playerId: string]: IPlayer }
 
+  localPlayerId: string
   activePlayerId: string
 }
 

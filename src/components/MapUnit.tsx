@@ -8,8 +8,11 @@ interface MapUnitProps {
 export default function MapUnit(props: MapUnitProps) {
   const { unitId } = props
   return withGameState(
-    s => s.units[unitId],
-    unit => (
+    s => ({
+      unit: s.units[unitId],
+      isSelected: s.players[s.localPlayerId].selectedUnitId == unitId,
+    }),
+    s => (
       <g pointerEvents={'none'}>
         <image
           xlinkHref={'https://image.flaticon.com/icons/svg/443/443955.svg'}
@@ -17,6 +20,7 @@ export default function MapUnit(props: MapUnitProps) {
           y={-50}
           width={100}
           height={100}
+          filter={s.isSelected ? 'invert(100%)' : undefined}
         />
       </g>
     ),

@@ -13,7 +13,13 @@ export function createGameState(): IGameState {
   const player = createPlayer()
   players[player.playerId] = player
 
-  return { map, units, players, activePlayerId: player.playerId }
+  return {
+    map,
+    units,
+    players,
+    localPlayerId: player.playerId,
+    activePlayerId: player.playerId,
+  }
 }
 
 function createPlayer(): IPlayer {
