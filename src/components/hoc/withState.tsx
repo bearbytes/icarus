@@ -9,13 +9,13 @@ type StateUpdate<S> = S | Partial<S> | null
 
 export function withState<S>(
   defaultState: S,
-  children: (state: S, setState: SetState<S>) => React.ReactNode,
+  render: (state: S, setState: SetState<S>) => React.ReactNode,
 ) {
-  class StateHolder<T> extends React.Component<{}, S> {
+  class StateHolder extends React.Component<{}, S> {
     state = defaultState
 
     render() {
-      return children(
+      return render(
         this.state,
         // Disable Type checking here so we can assign Partial<S> to state
         // This might be a problem due to https://github.com/Microsoft/TypeScript/issues/12793
@@ -28,7 +28,7 @@ export function withState<S>(
 
 export function withStateFromObservable<S>(
   observable: Observable<S>,
-  children: (state: S) => React.ReactNode,
+  render: (state: S) => React.ReactNode,
 ) {
   class StateHolder extends React.Component<{}, { value?: S }> {
     state = { value: undefined }
@@ -48,7 +48,7 @@ export function withStateFromObservable<S>(
     render() {
       const value = this.state.value
       if (!value) return null
-      return children(value)
+      return render(value)
     }
   }
   return <StateHolder />
