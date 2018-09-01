@@ -24,7 +24,7 @@ export interface IHexagonMap {
 }
 
 export interface IHexagonMapTile {
-  id: string
+  tileId: string
   coord: HexCoord
   color: string
   unitId?: string

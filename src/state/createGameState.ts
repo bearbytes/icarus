@@ -46,7 +46,7 @@ function createHexagonMapTile(
   const b = ((coord.c / radius + 1) / 2) * 255
 
   return {
-    id: coord.id,
+    tileId: coord.id,
     coord,
     color: Color({ r, g, b }).toString(),
   }

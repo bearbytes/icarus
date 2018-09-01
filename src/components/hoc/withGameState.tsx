@@ -10,10 +10,7 @@ export function withGameState<S>(
 ) {
   return (
     <GameContext.Consumer>
-      {ctx => {
-        const state = selectState(ctx.game)
-        return pure(state, s => render(s))
-      }}
+      {ctx => pure(selectState(ctx.game), render)}
     </GameContext.Consumer>
   )
 }
@@ -23,9 +20,7 @@ export function withDispatch(
 ) {
   return (
     <GameContext.Consumer>
-      {ctx => {
-        return render(ctx.dispatch)
-      }}
+      {ctx => pure(ctx.dispatch, render)}
     </GameContext.Consumer>
   )
 }
