@@ -19,6 +19,17 @@ export function updateTile(
   return { ...s, map }
 }
 
+export function updateUnit(
+  s: IGameState,
+  unitId: string,
+  partial: Partial<IUnit>,
+): IGameState {
+  let units = s.units
+  let unit = { ...units[unitId], ...partial }
+  units = { ...units, [unitId]: unit }
+  return { ...s, units }
+}
+
 export function updatePlayer(
   s: IGameState,
   playerId: string,
@@ -39,4 +50,13 @@ export function getUnitOnTile(s: IGameState, tileId: string): IUnit | null {
 export function getTileOfUnit(s: IGameState, unitId: string): IHexagonMapTile {
   const unit = s.units[unitId]
   return s.map.tiles[unit.tileId]
+}
+
+export function getSelectedUnitOfPlayer(
+  s: IGameState,
+  playerId: string,
+): IUnit | null {
+  const unitId = s.players[playerId].selectedUnitId
+  if (!unitId) return null
+  return s.units[unitId]
 }

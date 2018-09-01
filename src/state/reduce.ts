@@ -7,6 +7,8 @@ import {
   updatePlayer,
   getUnitOnTile,
   getTileOfUnit,
+  updateUnit,
+  getSelectedUnitOfPlayer,
 } from './helpers'
 
 export function reduce(
@@ -26,15 +28,25 @@ function clickOnTile(
   a: ClickOnTile,
   playerId: string,
 ): IGameState {
+  // each player may select a unit on the tile
   const unit = getUnitOnTile(s, a.tileId)
   if (unit) {
     return selectUnit(s, unit.unitId, playerId)
-  } else {
-    if (playerId != s.activePlayerId) {
-      return s
-    }
-    return spawnUnit(s, a, playerId)
   }
+
+  // only the active player may do the other things
+  if (playerId != s.activePlayerId) {
+    return s
+  }
+
+  // the player may move a selected unit to that tile
+  const selectedUnit = getSelectedUnitOfPlayer(s, playerId)
+  if (selectedUnit) {
+    return moveUnit(s, selectedUnit.unitId, a.tileId)
+  }
+
+  // otherwise, spawn a unit on that tile
+  return spawnUnit(s, a, playerId)
 }
 
 function spawnUnit(
@@ -59,9 +71,25 @@ function selectUnit(
   playerId: string,
 ): IGameState {
   s = updatePlayer(s, playerId, { selectedUnitId: unitId })
+  s = updateHighlightedTiles(s)
+  return s
+}
+
+function moveUnit(s: IGameState, unitId: string, tileId: string): IGameState {
+  const unit = s.units[unitId]
+  s = updateTile(s, unit.tileId, { unitId: undefined })
+  s = updateTile(s, tileId, { unitId })
+  s = updateUnit(s, unitId, { tileId })
+  s = updateHighlightedTiles(s)
+  return s
+}
+
+function updateHighlightedTiles(s: IGameState) {
+  const unit = getSelectedUnitOfPlayer(s, s.activePlayerId)
+  if (!unit) return s
 
   // Highlight tiles where unit can move
-  const unitTile = getTileOfUnit(s, unitId)
+  const unitTile = getTileOfUnit(s, unit.unitId)
   const highlightedTileIds = []
   const area = unitTile.coord.area(2)
   for (const coord of area) {
@@ -71,6 +99,5 @@ function selectUnit(
     }
   }
 
-  s = { ...s, highlightedTileIds }
-  return s
+  return { ...s, highlightedTileIds }
 }
