@@ -1,18 +1,15 @@
 import { createGameState } from '../state/createGameState'
 import { UserAction } from '../actions'
 import { IGameState } from '../types'
+import { BehaviorSubject, Observable } from 'rxjs'
 
-let value = createGameState()
-
-type Listener = (value: IGameState) => void
-const listeners = [] as Listener[]
-
-function subscribe(listener: Listener) {
-  listeners.push(listener)
-}
+const gameSubject = new BehaviorSubject(createGameState())
 
 function submitAction(action: UserAction) {
   console.log('submitted action', action)
 }
 
-export default { value, subscribe, submitAction }
+export default {
+  gameObservable: gameSubject as Observable<IGameState>,
+  submitAction,
+}
