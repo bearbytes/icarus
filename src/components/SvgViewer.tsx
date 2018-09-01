@@ -1,8 +1,7 @@
 import * as React from 'react'
 import { Rect, Point, Size } from '../types'
-import StateWrapper from './StateWrapper'
+import { withState } from './hoc/withState'
 import { formatRect } from '../lib/svg'
-import { clamp } from 'ramda'
 
 export interface SvgViewerProps {
   minViewSize: Size
@@ -15,70 +14,65 @@ export default function SvgViewer(
 ) {
   const { initialViewRect, children, minViewSize, maxViewSize } = props
 
-  return (
-    <StateWrapper
-      defaultState={{
-        viewRect: initialViewRect,
-        lastScreenPos: null as Point | null,
-      }}
-    >
-      {(state, setState) => {
-        function onWheel(e: React.WheelEvent<SVGSVGElement>) {
-          e.preventDefault()
-          const worldPos = worldPosFromEvent(e)
-          const zoomFactor = e.deltaY > 0 ? 1.2 : 1 / 1.2
-          let { viewRect } = state
-          viewRect = zoomViewRect(
-            viewRect,
-            worldPos,
-            zoomFactor,
-            minViewSize,
-            maxViewSize,
-          )
-          setState({ viewRect })
-        }
+  const initialState = {
+    viewRect: initialViewRect,
+    lastScreenPos: null as Point | null,
+  }
+  return withState(initialState, (state, setState) => {
+    function onWheel(e: React.WheelEvent<SVGSVGElement>) {
+      e.preventDefault()
+      const worldPos = worldPosFromEvent(e)
+      const zoomFactor = e.deltaY > 0 ? 1.2 : 1 / 1.2
+      let { viewRect } = state
+      viewRect = zoomViewRect(
+        viewRect,
+        worldPos,
+        zoomFactor,
+        minViewSize,
+        maxViewSize,
+      )
+      setState({ viewRect })
+    }
 
-        function onMouseDown(e: React.MouseEvent<SVGSVGElement>) {
-          const lastScreenPos = screenPosFromEvent(e)
-          setState({ lastScreenPos })
-        }
+    function onMouseDown(e: React.MouseEvent<SVGSVGElement>) {
+      const lastScreenPos = screenPosFromEvent(e)
+      setState({ lastScreenPos })
+    }
 
-        function onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
-          if (e.buttons != 1) return
+    function onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
+      if (e.buttons != 1) return
 
-          const { lastScreenPos } = state
-          if (!lastScreenPos) return
+      const { lastScreenPos } = state
+      if (!lastScreenPos) return
 
-          const screenPos = screenPosFromEvent(e)
-          const svg = e.currentTarget
+      const screenPos = screenPosFromEvent(e)
+      const svg = e.currentTarget
 
-          const viewRect = dragViewRect(
-            state.viewRect,
-            worldPosFromScreenPos(svg, lastScreenPos),
-            worldPosFromScreenPos(svg, screenPos),
-          )
+      const viewRect = dragViewRect(
+        state.viewRect,
+        worldPosFromScreenPos(svg, lastScreenPos),
+        worldPosFromScreenPos(svg, screenPos),
+      )
 
-          setState({ viewRect, lastScreenPos: screenPos })
-        }
+      setState({ viewRect, lastScreenPos: screenPos })
+    }
 
-        function onMouseUp(e: React.MouseEvent<SVGSVGElement>) {
-          setState({ lastScreenPos: null })
-        }
+    function onMouseUp(e: React.MouseEvent<SVGSVGElement>) {
+      setState({ lastScreenPos: null })
+    }
 
-        return (
-          <svg
-            viewBox={formatRect(state.viewRect)}
-            onWheel={onWheel}
-            onMouseDownCapture={onMouseDown}
-            onMouseMoveCapture={onMouseMove}
-            onMouseUpCapture={onMouseUp}
-          >
-            {children}
-          </svg>
-        )
-      }}
-    </StateWrapper>
-  )
+    return (
+      <svg
+        viewBox={formatRect(state.viewRect)}
+        onWheel={onWheel}
+        onMouseDownCapture={onMouseDown}
+        onMouseMoveCapture={onMouseMove}
+        onMouseUpCapture={onMouseUp}
+      >
+        {children}
+      </svg>
+    )
+  })
 }
 
 function screenPosFromEvent(e: React.MouseEvent<SVGSVGElement>) {
