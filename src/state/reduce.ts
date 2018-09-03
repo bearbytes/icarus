@@ -47,13 +47,19 @@ function clickOnTile(
   }
 
   // the player may move a selected unit to that tile
+  // TODO: check if movement is allowed (range)
   const selectedUnit = getSelectedUnitOfPlayer(s, playerId)
   if (selectedUnit) {
     return moveUnit(s, selectedUnit.unitId, a.tileId)
   }
 
-  // otherwise, spawn a unit on that tile
-  return spawnUnit(s, a, playerId)
+  // if the user has a UnitSpawn selected, spawn a unit here
+  const unitTypeId = s.players[playerId].selectedUnitSpawnTypeId
+  if (unitTypeId) {
+    return spawnUnit(s, unitTypeId, a.tileId, playerId)
+  }
+
+  return s
 }
 
 function clickOnUnitSpawnSelection(
@@ -61,26 +67,32 @@ function clickOnUnitSpawnSelection(
   a: ClickOnUnitSpawnSelection,
   playerId: string,
 ): IGameState {
+  const alreadySelected =
+    s.players[playerId].selectedUnitSpawnTypeId === a.unitTypeId
+
   s = updatePlayer(s, playerId, {
     selectedUnitId: null,
-    selectedUnitSpawnTypeId: a.unitTypeId,
+    selectedUnitSpawnTypeId: alreadySelected ? null : a.unitTypeId,
   })
+  s = updateHighlightedTiles(s)
   return s
 }
 
 function spawnUnit(
   s: IGameState,
-  a: ClickOnTile,
+  unitTypeId: string,
+  tileId: string,
   playerId: string,
 ): IGameState {
   const unitId = createId('unit')
   const unit: IUnit = {
     unitId,
     playerId,
-    tileId: a.tileId,
+    unitTypeId,
+    tileId: tileId,
   }
   s = addUnit(s, unit)
-  s = updateTile(s, a.tileId, { unitId })
+  s = updateTile(s, tileId, { unitId })
   return s
 }
 
@@ -89,7 +101,10 @@ function selectUnit(
   unitId: string,
   playerId: string,
 ): IGameState {
-  s = updatePlayer(s, playerId, { selectedUnitId: unitId })
+  s = updatePlayer(s, playerId, {
+    selectedUnitId: unitId,
+    selectedUnitSpawnTypeId: null,
+  })
   s = updateHighlightedTiles(s)
   return s
 }
@@ -105,7 +120,9 @@ function moveUnit(s: IGameState, unitId: string, tileId: string): IGameState {
 
 function updateHighlightedTiles(s: IGameState) {
   const unit = getSelectedUnitOfPlayer(s, s.activePlayerId)
-  if (!unit) return s
+  if (!unit) {
+    return { ...s, highlightedTileIds: [] }
+  }
 
   // Highlight tiles where unit can move
   const unitTile = getTileOfUnit(s, unit.unitId)
