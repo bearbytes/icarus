@@ -27,5 +27,4 @@ const Container = styled.div`
   width: 100vmin;
   height: 100vmin;
   margin: auto;
-  background-color: gray;
 `
