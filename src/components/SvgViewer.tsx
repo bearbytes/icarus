@@ -35,12 +35,13 @@ export default function SvgViewer(
     }
 
     function onMouseDown(e: React.MouseEvent<SVGSVGElement>) {
+      if (e.button != 2) return
       const lastScreenPos = screenPosFromEvent(e)
       setState({ lastScreenPos })
     }
 
     function onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
-      if (e.buttons != 1) return
+      if (e.buttons != 2) return
 
       const { lastScreenPos } = state
       if (!lastScreenPos) return
@@ -58,6 +59,7 @@ export default function SvgViewer(
     }
 
     function onMouseUp(e: React.MouseEvent<SVGSVGElement>) {
+      if (e.button != 2) return
       setState({ lastScreenPos: null })
     }
 
