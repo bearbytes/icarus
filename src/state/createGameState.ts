@@ -25,7 +25,7 @@ export function createGameState(): IGameState {
 
 function createPlayer(): IPlayer {
   const playerId = 'player:todo' //createId('player')
-  return { playerId, selectedUnitId: null, selectedUnitSpawn: null }
+  return { playerId, selectedUnitId: null, selectedUnitSpawnTypeId: null }
 }
 
 function createHexagonMap(): IHexagonMap {

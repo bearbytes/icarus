@@ -1,4 +1,8 @@
-import { UserAction, ClickOnTile } from '../actions/UserActions'
+import {
+  UserAction,
+  ClickOnTile,
+  ClickOnUnitSpawnSelection,
+} from '../actions/UserActions'
 import { IGameState, IUnit } from '../models'
 import { createId } from '../lib/createId'
 import {
@@ -19,6 +23,9 @@ export function reduce(
   switch (a.type) {
     case 'ClickOnTile': {
       return clickOnTile(s, a, executingPlayerId)
+    }
+    case 'ClickOnUnitSpawnSelection': {
+      return clickOnUnitSpawnSelection(s, a, executingPlayerId)
     }
   }
 }
@@ -47,6 +54,18 @@ function clickOnTile(
 
   // otherwise, spawn a unit on that tile
   return spawnUnit(s, a, playerId)
+}
+
+function clickOnUnitSpawnSelection(
+  s: IGameState,
+  a: ClickOnUnitSpawnSelection,
+  playerId: string,
+): IGameState {
+  s = updatePlayer(s, playerId, {
+    selectedUnitId: null,
+    selectedUnitSpawnTypeId: a.unitTypeId,
+  })
+  return s
 }
 
 function spawnUnit(

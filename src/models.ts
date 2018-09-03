@@ -19,7 +19,7 @@ export interface IPlayer {
   playerId: string
 
   selectedUnitId: string | null
-  selectedUnitSpawn: string | null
+  selectedUnitSpawnTypeId: string | null
 }
 
 export interface IHexagonMap {
