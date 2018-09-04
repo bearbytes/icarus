@@ -19,6 +19,7 @@ export interface IGameState {
 
 export interface IPlayer {
   playerId: string
+  color: string
 
   selectedUnitId: string | null
   selectedUnitSpawnTypeId: string | null
@@ -45,6 +46,6 @@ export interface IUnit {
 
 export interface IUnitType {
   unitTypeId: string
-  icon: string
+  svgPath: string
   movePoints: number
 }

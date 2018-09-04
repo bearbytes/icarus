@@ -9,21 +9,22 @@ interface MapUnitProps {
 export default function MapUnit(props: MapUnitProps) {
   const { unitId } = props
   return withGameState(
-    s => ({
-      unit: s.units[unitId],
-      isSelected: s.players[s.localPlayerId].selectedUnitId == unitId,
-    }),
+    s => {
+      const unit = s.units[unitId]
+      const player = s.players[unit.playerId]
+      const isSelected = s.players[s.localPlayerId].selectedUnitId == unitId
+      const color = player.color
+      return { unit, color, isSelected }
+    },
     s => (
-      <g pointerEvents={'none'}>
-        <image
-          xlinkHref={UnitTypes[s.unit.unitTypeId].icon}
-          x={-50}
-          y={-50}
-          width={100}
-          height={100}
-          filter={s.isSelected ? 'invert(100%)' : undefined}
-        />
-      </g>
+      <path
+        pointerEvents={'none'}
+        transform={'scale(0.25) translate(-256 -256)'}
+        d={UnitTypes[s.unit.unitTypeId].svgPath}
+        fill={s.isSelected ? 'white' : 'black'}
+        stroke={s.color}
+        strokeWidth={10}
+      />
     ),
   )
 }

@@ -14,7 +14,7 @@ export default function UnitSpawnSelectionArea() {
 }
 
 const StyledUnitSpawnSelectionArea = styled.div`
-  background-color: gray;
+  background-color: #111;
   width: 300px;
   height: 200px;
   padding: 5px;
@@ -42,14 +42,8 @@ function UnitSpawnSelection(props: UnitSpawnSelectionProps) {
           })
         }
       >
-        <svg viewBox="-50 -50 100 100">
-          <image
-            xlinkHref={UnitTypes[unitTypeId].icon}
-            x={-50}
-            y={-50}
-            width={100}
-            height={100}
-          />
+        <svg viewBox="0 0 512 512">
+          <path d={UnitTypes[unitTypeId].svgPath} fill={'white'} />
         </svg>
       </StyledUnitSpawnSelection>
     ),
