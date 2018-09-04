@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { withGameState } from './hoc/withGameState'
+import UnitTypes from '../resources/UnitTypes'
 
 interface MapUnitProps {
   unitId: string
@@ -15,7 +16,7 @@ export default function MapUnit(props: MapUnitProps) {
     s => (
       <g pointerEvents={'none'}>
         <image
-          xlinkHref={'https://image.flaticon.com/icons/svg/443/443955.svg'}
+          xlinkHref={UnitTypes[s.unit.unitTypeId].icon}
           x={-50}
           y={-50}
           width={100}

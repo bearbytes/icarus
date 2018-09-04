@@ -1,11 +1,14 @@
 import * as React from 'react'
 import styled from 'styled-components'
-import { withGameState, withGameStateAndDispatch } from './hoc/withGameState'
+import { withGameStateAndDispatch } from './hoc/withGameState'
+import UnitTypes from '../resources/UnitTypes'
 
 export default function UnitSpawnSelectionArea() {
   return (
     <StyledUnitSpawnSelectionArea>
-      <UnitSpawnSelection unitTypeId={'todo'} />
+      {Object.keys(UnitTypes).map(unitTypeId => (
+        <UnitSpawnSelection unitTypeId={unitTypeId} />
+      ))}
     </StyledUnitSpawnSelectionArea>
   )
 }
@@ -41,7 +44,7 @@ function UnitSpawnSelection(props: UnitSpawnSelectionProps) {
       >
         <svg viewBox="-50 -50 100 100">
           <image
-            xlinkHref={'https://image.flaticon.com/icons/svg/443/443955.svg'}
+            xlinkHref={UnitTypes[unitTypeId].icon}
             x={-50}
             y={-50}
             width={100}
