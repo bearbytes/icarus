@@ -3,7 +3,7 @@ import {
   ClickOnTile,
   ClickOnUnitSpawnSelection,
 } from '../actions/UserActions'
-import { IGameState, IUnit } from '../models'
+import { IGameState, IUnit, IHexagonMapTile } from '../models'
 import { createId } from '../lib/createId'
 import {
   addUnit,
@@ -13,7 +13,9 @@ import {
   getTileOfUnit,
   updateUnit,
   getSelectedUnitOfPlayer,
+  getTypeOfUnit,
 } from './helpers'
+import { contains } from 'ramda'
 
 export function reduce(
   s: IGameState,
@@ -125,15 +127,52 @@ function updateHighlightedTiles(s: IGameState) {
   }
 
   // Highlight tiles where unit can move
-  const unitTile = getTileOfUnit(s, unit.unitId)
-  const highlightedTileIds = []
-  const area = unitTile.coord.area(2)
-  for (const coord of area) {
-    const tileId = coord.id
-    if (tileId != unitTile.tileId) {
-      highlightedTileIds.push(tileId)
-    }
-  }
+  const highlightedTileIds = getValidMovementTargets(s, unit.unitId).map(
+    tile => tile.tileId,
+  )
 
   return { ...s, highlightedTileIds }
+}
+
+function getValidMovementTargets(
+  s: IGameState,
+  unitId: string,
+): IHexagonMapTile[] {
+  const unitTile = getTileOfUnit(s, unitId)
+  const movePoints = getTypeOfUnit(s, unitId).movePoints
+
+  let targets: IHexagonMapTile[] = []
+  let workTiles = [unitTile]
+  let nextTiles = []
+
+  while (workTiles.length > 0) {
+    for (const workTile of workTiles) {
+      for (const neighbor of getNeighborTiles(s, workTile)) {
+        if (neighbor.coord.distance(unitTile.coord) > movePoints) continue
+        if (contains(neighbor, targets)) continue
+        if (contains(neighbor, nextTiles)) continue
+        nextTiles.push(neighbor)
+      }
+    }
+    targets = [...targets, ...workTiles]
+    workTiles = nextTiles
+    nextTiles = []
+  }
+
+  return targets
+}
+
+function getNeighborTiles(
+  s: IGameState,
+  tile: IHexagonMapTile,
+): IHexagonMapTile[] {
+  const result: IHexagonMapTile[] = []
+  const neighborIds = tile.coord.neighbors().map(c => c.id)
+  for (const id of neighborIds) {
+    const neighbor = s.map.tiles[id]
+    if (neighbor) {
+      result.push(neighbor)
+    }
+  }
+  return result
 }

@@ -1,4 +1,11 @@
-import { IGameState, IUnit, IHexagonMapTile, IPlayer } from '../models'
+import {
+  IGameState,
+  IUnit,
+  IHexagonMapTile,
+  IPlayer,
+  IUnitType,
+} from '../models'
+import UnitTypes from '../resources/UnitTypes'
 
 export function addUnit(s: IGameState, unit: IUnit) {
   let units = s.units
@@ -50,6 +57,11 @@ export function getUnitOnTile(s: IGameState, tileId: string): IUnit | null {
 export function getTileOfUnit(s: IGameState, unitId: string): IHexagonMapTile {
   const unit = s.units[unitId]
   return s.map.tiles[unit.tileId]
+}
+
+export function getTypeOfUnit(s: IGameState, unitId: string): IUnitType {
+  const unit = s.units[unitId]
+  return UnitTypes[unit.unitTypeId]
 }
 
 export function getSelectedUnitOfPlayer(
