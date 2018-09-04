@@ -60,12 +60,12 @@ function clickOnTile(
   // TODO: check if movement is allowed (range)
   const selectedUnit = getSelectedUnitOfPlayer(s, playerId)
   if (selectedUnit) {
-    if (s.nextClickMovesUnit) {
+    if (s.targetTileId === a.tileId) {
       s = moveUnit(s, selectedUnit.unitId, a.tileId)
-      s = { ...s, nextClickMovesUnit: false }
+      s = { ...s, targetTileId: undefined }
     } else {
       s = highlightMovablePath(s, a.tileId)
-      s = { ...s, nextClickMovesUnit: true }
+      s = { ...s, targetTileId: a.tileId }
     }
     return s
   }

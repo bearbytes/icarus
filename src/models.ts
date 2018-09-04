@@ -14,7 +14,7 @@ export interface IGameState {
 
   // Client specific data?
   highlightedTileIds: string[]
-  nextClickMovesUnit: boolean
+  targetTileId?: string
 }
 
 export interface IPlayer {
