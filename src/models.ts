@@ -33,6 +33,7 @@ export interface IHexagonMapTile {
   coord: HexCoord
   color: string
   unitId?: string
+  blocked?: boolean
 }
 
 export interface IUnit {

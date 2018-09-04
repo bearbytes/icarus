@@ -172,6 +172,7 @@ function getValidMovementTargets(
   while (workTiles.length > 0) {
     for (const workTile of workTiles) {
       for (const neighbor of getNeighborTiles(s, workTile)) {
+        if (neighbor.blocked) continue
         if (neighbor.coord.distance(unitTile.coord) > movePoints) continue
         if (contains(neighbor, targets)) continue
         if (contains(neighbor, nextTiles)) continue
@@ -212,7 +213,7 @@ function getPathToTarget(
     start: s.map.tiles[startTileId],
     isEnd: tile => tile.tileId === targetTileId,
     neighbor: tile => getNeighborTiles(s, tile),
-    distance: (from, to) => 1,
+    distance: (from, to) => (to.blocked ? 1000000 : 1),
     heuristic: node => node.coord.distance(targetCoord),
     hash: tile => tile.tileId,
   })

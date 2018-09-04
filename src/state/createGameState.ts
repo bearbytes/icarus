@@ -45,10 +45,18 @@ function createHexagonMapTile(
   const r = ((coord.a / radius + 1) / 2) * 255
   const g = ((coord.b / radius + 1) / 2) * 255
   const b = ((coord.c / radius + 1) / 2) * 255
+  let color = Color({ r, g, b }).toString()
+  let blocked = undefined
+
+  if (Math.random() < 0.1) {
+    blocked = true
+    color = 'black'
+  }
 
   return {
     tileId: coord.id,
     coord,
-    color: Color({ r, g, b }).toString(),
+    color,
+    blocked,
   }
 }
