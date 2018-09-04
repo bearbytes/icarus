@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "a-star": "^0.2.0",
     "color": "^3.0.0",
     "ramda": "^0.25.0",
     "react": "^16.4.2",

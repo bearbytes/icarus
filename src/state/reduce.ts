@@ -14,8 +14,10 @@ import {
   updateUnit,
   getSelectedUnitOfPlayer,
   getTypeOfUnit,
+  getCoordinateOfTile,
 } from './helpers'
 import { contains } from 'ramda'
+import aStar from 'a-star'
 
 export function reduce(
   s: IGameState,
@@ -48,17 +50,24 @@ function clickOnTile(
     return s
   }
 
-  // the player may move a selected unit to that tile
-  // TODO: check if movement is allowed (range)
-  const selectedUnit = getSelectedUnitOfPlayer(s, playerId)
-  if (selectedUnit) {
-    return moveUnit(s, selectedUnit.unitId, a.tileId)
-  }
-
   // if the user has a UnitSpawn selected, spawn a unit here
   const unitTypeId = s.players[playerId].selectedUnitSpawnTypeId
   if (unitTypeId) {
     return spawnUnit(s, unitTypeId, a.tileId, playerId)
+  }
+
+  // the player may move a selected unit to that tile
+  // TODO: check if movement is allowed (range)
+  const selectedUnit = getSelectedUnitOfPlayer(s, playerId)
+  if (selectedUnit) {
+    if (s.nextClickMovesUnit) {
+      s = moveUnit(s, selectedUnit.unitId, a.tileId)
+      s = { ...s, nextClickMovesUnit: false }
+    } else {
+      s = highlightMovablePath(s, a.tileId)
+      s = { ...s, nextClickMovesUnit: true }
+    }
+    return s
   }
 
   return s
@@ -76,7 +85,7 @@ function clickOnUnitSpawnSelection(
     selectedUnitId: null,
     selectedUnitSpawnTypeId: alreadySelected ? null : a.unitTypeId,
   })
-  s = updateHighlightedTiles(s)
+  s = { ...s, highlightedTileIds: [] }
   return s
 }
 
@@ -107,7 +116,7 @@ function selectUnit(
     selectedUnitId: unitId,
     selectedUnitSpawnTypeId: null,
   })
-  s = updateHighlightedTiles(s)
+  s = highlightMovableTiles(s)
   return s
 }
 
@@ -116,11 +125,11 @@ function moveUnit(s: IGameState, unitId: string, tileId: string): IGameState {
   s = updateTile(s, unit.tileId, { unitId: undefined })
   s = updateTile(s, tileId, { unitId })
   s = updateUnit(s, unitId, { tileId })
-  s = updateHighlightedTiles(s)
+  s = highlightMovableTiles(s)
   return s
 }
 
-function updateHighlightedTiles(s: IGameState) {
+function highlightMovableTiles(s: IGameState): IGameState {
   const unit = getSelectedUnitOfPlayer(s, s.activePlayerId)
   if (!unit) {
     return { ...s, highlightedTileIds: [] }
@@ -131,6 +140,21 @@ function updateHighlightedTiles(s: IGameState) {
     tile => tile.tileId,
   )
 
+  return { ...s, highlightedTileIds }
+}
+
+function highlightMovablePath(s: IGameState, targetTileId: string): IGameState {
+  const unit = getSelectedUnitOfPlayer(s, s.activePlayerId)
+  if (!unit) {
+    return { ...s, highlightedTileIds: [] }
+  }
+
+  const path = getPathToTarget(s, unit.tileId, targetTileId)
+  if (!path) {
+    return { ...s, highlightedTileIds: [] }
+  }
+
+  const highlightedTileIds = path.map(tile => tile.tileId)
   return { ...s, highlightedTileIds }
 }
 
@@ -175,4 +199,27 @@ function getNeighborTiles(
     }
   }
   return result
+}
+
+function getPathToTarget(
+  s: IGameState,
+  startTileId: string,
+  targetTileId: string,
+): IHexagonMapTile[] | null {
+  const targetCoord = getCoordinateOfTile(s, targetTileId)
+
+  const result = aStar<IHexagonMapTile>({
+    start: s.map.tiles[startTileId],
+    isEnd: tile => tile.tileId === targetTileId,
+    neighbor: tile => getNeighborTiles(s, tile),
+    distance: (from, to) => 1,
+    heuristic: node => node.coord.distance(targetCoord),
+    hash: tile => tile.tileId,
+  })
+
+  if (result.status !== 'success') {
+    return null
+  }
+
+  return result.path
 }

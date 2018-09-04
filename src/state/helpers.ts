@@ -6,6 +6,7 @@ import {
   IUnitType,
 } from '../models'
 import UnitTypes from '../resources/UnitTypes'
+import { HexCoord } from '../lib/HexCoord'
 
 export function addUnit(s: IGameState, unit: IUnit) {
   let units = s.units
@@ -52,6 +53,10 @@ export function getUnitOnTile(s: IGameState, tileId: string): IUnit | null {
   const unitId = s.map.tiles[tileId].unitId
   if (!unitId) return null
   return s.units[unitId]
+}
+
+export function getCoordinateOfTile(s: IGameState, tileId: string): HexCoord {
+  return s.map.tiles[tileId].coord
 }
 
 export function getTileOfUnit(s: IGameState, unitId: string): IHexagonMapTile {

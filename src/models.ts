@@ -12,7 +12,9 @@ export interface IGameState {
   localPlayerId: string
   activePlayerId: string
 
+  // Client specific data?
   highlightedTileIds: string[]
+  nextClickMovesUnit: boolean
 }
 
 export interface IPlayer {

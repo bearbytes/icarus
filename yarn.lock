@@ -155,6 +155,18 @@
     "@types/node" "*"
     "@types/react" "*"
 
+Set@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/Set/-/Set-0.4.1.tgz#8385587be9863e49d2ffd7a85e1a1e4b11633ca6"
+
+a-star@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/a-star/-/a-star-0.2.0.tgz#a1423c830c3bf9a259d490bfbf2710e792f044f9"
+  dependencies:
+    Set "^0.4.1"
+    dict "^1.4.0"
+    heap "^0.2.3"
+
 abab@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.0.tgz#aba0ab4c5eee2d4c79d3487d85450fb2376ebb0f"
@@ -2181,6 +2193,10 @@ detect-port-alt@1.1.6:
     address "^1.0.1"
     debug "^2.6.0"
 
+dict@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/dict/-/dict-1.4.0.tgz#83d87d57cf0c4ac0d834608448b10a6e23bbfea0"
+
 diff@^3.2.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/diff/-/diff-3.5.0.tgz#800c0dd1e0a8bfbc95835c202ad220fe317e5a12"
@@ -3203,6 +3219,10 @@ hash.js@^1.0.0, hash.js@^1.0.3:
 he@1.1.x:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/he/-/he-1.1.1.tgz#93410fd21b009735151f8868c2f271f3427e23fd"
+
+heap@^0.2.3:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/heap/-/heap-0.2.6.tgz#087e1f10b046932fc8594dd9e6d378afc9d1e5ac"
 
 hmac-drbg@^1.0.0:
   version "1.0.1"
