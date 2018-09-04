@@ -52,7 +52,7 @@ function clickOnTile(
 
   // if the user has a UnitSpawn selected, spawn a unit here
   const unitTypeId = s.players[playerId].selectedUnitSpawnTypeId
-  if (unitTypeId) {
+  if (unitTypeId && canSpawnUnit(s, unitTypeId, a.tileId, playerId)) {
     return spawnUnit(s, unitTypeId, a.tileId, playerId)
   }
 
@@ -87,6 +87,16 @@ function clickOnUnitSpawnSelection(
   })
   s = { ...s, highlightedTileIds: [] }
   return s
+}
+
+function canSpawnUnit(
+  s: IGameState,
+  unitTypeId: string,
+  tileId: string,
+  playerId: string,
+): boolean {
+  const tile = s.map.tiles[tileId]
+  return !tile.blocked
 }
 
 function spawnUnit(
