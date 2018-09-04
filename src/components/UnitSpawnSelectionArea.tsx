@@ -15,8 +15,6 @@ export default function UnitSpawnSelectionArea() {
 
 const StyledUnitSpawnSelectionArea = styled.div`
   background-color: #111;
-  width: 300px;
-  height: 200px;
   padding: 5px;
 `
 

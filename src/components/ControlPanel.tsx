@@ -2,12 +2,12 @@ import * as React from 'react'
 import styled from 'styled-components'
 import UnitSpawnSelectionArea from './UnitSpawnSelectionArea'
 
-export default function SideBar() {
+export default function ControlPanel() {
   return (
-    <StyledSideBar>
+    <StyledControlPanel>
       <UnitSpawnSelectionArea />
-    </StyledSideBar>
+    </StyledControlPanel>
   )
 }
 
-const StyledSideBar = styled.div``
+const StyledControlPanel = styled.div``

@@ -2,13 +2,21 @@ import * as React from 'react'
 import HexagonMap from './HexagonMap'
 import styled from 'styled-components'
 import { GameContextProvider } from '../contexts/GameContext'
-import SideBar from './SideBar'
+import ControlPanel from './ControlPanel'
 
 export default function App() {
   return (
-    <GameContextProvider>
-      <Container>
-        <SideBar />
+    <HBox>
+      <ClientView playerName="Mond" />
+      <ClientView playerName="Stern" />
+    </HBox>
+  )
+}
+
+function ClientView(props: { playerName: string }) {
+  return (
+    <GameContextProvider playerName={props.playerName}>
+      <VBox>
         <HexMapContainer>
           <HexagonMap
             tileSize={100}
@@ -22,17 +30,23 @@ export default function App() {
             }}
           />
         </HexMapContainer>
-      </Container>
+        <ControlPanel />
+      </VBox>
     </GameContextProvider>
   )
 }
 
-const Container = styled.div`
+const HBox = styled.div`
   display: flex;
 `
 
+const VBox = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
 const HexMapContainer = styled.div`
-  width: 100vmin;
-  height: 100vmin;
+  width: 50vw;
+  height: 80vh;
   margin: auto;
 `

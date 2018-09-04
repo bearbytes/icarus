@@ -4,30 +4,36 @@ import { BehaviorSubject, Observable } from 'rxjs'
 import { reduce } from '../state/reduce'
 import { IGameState } from '../models'
 
-const gameSubject = new BehaviorSubject(createGameState())
-
-const devTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__
-const devToolsConnection = devTools ? devTools.connect() : null
-
-if (devToolsConnection) {
-  devToolsConnection.init(gameSubject.value)
+interface IServerConnection {
+  gameObservable: Observable<IGameState>
+  dispatch(action: UserAction): void
 }
 
-function dispatch(
-  action: UserAction,
-  executingPlayerId: string = 'player:todo', // get id from client
-) {
-  const prevState = gameSubject.value
-  const nextState = reduce(prevState, action, executingPlayerId)
+export function connectToServer(playerName: string): IServerConnection {
+  const playerId = playerName.toLowerCase()
+
+  const gameSubject = new BehaviorSubject(createGameState())
+
+  const devTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__
+  const devToolsConnection = devTools ? devTools.connect() : null
 
   if (devToolsConnection) {
-    devToolsConnection.send(action, nextState)
+    devToolsConnection.init(gameSubject.value)
   }
 
-  gameSubject.next(nextState)
-}
+  function dispatch(action: UserAction) {
+    const prevState = gameSubject.value
+    const nextState = reduce(prevState, action, playerId)
 
-export default {
-  gameObservable: gameSubject as Observable<IGameState>,
-  dispatch,
+    if (devToolsConnection) {
+      devToolsConnection.send(action, nextState)
+    }
+
+    gameSubject.next(nextState)
+  }
+
+  return {
+    gameObservable: gameSubject,
+    dispatch,
+  }
 }
