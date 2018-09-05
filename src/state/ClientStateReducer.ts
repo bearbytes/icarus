@@ -25,6 +25,7 @@ import {
   updateUI,
   updateGame,
   isMyTurn,
+  isMyUnit,
 } from './ClientStateHelpers'
 
 export interface IClientStateAndActions {
@@ -105,12 +106,14 @@ function clickOnTile(
   s: IClientState,
   { tileId }: ClickOnTile,
 ): IClientStateAndActions {
+  // Try to select a unit on that tile
   const unit = getUnitOnTile(s.game, tileId)
   if (unit) {
     s = selectUnit(s, unit.unitId)
     return { nextState: s }
   }
 
+  // Try to spawn a unit on that tile
   const spawnUnitTypeId = s.ui.selectedUnitSpawnTypeId
   if (spawnUnitTypeId) {
     if (isMyTurn(s)) {
@@ -126,8 +129,9 @@ function clickOnTile(
     }
   }
 
+  // Try to move a selected unit to that tile
   const selectedUnit = getSelectedUnit(s)
-  if (selectedUnit) {
+  if (selectedUnit && isMyUnit(s, selectedUnit.unitId)) {
     // If we previously selected that tile as target, move the unit
     if (s.ui.targetTileId == tileId) {
       if (isMyTurn(s)) {
