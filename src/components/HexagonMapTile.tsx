@@ -19,7 +19,6 @@ export default function HexagonMapTile(props: HexagonMapTileProps) {
     }),
     s => {
       const pos = s.tile.coord.toPixel(tileSize)
-      console.log('render tile')
       return withState({ hovered: false }, (state, setState) => (
         <g id={tileId} transform={`translate(${pos.x}, ${pos.y})`}>
           <use
