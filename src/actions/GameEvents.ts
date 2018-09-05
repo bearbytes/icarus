@@ -1,6 +1,6 @@
 import { IUnit, IGameState } from '../models'
 
-export type GameEvent = GameStarted | UnitSpawned | UnitMoved
+export type GameEvent = GameStarted | UnitSpawned | UnitMoved | TurnStarted
 
 export interface GameStarted {
   type: 'GameStarted'
@@ -16,4 +16,9 @@ export interface UnitMoved {
   type: 'UnitMoved'
   unitId: string
   tileId: string
+}
+
+export interface TurnStarted {
+  type: 'TurnStarted'
+  activePlayerId: string
 }

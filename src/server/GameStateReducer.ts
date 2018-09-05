@@ -9,6 +9,7 @@ import {
 import { PlayerAction } from '../actions/PlayerActions'
 import { IGameState, IUnit } from '../models'
 import { GameEvent } from '../actions/GameEvents'
+import { findIndex } from 'ramda'
 
 interface IGameStateAndEvents {
   nextState: IGameState
@@ -20,7 +21,13 @@ export function GameStateReducer(
   a: PlayerAction,
   executingPlayerId: string,
 ): IGameStateAndEvents {
+  if (executingPlayerId != s.activePlayerId) {
+    throw Error('Player is not allowed to act')
+  }
+
   switch (a.type) {
+    case 'EndTurn':
+      return endTurn(s)
     case 'SpawnUnit':
       return spawnUnit(s, a.unitTypeId, a.tileId, executingPlayerId)
     case 'MoveUnit':
@@ -37,6 +44,25 @@ function sendToAllPlayers(
     result[playerId] = events
   }
   return result
+}
+
+function endTurn(s: IGameState): IGameStateAndEvents {
+  const playerIds = Object.keys(s.players)
+  let index = 0
+  for (const playerId of playerIds) {
+    if (playerId == s.activePlayerId) break
+    index++
+  }
+  index = (index + 1) % playerIds.length
+  const activePlayerId = playerIds[index]
+  s = { ...s, activePlayerId }
+  return {
+    nextState: s,
+    events: sendToAllPlayers(s, {
+      type: 'TurnStarted',
+      activePlayerId,
+    }),
+  }
 }
 
 function spawnUnit(

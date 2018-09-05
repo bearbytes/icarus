@@ -1,4 +1,4 @@
-export type PlayerAction = SpawnUnit | MoveUnit
+export type PlayerAction = SpawnUnit | MoveUnit | EndTurn
 
 export interface SpawnUnit {
   type: 'SpawnUnit'
@@ -10,4 +10,8 @@ export interface MoveUnit {
   type: 'MoveUnit'
   unitId: string
   tileId: string
+}
+
+export interface EndTurn {
+  type: 'EndTurn'
 }

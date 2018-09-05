@@ -1,4 +1,15 @@
-import { IClientState, IUnit, IUIState } from '../models'
+import { IClientState, IUnit, IUIState, IGameState } from '../models'
+
+export function updateGame(
+  s: IClientState,
+  partialOrUpdate: Partial<IGameState> | ((g: IGameState) => IGameState),
+): IClientState {
+  if (typeof partialOrUpdate === 'function') {
+    return { ...s, game: partialOrUpdate(s.game) }
+  }
+  const game = { ...s.game, ...partialOrUpdate }
+  return { ...s, game }
+}
 
 export function updateUI(
   s: IClientState,

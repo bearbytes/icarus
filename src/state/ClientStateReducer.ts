@@ -3,8 +3,9 @@ import {
   GameStarted,
   UnitMoved,
   UnitSpawned,
+  TurnStarted,
 } from '../actions/GameEvents'
-import { IClientState } from '../models'
+import { IClientState, IGameState } from '../models'
 import { PlayerAction } from '../actions/PlayerActions'
 import {
   ClickOnTile,
@@ -19,7 +20,7 @@ import {
   updateUnit,
   addUnit,
 } from './GameStateHelpers'
-import { getSelectedUnit, updateUI } from './ClientStateHelpers'
+import { getSelectedUnit, updateUI, updateGame } from './ClientStateHelpers'
 
 export interface IClientStateAndActions {
   nextState?: IClientState
@@ -35,6 +36,8 @@ export function ClientStateReducer(
     // Events
     case 'GameStarted':
       return startGame(s, a)
+    case 'TurnStarted':
+      return startTurn(s, a)
     case 'UnitMoved':
       return moveUnit(s, a)
     case 'UnitSpawned':
@@ -46,12 +49,23 @@ export function ClientStateReducer(
     case 'ClickOnUnitSpawnSelection':
       return clickOnUnitSpawnSelection(s, a)
     case 'ClickOnEndTurn':
-      throw 'TODO'
+      return clickOnEndTurn(s)
   }
 }
 
-function startGame(s: IClientState, a: GameStarted): IClientState {
-  s = { ...s, game: a.initialState }
+function startGame(
+  s: IClientState,
+  { initialState }: GameStarted,
+): IClientState {
+  s = { ...s, game: initialState }
+  return s
+}
+
+function startTurn(
+  s: IClientState,
+  { activePlayerId }: TurnStarted,
+): IClientState {
+  s = updateGame(s, { activePlayerId })
   return s
 }
 
@@ -59,12 +73,14 @@ function moveUnit(
   s: IClientState,
   { unitId, tileId }: UnitMoved,
 ): IClientState {
-  let g = s.game
-  const unit = g.units[unitId]
-  g = updateTile(g, unit.tileId, { unitId: undefined })
-  g = updateTile(g, tileId, { unitId })
-  g = updateUnit(g, unitId, { tileId })
-  s = { ...s, game: g }
+  const unit = s.game.units[unitId]
+
+  s = updateGame(s, g => {
+    g = updateTile(g, unit.tileId, { unitId: undefined })
+    g = updateTile(g, tileId, { unitId })
+    g = updateUnit(g, unitId, { tileId })
+    return g
+  })
 
   if (unit.unitId == s.ui.selectedUnitId) {
     s = highlightMovableArea(s)
@@ -172,4 +188,10 @@ function highlightMovablePath(
   const highlightedTiles = path
   const highlightedTileIds = highlightedTiles.map(tile => tile.tileId)
   return updateUI(s, { highlightedTileIds, targetTileId })
+}
+
+function clickOnEndTurn(s: IClientState): IClientStateAndActions {
+  return {
+    action: { type: 'EndTurn' },
+  }
 }
