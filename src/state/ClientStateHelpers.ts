@@ -24,3 +24,7 @@ export function getSelectedUnit(s: IClientState): IUnit | null {
   if (!unitId) return null
   return s.game.units[unitId]
 }
+
+export function isMyTurn(s: IClientState): boolean {
+  return s.game.activePlayerId == s.ui.localPlayerId
+}

@@ -20,7 +20,12 @@ import {
   updateUnit,
   addUnit,
 } from './GameStateHelpers'
-import { getSelectedUnit, updateUI, updateGame } from './ClientStateHelpers'
+import {
+  getSelectedUnit,
+  updateUI,
+  updateGame,
+  isMyTurn,
+} from './ClientStateHelpers'
 
 export interface IClientStateAndActions {
   nextState?: IClientState
@@ -35,13 +40,13 @@ export function ClientStateReducer(
   switch (a.type) {
     // Events
     case 'GameStarted':
-      return startGame(s, a)
+      return gameStarted(s, a)
     case 'TurnStarted':
-      return startTurn(s, a)
+      return turnStarted(s, a)
     case 'UnitMoved':
-      return moveUnit(s, a)
+      return unitMoved(s, a)
     case 'UnitSpawned':
-      return spawnUnit(s, a)
+      return unitSpawned(s, a)
 
     // Actions
     case 'ClickOnTile':
@@ -53,7 +58,7 @@ export function ClientStateReducer(
   }
 }
 
-function startGame(
+function gameStarted(
   s: IClientState,
   { initialState }: GameStarted,
 ): IClientState {
@@ -61,7 +66,7 @@ function startGame(
   return s
 }
 
-function startTurn(
+function turnStarted(
   s: IClientState,
   { activePlayerId }: TurnStarted,
 ): IClientState {
@@ -69,7 +74,7 @@ function startTurn(
   return s
 }
 
-function moveUnit(
+function unitMoved(
   s: IClientState,
   { unitId, tileId }: UnitMoved,
 ): IClientState {
@@ -89,7 +94,7 @@ function moveUnit(
   return s
 }
 
-function spawnUnit(s: IClientState, { unit }: UnitSpawned): IClientState {
+function unitSpawned(s: IClientState, { unit }: UnitSpawned): IClientState {
   let g = s.game
   g = addUnit(g, unit)
   g = updateTile(g, unit.tileId, { unitId: unit.unitId })
@@ -108,14 +113,16 @@ function clickOnTile(
 
   const spawnUnitTypeId = s.ui.selectedUnitSpawnTypeId
   if (spawnUnitTypeId) {
-    s = updateUI(s, { targetTileId: null })
-    return {
-      nextState: s,
-      action: {
-        type: 'SpawnUnit',
-        tileId,
-        unitTypeId: spawnUnitTypeId,
-      },
+    if (isMyTurn(s)) {
+      s = updateUI(s, { targetTileId: null })
+      return {
+        nextState: s,
+        action: {
+          type: 'SpawnUnit',
+          tileId,
+          unitTypeId: spawnUnitTypeId,
+        },
+      }
     }
   }
 
@@ -123,12 +130,14 @@ function clickOnTile(
   if (selectedUnit) {
     // If we previously selected that tile as target, move the unit
     if (s.ui.targetTileId == tileId) {
-      return {
-        action: {
-          type: 'MoveUnit',
-          unitId: selectedUnit.unitId,
-          tileId,
-        },
+      if (isMyTurn(s)) {
+        return {
+          action: {
+            type: 'MoveUnit',
+            unitId: selectedUnit.unitId,
+            tileId,
+          },
+        }
       }
     }
 
@@ -191,6 +200,10 @@ function highlightMovablePath(
 }
 
 function clickOnEndTurn(s: IClientState): IClientStateAndActions {
+  if (!isMyTurn(s)) {
+    return {}
+  }
+
   return {
     action: { type: 'EndTurn' },
   }
