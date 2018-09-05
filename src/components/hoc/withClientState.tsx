@@ -25,7 +25,7 @@ export function withClientStateAndDispatch<S>(
     <ClientContext.Consumer>
       {ctx =>
         pure(selectState(ctx.clientState), s =>
-          render(Object.assign(s, { dispatch: ctx.dispatch })),
+          render(Object.assign({}, s, { dispatch: ctx.dispatch })),
         )
       }
     </ClientContext.Consumer>

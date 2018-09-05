@@ -18,7 +18,7 @@ class PureWrapper<P> extends React.Component<WrapperProps<P>> {
     for (const key in this.props.props) {
       const value = this.props.props[key]
       const nextValue = nextProps.props[key]
-      if (value != nextValue) return true
+      if (value !== nextValue) return true
     }
     return false
   }
