@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { withState } from './hoc/withState'
-import { withGameStateAndDispatch } from './hoc/withGameState'
+import { withClientStateAndDispatch } from './hoc/withClientState'
 import MapUnit from './MapUnit'
 
 interface HexagonMapTileProps {
@@ -11,7 +11,7 @@ interface HexagonMapTileProps {
 export default function HexagonMapTile(props: HexagonMapTileProps) {
   const { tileId, tileSize } = props
 
-  return withGameStateAndDispatch(
+  return withClientStateAndDispatch(
     s => ({
       tile: s.map.tiles[tileId],
       isHighlighted: s.highlightedTileIds.find(id => id == tileId) != null,

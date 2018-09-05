@@ -1,10 +1,10 @@
 import { zipObj } from 'ramda'
 import * as Color from 'color'
 import { HexCoord } from '../types'
-import { IHexagonMap, IHexagonMapTile, IGameState, IPlayer } from '../models'
+import { IHexagonMap, IHexagonMapTile, IClientState, IPlayer } from '../models'
 import { createId } from '../lib/createId'
 
-export function createGameState(playerId: string): IGameState {
+export function createClientState(playerId: string): IClientState {
   const map = createHexagonMap()
 
   const units = {}
@@ -20,6 +20,8 @@ export function createGameState(playerId: string): IGameState {
     localPlayerId: player.playerId,
     activePlayerId: player.playerId,
     highlightedTileIds: [],
+    selectedUnitId: null,
+    selectedUnitSpawnTypeId: null,
   }
 }
 
@@ -28,8 +30,6 @@ function createPlayer(playerId: string): IPlayer {
   return {
     playerId,
     color,
-    selectedUnitId: null,
-    selectedUnitSpawnTypeId: null,
   }
 }
 

@@ -9,20 +9,24 @@ export interface IGameState {
   units: { [unitId: string]: IUnit }
   players: { [playerId: string]: IPlayer }
 
-  localPlayerId: string
   activePlayerId: string
+}
 
-  // Client specific data?
+export interface IClientState extends IGameState {
+  localPlayerId: string
+
   highlightedTileIds: string[]
   targetTileId?: string
+
+  selectedUnitId: string | null
+  selectedUnitSpawnTypeId: string | null
 }
+
+export interface IServerState extends IGameState {}
 
 export interface IPlayer {
   playerId: string
   color: string
-
-  selectedUnitId: string | null
-  selectedUnitSpawnTypeId: string | null
 }
 
 export interface IHexagonMap {

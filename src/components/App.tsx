@@ -1,7 +1,7 @@
 import * as React from 'react'
 import HexagonMap from './HexagonMap'
 import styled from 'styled-components'
-import { GameContextProvider } from '../contexts/GameContext'
+import { ClientContextProvider } from '../contexts/ClientContext'
 import ControlPanel from './ControlPanel'
 
 export default function App() {
@@ -15,7 +15,7 @@ export default function App() {
 
 function ClientView(props: { playerName: string }) {
   return (
-    <GameContextProvider playerName={props.playerName}>
+    <ClientContextProvider playerName={props.playerName}>
       <VBox>
         <HexMapContainer>
           <HexagonMap
@@ -32,7 +32,7 @@ function ClientView(props: { playerName: string }) {
         </HexMapContainer>
         <ControlPanel />
       </VBox>
-    </GameContextProvider>
+    </ClientContextProvider>
   )
 }
 

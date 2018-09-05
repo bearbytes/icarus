@@ -3,7 +3,7 @@ import {
   ClickOnTile,
   ClickOnUnitSpawnSelection,
 } from '../actions/UserActions'
-import { IGameState, IUnit, IHexagonMapTile } from '../models'
+import { IClientState, IUnit, IHexagonMapTile } from '../models'
 import { createId } from '../lib/createId'
 import {
   addUnit,
@@ -20,10 +20,10 @@ import { contains } from 'ramda'
 import aStar from 'a-star'
 
 export function reduce(
-  s: IGameState,
+  s: IClientState,
   a: UserAction,
   executingPlayerId: string,
-): IGameState {
+): IClientState {
   switch (a.type) {
     case 'ClickOnTile': {
       return clickOnTile(s, a, executingPlayerId)
@@ -35,10 +35,10 @@ export function reduce(
 }
 
 function clickOnTile(
-  s: IGameState,
+  s: IClientState,
   a: ClickOnTile,
   playerId: string,
-): IGameState {
+): IClientState {
   // each player may select a unit on the tile
   const unit = getUnitOnTile(s, a.tileId)
   if (unit) {
@@ -51,7 +51,7 @@ function clickOnTile(
   }
 
   // if the user has a UnitSpawn selected, spawn a unit here
-  const unitTypeId = s.players[playerId].selectedUnitSpawnTypeId
+  const unitTypeId = s.selectedUnitSpawnTypeId
   if (unitTypeId && canSpawnUnit(s, unitTypeId, a.tileId, playerId)) {
     return spawnUnit(s, unitTypeId, a.tileId, playerId)
   }
@@ -74,23 +74,22 @@ function clickOnTile(
 }
 
 function clickOnUnitSpawnSelection(
-  s: IGameState,
+  s: IClientState,
   a: ClickOnUnitSpawnSelection,
   playerId: string,
-): IGameState {
-  const alreadySelected =
-    s.players[playerId].selectedUnitSpawnTypeId === a.unitTypeId
+): IClientState {
+  const alreadySelected = s.selectedUnitSpawnTypeId === a.unitTypeId
 
-  s = updatePlayer(s, playerId, {
+  return {
+    ...s,
     selectedUnitId: null,
     selectedUnitSpawnTypeId: alreadySelected ? null : a.unitTypeId,
-  })
-  s = { ...s, highlightedTileIds: [] }
-  return s
+    highlightedTileIds: [],
+  }
 }
 
 function canSpawnUnit(
-  s: IGameState,
+  s: IClientState,
   unitTypeId: string,
   tileId: string,
   playerId: string,
@@ -100,11 +99,11 @@ function canSpawnUnit(
 }
 
 function spawnUnit(
-  s: IGameState,
+  s: IClientState,
   unitTypeId: string,
   tileId: string,
   playerId: string,
-): IGameState {
+): IClientState {
   const unitId = createId('unit')
   const unit: IUnit = {
     unitId,
@@ -118,19 +117,24 @@ function spawnUnit(
 }
 
 function selectUnit(
-  s: IGameState,
+  s: IClientState,
   unitId: string,
   playerId: string,
-): IGameState {
-  s = updatePlayer(s, playerId, {
+): IClientState {
+  s = {
+    ...s,
     selectedUnitId: unitId,
     selectedUnitSpawnTypeId: null,
-  })
+  }
   s = highlightMovableTiles(s)
   return s
 }
 
-function moveUnit(s: IGameState, unitId: string, tileId: string): IGameState {
+function moveUnit(
+  s: IClientState,
+  unitId: string,
+  tileId: string,
+): IClientState {
   const unit = s.units[unitId]
   s = updateTile(s, unit.tileId, { unitId: undefined })
   s = updateTile(s, tileId, { unitId })
@@ -139,7 +143,7 @@ function moveUnit(s: IGameState, unitId: string, tileId: string): IGameState {
   return s
 }
 
-function highlightMovableTiles(s: IGameState): IGameState {
+function highlightMovableTiles(s: IClientState): IClientState {
   const unit = getSelectedUnitOfPlayer(s, s.activePlayerId)
   if (!unit) {
     return { ...s, highlightedTileIds: [] }
@@ -153,7 +157,10 @@ function highlightMovableTiles(s: IGameState): IGameState {
   return { ...s, highlightedTileIds }
 }
 
-function highlightMovablePath(s: IGameState, targetTileId: string): IGameState {
+function highlightMovablePath(
+  s: IClientState,
+  targetTileId: string,
+): IClientState {
   const unit = getSelectedUnitOfPlayer(s, s.activePlayerId)
   if (!unit) {
     return { ...s, highlightedTileIds: [] }
@@ -169,7 +176,7 @@ function highlightMovablePath(s: IGameState, targetTileId: string): IGameState {
 }
 
 function getValidMovementTargets(
-  s: IGameState,
+  s: IClientState,
   unitId: string,
 ): IHexagonMapTile[] {
   const unitTile = getTileOfUnit(s, unitId)
@@ -198,7 +205,7 @@ function getValidMovementTargets(
 }
 
 function getNeighborTiles(
-  s: IGameState,
+  s: IClientState,
   tile: IHexagonMapTile,
 ): IHexagonMapTile[] {
   const result: IHexagonMapTile[] = []
@@ -213,7 +220,7 @@ function getNeighborTiles(
 }
 
 function getPathToTarget(
-  s: IGameState,
+  s: IClientState,
   startTileId: string,
   targetTileId: string,
 ): IHexagonMapTile[] | null {

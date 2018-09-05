@@ -1,6 +1,6 @@
 import * as React from 'react'
 import styled from 'styled-components'
-import { withGameStateAndDispatch } from './hoc/withGameState'
+import { withClientStateAndDispatch } from './hoc/withClientState'
 import UnitTypes from '../resources/UnitTypes'
 
 export default function UnitSpawnSelectionArea() {
@@ -26,10 +26,9 @@ interface UnitSpawnSelectionProps {
 function UnitSpawnSelection(props: UnitSpawnSelectionProps) {
   const { unitTypeId } = props
 
-  return withGameStateAndDispatch(
+  return withClientStateAndDispatch(
     s => ({
-      isSelected:
-        s.players[s.activePlayerId].selectedUnitSpawnTypeId === unitTypeId,
+      isSelected: s.selectedUnitSpawnTypeId === unitTypeId,
     }),
     s => (
       <StyledUnitSpawnSelection

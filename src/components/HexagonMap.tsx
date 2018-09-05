@@ -3,7 +3,7 @@ import { formatPoints } from '../lib/svg'
 import HexagonMapTile from './HexagonMapTile'
 import { HexCoord } from '../types'
 import SvgViewer, { SvgViewerProps } from './SvgViewer'
-import { withGameState } from './hoc/withGameState'
+import { withClientState } from './hoc/withClientState'
 import { IHexagonMap } from '../models'
 
 interface HexagonMapProps {
@@ -12,7 +12,7 @@ interface HexagonMapProps {
 }
 
 export default function HexagonMap(props: HexagonMapProps) {
-  return withGameState(s => s.map, map => <Wrapper map={map} {...props} />)
+  return withClientState(s => s.map, map => <Wrapper map={map} {...props} />)
 }
 
 interface WrapperProps extends HexagonMapProps {

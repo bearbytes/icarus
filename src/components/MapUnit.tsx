@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { withGameState } from './hoc/withGameState'
+import { withClientState } from './hoc/withClientState'
 import UnitTypes from '../resources/UnitTypes'
 
 interface MapUnitProps {
@@ -8,11 +8,11 @@ interface MapUnitProps {
 
 export default function MapUnit(props: MapUnitProps) {
   const { unitId } = props
-  return withGameState(
+  return withClientState(
     s => {
       const unit = s.units[unitId]
       const player = s.players[unit.playerId]
-      const isSelected = s.players[s.localPlayerId].selectedUnitId == unitId
+      const isSelected = s.selectedUnitId == unitId
       const color = player.color
       return { unit, color, isSelected }
     },

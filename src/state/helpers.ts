@@ -1,5 +1,5 @@
 import {
-  IGameState,
+  IClientState,
   IUnit,
   IHexagonMapTile,
   IPlayer,
@@ -8,17 +8,17 @@ import {
 import UnitTypes from '../resources/UnitTypes'
 import { HexCoord } from '../lib/HexCoord'
 
-export function addUnit(s: IGameState, unit: IUnit) {
+export function addUnit(s: IClientState, unit: IUnit) {
   let units = s.units
   units = { ...units, [unit.unitId]: unit }
   return { ...s, units }
 }
 
 export function updateTile(
-  s: IGameState,
+  s: IClientState,
   tileId: string,
   partial: Partial<IHexagonMapTile>,
-): IGameState {
+): IClientState {
   let map = s.map
   let tiles = map.tiles
   let tile = { ...tiles[tileId], ...partial }
@@ -28,10 +28,10 @@ export function updateTile(
 }
 
 export function updateUnit(
-  s: IGameState,
+  s: IClientState,
   unitId: string,
   partial: Partial<IUnit>,
-): IGameState {
+): IClientState {
   let units = s.units
   let unit = { ...units[unitId], ...partial }
   units = { ...units, [unitId]: unit }
@@ -39,41 +39,43 @@ export function updateUnit(
 }
 
 export function updatePlayer(
-  s: IGameState,
+  s: IClientState,
   playerId: string,
   partial: Partial<IPlayer>,
-): IGameState {
+): IClientState {
   let players = s.players
   let player = { ...players[playerId], ...partial }
   players = { ...players, [playerId]: player }
   return { ...s, players }
 }
 
-export function getUnitOnTile(s: IGameState, tileId: string): IUnit | null {
+export function getUnitOnTile(s: IClientState, tileId: string): IUnit | null {
   const unitId = s.map.tiles[tileId].unitId
   if (!unitId) return null
   return s.units[unitId]
 }
 
-export function getCoordinateOfTile(s: IGameState, tileId: string): HexCoord {
+export function getCoordinateOfTile(s: IClientState, tileId: string): HexCoord {
   return s.map.tiles[tileId].coord
 }
 
-export function getTileOfUnit(s: IGameState, unitId: string): IHexagonMapTile {
+export function getTileOfUnit(
+  s: IClientState,
+  unitId: string,
+): IHexagonMapTile {
   const unit = s.units[unitId]
   return s.map.tiles[unit.tileId]
 }
 
-export function getTypeOfUnit(s: IGameState, unitId: string): IUnitType {
+export function getTypeOfUnit(s: IClientState, unitId: string): IUnitType {
   const unit = s.units[unitId]
   return UnitTypes[unit.unitTypeId]
 }
 
 export function getSelectedUnitOfPlayer(
-  s: IGameState,
+  s: IClientState,
   playerId: string,
 ): IUnit | null {
-  const unitId = s.players[playerId].selectedUnitId
-  if (!unitId) return null
-  return s.units[unitId]
+  if (!s.selectedUnitId) return null
+  return s.units[s.selectedUnitId]
 }
