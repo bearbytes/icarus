@@ -1,17 +1,15 @@
-import { IAction } from '../models'
-
 export type UIAction = ClickOnTile | ClickOnUnitSpawnSelection | ClickOnEndTurn
 
-export interface ClickOnTile extends IAction {
+export interface ClickOnTile {
   type: 'ClickOnTile'
   tileId: string
 }
 
-export interface ClickOnUnitSpawnSelection extends IAction {
+export interface ClickOnUnitSpawnSelection {
   type: 'ClickOnUnitSpawnSelection'
   unitTypeId: string
 }
 
-export interface ClickOnEndTurn extends IAction {
+export interface ClickOnEndTurn {
   type: 'ClickOnEndTurn'
 }

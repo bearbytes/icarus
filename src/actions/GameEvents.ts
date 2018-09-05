@@ -1,18 +1,18 @@
-import { IAction, IUnit, IGameState } from '../models'
+import { IUnit, IGameState } from '../models'
 
 export type GameEvent = GameStarted | UnitSpawned | UnitMoved
 
-export interface GameStarted extends IAction {
+export interface GameStarted {
   type: 'GameStarted'
   initialState: IGameState
 }
 
-export interface UnitSpawned extends IAction {
+export interface UnitSpawned {
   type: 'UnitSpawned'
   unit: IUnit
 }
 
-export interface UnitMoved extends IAction {
+export interface UnitMoved {
   type: 'UnitMoved'
   unitId: string
   tileId: string

@@ -1,14 +1,12 @@
-import { IAction } from '../models'
-
 export type PlayerAction = SpawnUnit | MoveUnit
 
-export interface SpawnUnit extends IAction {
+export interface SpawnUnit {
   type: 'SpawnUnit'
   unitTypeId: string
   tileId: string
 }
 
-export interface MoveUnit extends IAction {
+export interface MoveUnit {
   type: 'MoveUnit'
   unitId: string
   tileId: string

@@ -1,9 +1,5 @@
 import { HexCoord } from './types'
 
-export interface IAction {
-  type: string
-}
-
 export interface IGameState {
   map: IHexagonMap
   units: { [unitId: string]: IUnit }
