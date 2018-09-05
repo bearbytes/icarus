@@ -86,11 +86,14 @@ function ClientStateChangeHandler(
     const update = updateOrState as IClientStateAndActions
     const state = updateOrState as IClientState
 
-    if (!update.nextState && !update.actions) {
+    if (!update.nextState && !update.actions && !update.action) {
       clientStateSubject.next(state)
     } else {
       if (update.nextState) {
         clientStateSubject.next(update.nextState)
+      }
+      if (update.action) {
+        playerActionSubject.next(update.action)
       }
       if (update.actions) {
         for (const playerAction of update.actions) {

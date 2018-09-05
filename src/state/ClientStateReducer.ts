@@ -24,6 +24,7 @@ import { getSelectedUnit, updateUI } from './ClientStateHelpers'
 export interface IClientStateAndActions {
   nextState?: IClientState
   actions?: PlayerAction[]
+  action?: PlayerAction
 }
 
 export function ClientStateReducer(
@@ -61,7 +62,13 @@ function moveUnit(
   g = updateTile(g, unit.tileId, { unitId: undefined })
   g = updateTile(g, tileId, { unitId })
   g = updateUnit(g, unitId, { tileId })
-  return { ...s, game: g }
+  s = { ...s, game: g }
+
+  if (unit.unitId == s.ui.selectedUnitId) {
+    s = highlightMovableArea(s)
+  }
+
+  return s
 }
 
 function spawnUnit(s: IClientState, { unit }: UnitSpawned): IClientState {
@@ -83,14 +90,14 @@ function clickOnTile(
 
   const spawnUnitTypeId = s.ui.selectedUnitSpawnTypeId
   if (spawnUnitTypeId) {
+    s = updateUI(s, { targetTileId: null })
     return {
-      actions: [
-        {
-          type: 'SpawnUnit',
-          tileId,
-          unitTypeId: spawnUnitTypeId,
-        },
-      ],
+      nextState: s,
+      action: {
+        type: 'SpawnUnit',
+        tileId,
+        unitTypeId: spawnUnitTypeId,
+      },
     }
   }
 
@@ -99,13 +106,11 @@ function clickOnTile(
     // If we previously selected that tile as target, move the unit
     if (s.ui.targetTileId == tileId) {
       return {
-        actions: [
-          {
-            type: 'MoveUnit',
-            unitId: selectedUnit.unitId,
-            tileId,
-          },
-        ],
+        action: {
+          type: 'MoveUnit',
+          unitId: selectedUnit.unitId,
+          tileId,
+        },
       }
     }
 
@@ -118,7 +123,9 @@ function clickOnTile(
 }
 
 function selectUnit(s: IClientState, unitId: string): IClientState {
-  return updateUI(s, { selectedUnitId: unitId, selectedUnitSpawnTypeId: null })
+  s = updateUI(s, { selectedUnitId: unitId, selectedUnitSpawnTypeId: null })
+  s = highlightMovableArea(s)
+  return s
 }
 
 function clickOnUnitSpawnSelection(
@@ -133,6 +140,17 @@ function clickOnUnitSpawnSelection(
     highlightedTileIds: [],
     targetTileId: null,
   })
+}
+
+function highlightMovableArea(s: IClientState): IClientState {
+  const unit = getSelectedUnit(s)
+  if (!unit) {
+    return updateUI(s, { targetTileId: null })
+  }
+
+  const highlightedTiles = getValidMovementTargets(s.game, unit.unitId)
+  const highlightedTileIds = highlightedTiles.map(tile => tile.tileId)
+  return updateUI(s, { highlightedTileIds, targetTileId: null })
 }
 
 function highlightMovablePath(
