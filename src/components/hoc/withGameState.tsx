@@ -15,23 +15,19 @@ export function withGameState<S>(
   )
 }
 
-export function withDispatch(
-  render: (dispatch: (action: UserAction) => void) => React.ReactNode,
-) {
-  return (
-    <GameContext.Consumer>
-      {ctx => pure(ctx.dispatch, render)}
-    </GameContext.Consumer>
-  )
-}
-
 export function withGameStateAndDispatch<S>(
   selectState: (gameState: IGameState) => S,
-  render: (state: S, dispatch: (action: UserAction) => void) => React.ReactNode,
+  render: (
+    state: S & { dispatch: (action: UserAction) => void },
+  ) => React.ReactNode,
 ) {
   return (
     <GameContext.Consumer>
-      {ctx => pure(selectState(ctx.game), s => render(s, ctx.dispatch))}
+      {ctx =>
+        pure(selectState(ctx.game), s =>
+          render(Object.assign(s, { dispatch: ctx.dispatch })),
+        )
+      }
     </GameContext.Consumer>
   )
 }

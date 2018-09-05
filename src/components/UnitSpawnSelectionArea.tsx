@@ -31,11 +31,11 @@ function UnitSpawnSelection(props: UnitSpawnSelectionProps) {
       isSelected:
         s.players[s.activePlayerId].selectedUnitSpawnTypeId === unitTypeId,
     }),
-    (s, dispatch) => (
+    s => (
       <StyledUnitSpawnSelection
         showBorder={s.isSelected}
         onClick={() =>
-          dispatch({
+          s.dispatch({
             type: 'ClickOnUnitSpawnSelection',
             unitTypeId,
           })
