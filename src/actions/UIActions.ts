@@ -1,6 +1,6 @@
 import { IAction } from '../models'
 
-export type UIAction = ClickOnTile | ClickOnUnitSpawnSelection
+export type UIAction = ClickOnTile | ClickOnUnitSpawnSelection | ClickOnEndTurn
 
 export interface ClickOnTile extends IAction {
   type: 'ClickOnTile'
@@ -10,4 +10,8 @@ export interface ClickOnTile extends IAction {
 export interface ClickOnUnitSpawnSelection extends IAction {
   type: 'ClickOnUnitSpawnSelection'
   unitTypeId: string
+}
+
+export interface ClickOnEndTurn extends IAction {
+  type: 'ClickOnEndTurn'
 }

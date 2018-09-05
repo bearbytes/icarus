@@ -1,13 +1,14 @@
 import * as React from 'react'
-import styled from 'styled-components'
 import UnitSpawnSelectionArea from './UnitSpawnSelectionArea'
+import { HBox, Spacer } from './layout'
+import EndTurnButton from './EndTurnButton'
 
 export default function ControlPanel() {
   return (
-    <StyledControlPanel>
+    <HBox>
       <UnitSpawnSelectionArea />
-    </StyledControlPanel>
+      <Spacer />
+      <EndTurnButton />
+    </HBox>
   )
 }
-
-const StyledControlPanel = styled.div``

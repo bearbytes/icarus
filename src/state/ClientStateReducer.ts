@@ -45,6 +45,8 @@ export function ClientStateReducer(
       return clickOnTile(s, a)
     case 'ClickOnUnitSpawnSelection':
       return clickOnUnitSpawnSelection(s, a)
+    case 'ClickOnEndTurn':
+      throw 'TODO'
   }
 }
 
