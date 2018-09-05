@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { ClientContext } from '../../contexts/ClientContext'
-import { UserAction } from '../../actions/UserActions'
+import { UIAction } from '../../actions/UIActions'
 import { IClientState } from '../../models'
 import { pure } from './pure'
 
@@ -18,7 +18,7 @@ export function withClientState<S>(
 export function withClientStateAndDispatch<S>(
   selectState: (clientState: IClientState) => S,
   render: (
-    state: S & { dispatch: (action: UserAction) => void },
+    state: S & { dispatch: (action: UIAction) => void },
   ) => React.ReactNode,
 ) {
   return (

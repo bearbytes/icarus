@@ -12,7 +12,10 @@ interface HexagonMapProps {
 }
 
 export default function HexagonMap(props: HexagonMapProps) {
-  return withClientState(s => s.map, map => <Wrapper map={map} {...props} />)
+  return withClientState(
+    s => s.game.map,
+    map => <Wrapper map={map} {...props} />,
+  )
 }
 
 interface WrapperProps extends HexagonMapProps {

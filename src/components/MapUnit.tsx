@@ -10,9 +10,9 @@ export default function MapUnit(props: MapUnitProps) {
   const { unitId } = props
   return withClientState(
     s => {
-      const unit = s.units[unitId]
-      const player = s.players[unit.playerId]
-      const isSelected = s.selectedUnitId == unitId
+      const unit = s.game.units[unitId]
+      const player = s.game.players[unit.playerId]
+      const isSelected = s.ui.selectedUnitId == unitId
       const color = player.color
       return { unit, color, isSelected }
     },

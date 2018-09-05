@@ -9,7 +9,7 @@ export interface SpawnUnit extends IAction {
 }
 
 export interface MoveUnit extends IAction {
-  type: 'ClickOnUnitSpawnSelection'
+  type: 'MoveUnit'
   unitId: string
   tileId: string
 }

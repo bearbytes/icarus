@@ -12,20 +12,28 @@ export interface IGameState {
   activePlayerId: string
 }
 
-export interface IClientState extends IGameState {
+export interface IUIState {
   localPlayerId: string
 
   highlightedTileIds: string[]
-  targetTileId?: string
+  targetTileId: string | null
 
   selectedUnitId: string | null
   selectedUnitSpawnTypeId: string | null
 }
 
-export interface IServerState extends IGameState {}
+export interface IClientState {
+  game: IGameState
+  ui: IUIState
+}
+
+export interface IServerState {
+  game: IGameState
+}
 
 export interface IPlayer {
   playerId: string
+  name: string
   color: string
 }
 

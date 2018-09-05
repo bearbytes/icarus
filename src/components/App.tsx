@@ -3,19 +3,25 @@ import HexagonMap from './HexagonMap'
 import styled from 'styled-components'
 import { ClientContextProvider } from '../contexts/ClientContext'
 import ControlPanel from './ControlPanel'
+import { ServerContextProvider } from '../contexts/ServerContext'
 
 export default function App() {
   return (
-    <HBox>
-      <ClientView playerName="Mond" />
-      <ClientView playerName="Stern" />
-    </HBox>
+    <ServerContextProvider>
+      <HBox>
+        <ClientView playerName="Mond" playerColor="blue" />
+        <ClientView playerName="Stern" playerColor="red" />
+      </HBox>
+    </ServerContextProvider>
   )
 }
 
-function ClientView(props: { playerName: string }) {
+function ClientView(props: { playerName: string; playerColor: string }) {
   return (
-    <ClientContextProvider playerName={props.playerName}>
+    <ClientContextProvider
+      playerName={props.playerName}
+      playerColor={props.playerColor}
+    >
       <VBox>
         <HexMapContainer>
           <HexagonMap

@@ -7,7 +7,7 @@ export default function UnitSpawnSelectionArea() {
   return (
     <StyledUnitSpawnSelectionArea>
       {Object.keys(UnitTypes).map(unitTypeId => (
-        <UnitSpawnSelection unitTypeId={unitTypeId} />
+        <UnitSpawnSelection key={unitTypeId} unitTypeId={unitTypeId} />
       ))}
     </StyledUnitSpawnSelectionArea>
   )
@@ -28,7 +28,7 @@ function UnitSpawnSelection(props: UnitSpawnSelectionProps) {
 
   return withClientStateAndDispatch(
     s => ({
-      isSelected: s.selectedUnitSpawnTypeId === unitTypeId,
+      isSelected: s.ui.selectedUnitSpawnTypeId === unitTypeId,
     }),
     s => (
       <StyledUnitSpawnSelection

@@ -1,26 +1,117 @@
 import * as React from 'react'
-import { UserAction } from '../actions/UserActions'
 import { withStateFromObservable } from '../components/hoc/withState'
-import { connectToServer } from '../server/ServerConnection'
-import { IGameState, IClientState } from '../models'
+import { IClientState, IPlayer } from '../models'
+import { ServerContext } from './ServerContext'
+import { Subject, Observable, BehaviorSubject } from 'rxjs'
+import { PlayerAction } from '../actions/PlayerActions'
+import { GameEvent } from '../actions/GameEvents'
+import { UIAction } from '../actions/UIActions'
+import { createClientState } from '../state/createClientState'
+import {
+  ClientStateReducer,
+  IClientStateAndActions,
+} from '../state/ClientStateReducer'
 
 export interface IClientContext {
   clientState: IClientState
-  dispatch(action: UserAction): void
+  dispatch(playerAction: UIAction): void
 }
 
 export const ClientContext = React.createContext<IClientContext>(null as any)
 
 interface ClientContextProviderProps {
   playerName: string
+  playerColor: string
   children: React.ReactNode
 }
 
 export function ClientContextProvider(props: ClientContextProviderProps) {
-  const { clientStateObservable, dispatch } = connectToServer(props.playerName)
-  return withStateFromObservable(clientStateObservable, clientState => (
-    <ClientContext.Provider value={{ clientState, dispatch }}>
-      {props.children}
-    </ClientContext.Provider>
-  ))
+  const player: IPlayer = {
+    playerId: props.playerName.toLowerCase(),
+    name: props.playerName,
+    color: props.playerColor,
+  }
+
+  const uiActionsSubject = new Subject<UIAction>()
+  const gameEventsSubject = new Subject<GameEvent[]>()
+  const {
+    clientStateObservable,
+    playerActionObservable,
+  } = ClientStateChangeHandler(
+    player.playerId,
+    gameEventsSubject,
+    uiActionsSubject,
+  )
+
+  function dispatch(playerAction: UIAction) {
+    uiActionsSubject.next(playerAction)
+  }
+
+  return (
+    <ServerContext.Consumer>
+      {serverContext => {
+        // side effect: TODO unsubscribe
+        serverContext.serverProcess.connect({
+          player,
+          actions: playerActionObservable,
+          sendEvents: events => gameEventsSubject.next(events),
+        })
+        return withStateFromObservable(clientStateObservable, clientState => {
+          return (
+            <ClientContext.Provider value={{ clientState, dispatch }}>
+              {props.children}
+            </ClientContext.Provider>
+          )
+        })
+      }}
+    </ServerContext.Consumer>
+  )
+}
+
+function ClientStateChangeHandler(
+  playerId: string,
+  gameEventsObservable: Observable<GameEvent[]>,
+  uiActionsObservable: Observable<UIAction>,
+): {
+  clientStateObservable: Observable<IClientState>
+  playerActionObservable: Observable<PlayerAction>
+} {
+  const initialState = createClientState(playerId)
+  const clientStateSubject = new BehaviorSubject<IClientState>(initialState)
+  const playerActionSubject = new Subject<PlayerAction>()
+
+  function updateState(e: GameEvent | UIAction) {
+    const updateOrState = ClientStateReducer(clientStateSubject.value, e)
+
+    const update = updateOrState as IClientStateAndActions
+    const state = updateOrState as IClientState
+
+    if (!update.nextState && !update.actions) {
+      clientStateSubject.next(state)
+    } else {
+      if (update.nextState) {
+        clientStateSubject.next(update.nextState)
+      }
+      if (update.actions) {
+        for (const playerAction of update.actions) {
+          playerActionSubject.next(playerAction)
+        }
+      }
+    }
+  }
+
+  gameEventsObservable.subscribe(events => {
+    for (const event of events) {
+      updateState(event)
+    }
+  })
+
+  uiActionsObservable.subscribe(action => {
+    updateState(action)
+  })
+
+  return {
+    clientStateObservable: clientStateSubject,
+    playerActionObservable: playerActionSubject,
+  }
 }

@@ -13,12 +13,11 @@ export default function HexagonMapTile(props: HexagonMapTileProps) {
 
   return withClientStateAndDispatch(
     s => ({
-      tile: s.map.tiles[tileId],
-      isHighlighted: s.highlightedTileIds.find(id => id == tileId) != null,
+      tile: s.game.map.tiles[tileId],
+      isHighlighted: s.ui.highlightedTileIds.find(id => id == tileId) != null,
     }),
     s => {
       const pos = s.tile.coord.toPixel(tileSize)
-      console.log('render', tileId)
       return withState({ hovered: false }, (state, setState) => (
         <g id={tileId} transform={`translate(${pos.x}, ${pos.y})`}>
           <use
