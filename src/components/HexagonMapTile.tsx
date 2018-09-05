@@ -2,7 +2,6 @@ import * as React from 'react'
 import { withState } from './hoc/withState'
 import { withClientStateAndDispatch } from './hoc/withClientState'
 import MapUnit from './MapUnit'
-import { HexCoord } from '../lib/HexCoord'
 
 interface HexagonMapTileProps {
   tileId: string
