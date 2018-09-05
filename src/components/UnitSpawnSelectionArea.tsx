@@ -16,6 +16,7 @@ export default function UnitSpawnSelectionArea() {
 const StyledUnitSpawnSelectionArea = styled.div`
   background-color: #111;
   padding: 5px;
+  display: flex;
 `
 
 interface UnitSpawnSelectionProps {
