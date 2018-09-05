@@ -12,7 +12,7 @@ interface IServerConnection {
 export function connectToServer(playerName: string): IServerConnection {
   const playerId = playerName.toLowerCase()
 
-  const gameSubject = new BehaviorSubject(createGameState())
+  const gameSubject = new BehaviorSubject(createGameState(playerId))
 
   const devTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__
   const devToolsConnection = devTools ? devTools.connect() : null

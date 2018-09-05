@@ -4,13 +4,13 @@ import { HexCoord } from '../types'
 import { IHexagonMap, IHexagonMapTile, IGameState, IPlayer } from '../models'
 import { createId } from '../lib/createId'
 
-export function createGameState(): IGameState {
+export function createGameState(playerId: string): IGameState {
   const map = createHexagonMap()
 
   const units = {}
 
   const players = {}
-  const player = createPlayer()
+  const player = createPlayer(playerId)
   players[player.playerId] = player
 
   return {
@@ -23,8 +23,7 @@ export function createGameState(): IGameState {
   }
 }
 
-function createPlayer(): IPlayer {
-  const playerId = 'player:todo' //createId('player')
+function createPlayer(playerId: string): IPlayer {
   const color = 'blue'
   return {
     playerId,
