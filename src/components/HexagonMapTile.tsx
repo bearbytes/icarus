@@ -2,6 +2,7 @@ import * as React from 'react'
 import { withState } from './hoc/withState'
 import { withClientStateAndDispatch } from './hoc/withClientState'
 import MapUnit from './MapUnit'
+import { IHexagonMapTileHighlight } from '../models'
 
 interface HexagonMapTileProps {
   tileId: string
@@ -14,7 +15,7 @@ export default function HexagonMapTile(props: HexagonMapTileProps) {
   return withClientStateAndDispatch(
     s => ({
       tile: s.game.map.tiles[tileId],
-      isHighlighted: s.ui.highlightedTileIds.find(id => id == tileId) != null,
+      highlight: s.ui.tileHighlights[tileId],
     }),
     s => {
       const pos = s.tile.coord.toPixel(tileSize)
@@ -23,13 +24,7 @@ export default function HexagonMapTile(props: HexagonMapTileProps) {
           <use
             xlinkHref={'#hexagon'}
             fill={s.tile.color}
-            stroke={
-              state.hovered
-                ? 'white'
-                : s.isHighlighted
-                  ? 'lightgray'
-                  : 'transparent'
-            }
+            stroke={getStrokeColor(state.hovered, s.highlight)}
             onMouseEnter={() => setState({ hovered: true })}
             onMouseLeave={() => setState({ hovered: false })}
             onClick={() =>
@@ -44,4 +39,13 @@ export default function HexagonMapTile(props: HexagonMapTileProps) {
       ))
     },
   )
+}
+
+function getStrokeColor(
+  hovered: boolean,
+  highlight: IHexagonMapTileHighlight | undefined,
+) {
+  if (hovered) return 'white'
+  if (highlight) return highlight.borderColor
+  return 'transparent'
 }

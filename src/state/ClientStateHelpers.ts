@@ -1,4 +1,10 @@
-import { IClientState, IUnit, IUIState, IGameState } from '../models'
+import {
+  IClientState,
+  IUnit,
+  IUIState,
+  IGameState,
+  IHexagonMapTile,
+} from '../models'
 
 export function updateGame(
   s: IClientState,
@@ -31,4 +37,11 @@ export function isMyTurn(s: IClientState): boolean {
 
 export function isMyUnit(s: IClientState, unitId: string): boolean {
   return s.game.units[unitId].playerId == s.ui.localPlayerId
+}
+
+export function getMovementTargetTileId(s: IClientState): string | null {
+  const pathLength = s.ui.movementPathTileIds.length
+  if (pathLength == 0) return null
+
+  return s.ui.movementPathTileIds[pathLength - 1]
 }

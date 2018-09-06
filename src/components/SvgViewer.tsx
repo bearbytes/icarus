@@ -97,8 +97,6 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
     this.setState({ scrollInfo: null })
   }
 
-  scrollTimerId: number | null
-
   calculateScroll() {
     const scrollInfo = this.state.scrollInfo
     if (!scrollInfo) {
@@ -119,6 +117,8 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
     const viewRect = { ...this.state.viewRect, topLeft }
     this.setState({ viewRect })
   }
+
+  scrollTimerId: number | null
 
   startScrollTimer() {
     if (this.scrollTimerId) return

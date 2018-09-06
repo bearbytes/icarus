@@ -5,7 +5,7 @@ import {
   UnitSpawned,
   TurnStarted,
 } from '../actions/GameEvents'
-import { IClientState, IGameState } from '../models'
+import { IClientState } from '../models'
 import { PlayerAction } from '../actions/PlayerActions'
 import {
   ClickOnTile,
@@ -26,7 +26,9 @@ import {
   updateGame,
   isMyTurn,
   isMyUnit,
+  getMovementTargetTileId,
 } from './ClientStateHelpers'
+import log from '../lib/log'
 
 export interface IClientStateAndActions {
   nextState?: IClientState
@@ -89,7 +91,7 @@ function unitMoved(
   })
 
   if (unit.unitId == s.ui.selectedUnitId) {
-    s = highlightMovableArea(s)
+    s = updateTileHighlights(s)
   }
 
   return s
@@ -117,7 +119,6 @@ function clickOnTile(
   const spawnUnitTypeId = s.ui.selectedUnitSpawnTypeId
   if (spawnUnitTypeId) {
     if (isMyTurn(s)) {
-      s = updateUI(s, { targetTileId: null })
       return {
         nextState: s,
         action: {
@@ -133,20 +134,14 @@ function clickOnTile(
   const selectedUnit = getSelectedUnit(s)
   if (selectedUnit && isMyUnit(s, selectedUnit.unitId)) {
     // If we previously selected that tile as target, move the unit
-    if (s.ui.targetTileId == tileId) {
+    if (getMovementTargetTileId(s) == tileId) {
       if (isMyTurn(s)) {
-        return {
-          action: {
-            type: 'MoveUnit',
-            unitId: selectedUnit.unitId,
-            tileId,
-          },
-        }
+        return moveUnit(s, tileId)
       }
     }
 
     // otherwise, first click only selects the tile as target
-    s = highlightMovablePath(s, tileId)
+    s = createMovementPathToTile(s, tileId)
     return { nextState: s }
   }
 
@@ -155,52 +150,71 @@ function clickOnTile(
 
 function selectUnit(s: IClientState, unitId: string): IClientState {
   s = updateUI(s, { selectedUnitId: unitId, selectedUnitSpawnTypeId: null })
-  s = highlightMovableArea(s)
+  s = updateTileHighlights(s)
   return s
+}
+
+function deselectUnit(s: IClientState): IClientState {
+  const unit = getSelectedUnit(s)
+  if (!unit) return s
+  return updateUI(s, {
+    selectedUnitId: null,
+    tileHighlights: {},
+    movementPathTileIds: [],
+  })
+}
+
+function moveUnit(s: IClientState, tileId: string): IClientStateAndActions {
+  const unit = getSelectedUnit(s)
+  if (!unit) return { nextState: s }
+
+  s = updateUI(s, { movementPathTileIds: [] })
+
+  return {
+    nextState: s,
+    action: {
+      type: 'MoveUnit',
+      unitId: unit.unitId,
+      tileId,
+    },
+  }
 }
 
 function clickOnUnitSpawnSelection(
   s: IClientState,
   { unitTypeId }: ClickOnUnitSpawnSelection,
 ): IClientState {
+  s = deselectUnit(s)
+
   const alreadySelected = s.ui.selectedUnitSpawnTypeId === unitTypeId
+  const selectedUnitSpawnTypeId = alreadySelected ? null : unitTypeId
 
-  return updateUI(s, {
-    selectedUnitId: null,
-    selectedUnitSpawnTypeId: alreadySelected ? null : unitTypeId,
-    highlightedTileIds: [],
-    targetTileId: null,
-  })
+  return updateUI(s, { selectedUnitSpawnTypeId })
 }
 
-function highlightMovableArea(s: IClientState): IClientState {
+function updateTileHighlights(s: IClientState): IClientState {
+  const tileHighlights = {}
+
   const unit = getSelectedUnit(s)
-  if (!unit) {
-    return updateUI(s, { targetTileId: null })
+  if (unit) {
+    const area = getValidMovementTargets(s.game, unit.unitId)
+    for (const tile of area) {
+      tileHighlights[tile.tileId] = {
+        borderColor: '#888',
+      }
+    }
   }
 
-  const highlightedTiles = getValidMovementTargets(s.game, unit.unitId)
-  const highlightedTileIds = highlightedTiles.map(tile => tile.tileId)
-  return updateUI(s, { highlightedTileIds, targetTileId: null })
-}
-
-function highlightMovablePath(
-  s: IClientState,
-  targetTileId: string,
-): IClientState {
-  const unit = getSelectedUnit(s)
-  if (!unit) {
-    return updateUI(s, { highlightedTileIds: [], targetTileId: null })
+  const movementPath = s.ui.movementPathTileIds
+  if (movementPath) {
+    for (const tileId of movementPath) {
+      tileHighlights[tileId] = {
+        borderColor: '#fff',
+      }
+    }
   }
 
-  const path = getPathToTarget(s.game, unit.tileId, targetTileId)
-  if (!path) {
-    return updateUI(s, { highlightedTileIds: [], targetTileId: null })
-  }
-
-  const highlightedTiles = path
-  const highlightedTileIds = highlightedTiles.map(tile => tile.tileId)
-  return updateUI(s, { highlightedTileIds, targetTileId })
+  return updateUI(s, { tileHighlights })
 }
 
 function clickOnEndTurn(s: IClientState): IClientStateAndActions {
@@ -210,5 +224,34 @@ function clickOnEndTurn(s: IClientState): IClientStateAndActions {
 
   return {
     action: { type: 'EndTurn' },
+  }
+}
+
+function createMovementPathToTile(
+  s: IClientState,
+  targetTileId: string,
+): IClientState {
+  const startTileId = getMovementTargetTileId(s)
+  if (startTileId) {
+    return createMovementPath(startTileId)
+  }
+
+  const selectedUnit = getSelectedUnit(s)
+  if (selectedUnit) {
+    return createMovementPath(selectedUnit.tileId)
+  }
+
+  log.warn('createMovementPathToTile')
+  return s
+
+  function createMovementPath(startTileId: string): IClientState {
+    const path = getPathToTarget(s.game, startTileId, targetTileId) || []
+    const movementPathTileIds = [
+      ...s.ui.movementPathTileIds,
+      ...path.map(tile => tile.tileId),
+    ]
+    s = updateUI(s, { movementPathTileIds })
+    s = updateTileHighlights(s)
+    return s
   }
 }

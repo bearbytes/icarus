@@ -26,7 +26,7 @@ export default function ClientView(props: {
               minViewSize: { w: 2000, h: 2000 },
               maxViewSize: { w: 3000, h: 3000 },
               scrollSpeed: 1,
-              scrollBorderSize: 100,
+              scrollBorderSize: 50,
             }}
           />
         </HexMapContainer>

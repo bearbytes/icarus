@@ -9,11 +9,11 @@ export function createClientState(playerId: string): IClientState {
       units: {},
     },
     ui: {
-      highlightedTileIds: [],
       localPlayerId: playerId,
       selectedUnitId: null,
       selectedUnitSpawnTypeId: null,
-      targetTileId: null,
+      tileHighlights: {},
+      movementPathTileIds: [],
     },
   }
 }

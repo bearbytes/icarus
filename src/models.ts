@@ -11,8 +11,8 @@ export interface IGameState {
 export interface IUIState {
   localPlayerId: string
 
-  highlightedTileIds: string[]
-  targetTileId: string | null
+  tileHighlights: { [tileId: string]: IHexagonMapTileHighlight }
+  movementPathTileIds: string[]
 
   selectedUnitId: string | null
   selectedUnitSpawnTypeId: string | null
@@ -43,6 +43,10 @@ export interface IHexagonMapTile {
   color: string
   unitId?: string
   blocked?: boolean
+}
+
+export interface IHexagonMapTileHighlight {
+  borderColor: string
 }
 
 export interface IUnit {
