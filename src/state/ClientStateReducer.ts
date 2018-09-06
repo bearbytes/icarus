@@ -189,7 +189,10 @@ function clickOnEndTurn(s: IClientState): IClientStateAndActions {
     return {}
   }
 
+  s = deselectUnit(s)
+
   return {
+    nextState: s,
     action: { type: 'EndTurn' },
   }
 }
