@@ -71,6 +71,20 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
     if (e.pageY - rect.top < this.props.scrollBorderSize) y = -1
     if (rect.bottom - e.pageY < this.props.scrollBorderSize) y = +1
 
+    this.setScrollDirection(x, y)
+  }
+
+  onMouseLeave(e: React.MouseEvent<SVGSVGElement>) {
+    this.setState({ scrollInfo: null })
+  }
+
+  onMouseDown(e: React.MouseEvent<SVGSVGElement>) {
+    if (e.button == 2) {
+      this.props.onRightClick()
+    }
+  }
+
+  setScrollDirection(x: number, y: number) {
     if (x == 0 && y == 0) {
       this.setState({ scrollInfo: null })
     }
@@ -93,16 +107,6 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
     })
 
     this.startScrollTimer()
-  }
-
-  onMouseLeave(e: React.MouseEvent<SVGSVGElement>) {
-    this.setState({ scrollInfo: null })
-  }
-
-  onMouseDown(e: React.MouseEvent<SVGSVGElement>) {
-    if (e.button == 2) {
-      this.props.onRightClick()
-    }
   }
 
   calculateScroll() {
@@ -143,7 +147,25 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
     }
   }
 
+  onKeyDown = (e: KeyboardEvent) => {
+    if (e.key == 'w') this.setScrollDirection(0, -1)
+    if (e.key == 'a') this.setScrollDirection(-1, 0)
+    if (e.key == 's') this.setScrollDirection(0, +1)
+    if (e.key == 'd') this.setScrollDirection(+1, 0)
+  }
+
+  onKeyUp = (e: KeyboardEvent) => {
+    this.setScrollDirection(0, 0)
+  }
+
+  componentDidMount() {
+    window.addEventListener('keydown', this.onKeyDown)
+    window.addEventListener('keyup', this.onKeyUp)
+  }
+
   componentWillUnmount() {
+    window.removeEventListener('keydown', this.onKeyDown)
+    window.removeEventListener('keyup', this.onKeyUp)
     this.stopScrollTimer()
   }
 }
