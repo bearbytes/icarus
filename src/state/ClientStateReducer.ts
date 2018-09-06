@@ -231,10 +231,15 @@ function createMovementPathToTile(
   s: IClientState,
   targetTileId: string,
 ): IClientState {
+  const movePoints = getRemainingMovePoints(s)
+  if (!movePoints) return s
+
   const startTileId = getMovementStartTileId(s)
   if (!startTileId) return s
 
   const path = getPathToTarget(s.game, startTileId, targetTileId) || []
+  if (movePoints < path.length) return s
+
   const movementPathTileIds = [
     ...s.ui.movementPathTileIds,
     ...path.map(tile => tile.tileId),
