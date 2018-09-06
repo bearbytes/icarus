@@ -31,7 +31,7 @@ import {
   getRemainingMovePoints,
 } from './ClientStateHelpers'
 import log from '../lib/log'
-import { start } from 'repl'
+import { last } from 'ramda'
 
 export interface IClientStateAndActions {
   nextState?: IClientState
@@ -82,14 +82,16 @@ function turnStarted(
 
 function unitMoved(
   s: IClientState,
-  { unitId, tileId }: UnitMoved,
+  { unitId, path, remainingMovePoints }: UnitMoved,
 ): IClientState {
   const unit = s.game.units[unitId]
+
+  const tileId = last(path)!
 
   s = updateGame(s, g => {
     g = updateTile(g, unit.tileId, { unitId: undefined })
     g = updateTile(g, tileId, { unitId })
-    g = updateUnit(g, unitId, { tileId })
+    g = updateUnit(g, unitId, { tileId, movePoints: remainingMovePoints })
     return g
   })
 
@@ -139,7 +141,7 @@ function clickOnTile(
     // If we previously selected that tile as target, move the unit
     if (getMovementTargetTileId(s) == tileId) {
       if (isMyTurn(s)) {
-        return moveUnit(s, tileId)
+        return moveUnit(s)
       }
     }
 
@@ -189,10 +191,11 @@ function deselectUnit(s: IClientState): IClientState {
   })
 }
 
-function moveUnit(s: IClientState, tileId: string): IClientStateAndActions {
+function moveUnit(s: IClientState): IClientStateAndActions {
   const unit = getSelectedUnit(s)
   if (!unit) return { nextState: s }
 
+  const path = s.ui.movementPathTileIds
   s = updateUI(s, { movementPathTileIds: [] })
 
   return {
@@ -200,7 +203,7 @@ function moveUnit(s: IClientState, tileId: string): IClientStateAndActions {
     action: {
       type: 'MoveUnit',
       unitId: unit.unitId,
-      tileId,
+      path,
     },
   }
 }

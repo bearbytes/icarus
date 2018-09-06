@@ -8,7 +8,7 @@ import {
 import UnitTypes from '../resources/UnitTypes'
 import { HexCoord } from '../lib/HexCoord'
 import aStar from 'a-star'
-import { contains } from 'ramda'
+import { contains, head, tail } from 'ramda'
 
 export function addUnit(s: IGameState, unit: IUnit) {
   let units = s.units
@@ -79,11 +79,13 @@ export function canSpawnUnit(s: IGameState, tileId: string): boolean {
 export function canMoveUnit(
   s: IGameState,
   unitId: string,
-  tileId: string,
+  path: string[],
 ): boolean {
+  if (s.units[unitId].movePoints < path.length) return false
+
   const startTile = getTileOfUnit(s, unitId)
-  const path = getPathToTarget(s, startTile.tileId, tileId)
-  if (!path) return false
+  // TODO test if path is connected and adjacent to unit tile
+
   return true
 }
 
@@ -107,7 +109,7 @@ export function getPathToTarget(
     return null
   }
 
-  return result.path
+  return tail(result.path)
 }
 
 export function getNeighborTiles(

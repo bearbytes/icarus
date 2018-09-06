@@ -9,7 +9,8 @@ import {
 import { PlayerAction } from '../actions/PlayerActions'
 import { IGameState, IUnit } from '../models'
 import { GameEvent } from '../actions/GameEvents'
-import { findIndex } from 'ramda'
+import { findIndex, tail, last } from 'ramda'
+import UnitTypes from '../resources/UnitTypes'
 
 interface IGameStateAndEvents {
   nextState: IGameState
@@ -31,7 +32,7 @@ export function GameStateReducer(
     case 'SpawnUnit':
       return spawnUnit(s, a.unitTypeId, a.tileId, executingPlayerId)
     case 'MoveUnit':
-      return moveUnit(s, a.unitId, a.tileId)
+      return moveUnit(s, a.unitId, a.path)
   }
 }
 
@@ -81,6 +82,8 @@ function spawnUnit(
     playerId,
     unitTypeId,
     tileId: tileId,
+    actionPoints: 2,
+    movePoints: UnitTypes[unitTypeId].movePoints,
   }
   s = addUnit(s, unit)
   s = updateTile(s, tileId, { unitId })
@@ -97,23 +100,31 @@ function spawnUnit(
 function moveUnit(
   s: IGameState,
   unitId: string,
-  tileId: string,
+  path: string[],
 ): IGameStateAndEvents {
-  if (!canMoveUnit(s, unitId, tileId)) {
+  if (!canMoveUnit(s, unitId, path)) {
     throw Error('Tried to move unit where it can not')
   }
 
   const unit = s.units[unitId]
+  const targetTileId = last(path)!
+
+  const remainingMovePoints = unit.movePoints - path.length
+
   s = updateTile(s, unit.tileId, { unitId: undefined })
-  s = updateTile(s, tileId, { unitId })
-  s = updateUnit(s, unitId, { tileId })
+  s = updateTile(s, targetTileId, { unitId })
+  s = updateUnit(s, unitId, {
+    tileId: targetTileId,
+    movePoints: remainingMovePoints,
+  })
 
   return {
     nextState: s,
     events: sendToAllPlayers(s, {
       type: 'UnitMoved',
       unitId,
-      tileId,
+      path,
+      remainingMovePoints,
     }),
   }
 }

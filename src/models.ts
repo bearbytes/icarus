@@ -54,6 +54,9 @@ export interface IUnit {
   unitTypeId: string
   playerId: string
   tileId: string
+
+  actionPoints: number
+  movePoints: number
 }
 
 export interface IUnitType {

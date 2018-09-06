@@ -15,7 +15,8 @@ export interface UnitSpawned {
 export interface UnitMoved {
   type: 'UnitMoved'
   unitId: string
-  tileId: string
+  path: string[]
+  remainingMovePoints: number
 }
 
 export interface TurnStarted {

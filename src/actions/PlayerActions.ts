@@ -9,7 +9,7 @@ export interface SpawnUnit {
 export interface MoveUnit {
   type: 'MoveUnit'
   unitId: string
-  tileId: string
+  path: string[]
 }
 
 export interface EndTurn {
