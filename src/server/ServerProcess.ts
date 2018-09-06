@@ -4,6 +4,7 @@ import { GameEvent } from '../actions/GameEvents'
 import { PlayerAction } from '../actions/PlayerActions'
 import { createGameState } from './createGameState'
 import { GameStateReducer } from './GameStateReducer'
+import { connectDevTools } from '../lib/ReduxDevTools'
 
 export interface IServerProcess {
   connect(client: IClientConnection): void
@@ -16,6 +17,7 @@ export interface IClientConnection {
 }
 
 export function createServerProcess(): IServerProcess {
+  const devTools = connectDevTools('Server')
   let game: IGameState | null = null
   const clients: IClientConnection[] = []
 
@@ -41,6 +43,7 @@ export function createServerProcess(): IServerProcess {
 
   function handlePlayerAction(playerAction: PlayerAction, playerId: string) {
     const update = GameStateReducer(game!, playerAction, playerId)
+    devTools.send(playerAction, update.nextState)
     game = update.nextState
 
     for (const client of clients) {

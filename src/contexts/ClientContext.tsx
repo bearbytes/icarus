@@ -11,6 +11,7 @@ import {
   ClientStateReducer,
   IClientStateAndActions,
 } from '../state/ClientStateReducer'
+import { connectDevTools } from '../lib/ReduxDevTools'
 
 export interface IClientContext {
   clientState: IClientState
@@ -76,6 +77,8 @@ function ClientStateChangeHandler(
   clientStateObservable: Observable<IClientState>
   playerActionObservable: Observable<PlayerAction>
 } {
+  const devTools = connectDevTools(playerId)
+
   const initialState = createClientState(playerId)
   const clientStateSubject = new BehaviorSubject<IClientState>(initialState)
   const playerActionSubject = new Subject<PlayerAction>()
@@ -87,8 +90,11 @@ function ClientStateChangeHandler(
     const state = updateOrState as IClientState
 
     if (!update.nextState && !update.actions && !update.action) {
+      devTools.send(e, state)
       clientStateSubject.next(state)
     } else {
+      devTools.send(e, update.nextState || clientStateSubject.value)
+
       if (update.nextState) {
         clientStateSubject.next(update.nextState)
       }
