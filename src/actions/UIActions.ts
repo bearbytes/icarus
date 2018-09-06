@@ -1,8 +1,14 @@
 export type UIAction =
+  | HoverTile
   | ClickOnTile
   | ClickOnUnitSpawnSelection
   | ClickOnEndTurn
   | RightClick
+
+export interface HoverTile {
+  type: 'HoverTile'
+  tileId: string
+}
 
 export interface ClickOnTile {
   type: 'ClickOnTile'

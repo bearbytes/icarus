@@ -11,6 +11,7 @@ export interface IGameState {
 export interface IUIState {
   localPlayerId: string
 
+  hoveredTileId: string | null
   tileHighlights: { [tileId: string]: IHexagonMapTileHighlight }
   movementPathTileIds: string[]
 

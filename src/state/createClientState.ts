@@ -14,6 +14,7 @@ export function createClientState(playerId: string): IClientState {
       selectedUnitSpawnTypeId: null,
       tileHighlights: {},
       movementPathTileIds: [],
+      hoveredTileId: null,
     },
   }
 }

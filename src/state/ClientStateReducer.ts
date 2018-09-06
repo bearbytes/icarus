@@ -13,6 +13,7 @@ import {
   ClickOnUnitSpawnSelection,
   UIAction,
   RightClick,
+  HoverTile,
 } from '../actions/UIActions'
 import {
   getUnitOnTile,
@@ -60,6 +61,8 @@ export function ClientStateReducer(
       return unitUpdated(s, a)
 
     // Actions
+    case 'HoverTile':
+      return hoverTile(s, a)
     case 'RightClick':
       return rightClick(s, a)
     case 'ClickOnTile':
@@ -132,6 +135,11 @@ function unitUpdated(
     s = updateTileHighlights(s)
   }
 
+  return s
+}
+
+function hoverTile(s: IClientState, { tileId }: HoverTile): IClientState {
+  s = updateUI(s, { hoveredTileId: tileId })
   return s
 }
 
@@ -274,20 +282,20 @@ function updateTileHighlights(s: IClientState): IClientState {
     if (range) {
       for (const tileId of getReachableTileIds(s.game, startTileId, range)) {
         tileHighlights[tileId] = {
-          borderColor: '#888',
+          borderColor: '#ccc',
         }
       }
     }
   }
 
-  const movementPath = s.ui.movementPathTileIds
-  if (movementPath) {
-    for (const tileId of movementPath) {
-      tileHighlights[tileId] = {
-        borderColor: '#fff',
-      }
-    }
-  }
+  // const movementPath = s.ui.movementPathTileIds
+  // if (movementPath) {
+  //   for (const tileId of movementPath) {
+  //     tileHighlights[tileId] = {
+  //       borderColor: '#fff',
+  //     }
+  //   }
+  // }
 
   return updateUI(s, { tileHighlights })
 }

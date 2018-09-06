@@ -19,7 +19,6 @@ export default function ClientView(props: {
         <HexMapContainer>
           {withDispatch(dispatch => (
             <HexagonMap
-              tileSize={100}
               viewerProps={{
                 initialViewRect: {
                   topLeft: { x: -1250, y: -1250 },

@@ -5,9 +5,12 @@ import { HexCoord } from '../types'
 import SvgViewer, { SvgViewerProps } from './SvgViewer'
 import { withClientState } from './hoc/withClientState'
 import { IHexagonMap } from '../models'
+import { getSelectedUnitId, getSelectedUnit } from '../state/ClientStateHelpers'
+import Units from './Units'
+import TileHighlight from './TileHighlight'
+import HoverTile from './HoverTile'
 
 interface HexagonMapProps {
-  tileSize: number
   viewerProps: SvgViewerProps
 }
 
@@ -24,46 +27,63 @@ interface WrapperProps extends HexagonMapProps {
 
 class Wrapper extends React.Component<WrapperProps> {
   render() {
-    const { map, tileSize, viewerProps } = this.props
+    const { map, viewerProps } = this.props
+    const tileIds = Object.keys(map.tiles)
     return (
       <SvgViewer {...viewerProps}>
         <defs>
           <polygon
             id={'hexagon'}
-            points={formatPoints(HexCoord.corners(tileSize * 0.95))}
-            strokeWidth={tileSize * 0.05}
+            points={formatPoints(HexCoord.corners(100))}
+            strokeWidth={100 * 0.05}
           />
         </defs>
-        {Object.keys(map.tiles).map(tileId => (
-          <HexagonMapTile key={tileId} tileId={tileId} tileSize={tileSize} />
+        {tileIds.map(tileId => (
+          <HexagonMapTile key={tileId} tileId={tileId} />
         ))}
-        {/* <MovementPath tileSize={tileSize} /> */}
+        {tileIds.map(tileId => (
+          <TileHighlight key={tileId} tileId={tileId} />
+        ))}
+        <MovementPath />
+        <Units />
+        <HoverTile />
       </SvgViewer>
     )
   }
 
   shouldComponentUpdate(nextProps: WrapperProps) {
-    return (
-      this.props.tileSize != nextProps.tileSize ||
-      this.props.viewerProps != nextProps.viewerProps
-    )
+    return this.props.viewerProps != nextProps.viewerProps
   }
 }
 
-function MovementPath(props: { tileSize: number }) {
+function MovementPath() {
   return withClientState(
-    s => ({
-      path: s.ui.movementPathTileIds,
-    }),
     s => {
+      const unit = getSelectedUnit(s)
+      return {
+        path: s.ui.movementPathTileIds,
+        targetTileId: unit && unit.tileId,
+      }
+    },
+    s => {
+      if (!s.targetTileId) return null
+      const path = [s.targetTileId, ...s.path]
+
       let polyline = ''
-      for (const tileId of s.path) {
+      for (const tileId of path) {
         const coord = HexCoord.fromId(tileId)
-        const pixel = coord.toPixel(props.tileSize)
+        const pixel = coord.toPixel(100)
         polyline += pixel.x + ',' + pixel.y + ' '
       }
 
-      return <polyline points={polyline} stroke="white" fill="none" />
+      return (
+        <polyline
+          points={polyline}
+          stroke="white"
+          strokeWidth={15}
+          fill="none"
+        />
+      )
     },
   )
 }
