@@ -22,7 +22,7 @@ export function createGameState(playerList: IPlayer[]): IGameState {
 }
 
 function createHexagonMap(): IHexagonMap {
-  const radius = 15
+  const radius = 12
   const coordinates = new HexCoord(0, 0).area(radius)
   const tiles = zipObj(
     coordinates.map(c => c.id),

@@ -46,8 +46,8 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
       <svg
         viewBox={formatRect(this.state.viewRect)}
         onWheel={e => this.onWheel(e)}
-        onMouseMove={e => this.onMouseMove(e)}
-        onMouseLeave={e => this.onMouseLeave(e)}
+        // onMouseMove={e => this.onMouseMove(e)}
+        // onMouseLeave={e => this.onMouseLeave(e)}
         onMouseDown={e => this.onMouseDown(e)}
       >
         {this.props.children}
