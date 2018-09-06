@@ -39,9 +39,26 @@ export function isMyUnit(s: IClientState, unitId: string): boolean {
   return s.game.units[unitId].playerId == s.ui.localPlayerId
 }
 
+export function getMovementStartTileId(s: IClientState): string | null {
+  const targetTileId = getMovementTargetTileId(s)
+  if (targetTileId) return targetTileId
+
+  const selectedUnit = getSelectedUnit(s)
+  if (selectedUnit) return selectedUnit.tileId
+
+  return null
+}
+
 export function getMovementTargetTileId(s: IClientState): string | null {
   const pathLength = s.ui.movementPathTileIds.length
   if (pathLength == 0) return null
 
   return s.ui.movementPathTileIds[pathLength - 1]
+}
+
+export function getRemainingMovePoints(s: IClientState): number | null {
+  const selectedUnit = getSelectedUnit(s)
+  if (selectedUnit) return 2 // TODO
+
+  return null
 }

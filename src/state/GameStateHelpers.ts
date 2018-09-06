@@ -125,31 +125,46 @@ export function getNeighborTiles(
   return result
 }
 
-export function getValidMovementTargets(
+export function getReachableTileIds(
   s: IGameState,
-  unitId: string,
-): IHexagonMapTile[] {
-  const unitTile = getTileOfUnit(s, unitId)
-  const movePoints = getTypeOfUnit(s, unitId).movePoints
+  startTileId: string,
+  range: number,
+): string[] {
+  const startTile = s.map.tiles[startTileId]
 
-  let targets: IHexagonMapTile[] = []
-  let workTiles = [unitTile]
-  let nextTiles = []
+  let currentTiles = [startTile]
 
-  while (workTiles.length > 0) {
-    for (const workTile of workTiles) {
-      for (const neighbor of getNeighborTiles(s, workTile)) {
-        if (neighbor.blocked) continue
-        if (neighbor.coord.distance(unitTile.coord) > movePoints) continue
-        if (contains(neighbor, targets)) continue
-        if (contains(neighbor, nextTiles)) continue
-        nextTiles.push(neighbor)
-      }
-    }
-    targets = [...targets, ...workTiles]
-    workTiles = nextTiles
-    nextTiles = []
+  const tileDistances = {
+    [startTileId]: 0,
   }
 
-  return targets
+  while (currentTiles.length) {
+    const nextTiles = []
+    for (const tile of currentTiles) {
+      const dist = tileDistances[tile.tileId]
+      for (const neighbor of getNeighborTiles(s, tile)) {
+        const neighborDist = dist + 1
+        if (neighborDist > range) continue
+        if (
+          tileDistances[neighbor.tileId] == null ||
+          tileDistances[neighbor.tileId] > neighborDist
+        ) {
+          tileDistances[neighbor.tileId] = neighborDist
+          nextTiles.push(neighbor)
+        }
+      }
+    }
+    currentTiles = nextTiles
+  }
+
+  return Object.keys(tileDistances)
+}
+
+export function getReachableTileIdsForUnit(
+  s: IGameState,
+  unitId: string,
+): string[] {
+  const unitTile = getTileOfUnit(s, unitId)
+  const movePoints = getTypeOfUnit(s, unitId).movePoints
+  return getReachableTileIds(s, unitTile.tileId, movePoints)
 }

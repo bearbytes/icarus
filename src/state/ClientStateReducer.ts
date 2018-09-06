@@ -14,11 +14,11 @@ import {
 } from '../actions/UIActions'
 import {
   getUnitOnTile,
-  getValidMovementTargets,
   getPathToTarget,
   updateTile,
   updateUnit,
   addUnit,
+  getReachableTileIds,
 } from './GameStateHelpers'
 import {
   getSelectedUnit,
@@ -27,8 +27,11 @@ import {
   isMyTurn,
   isMyUnit,
   getMovementTargetTileId,
+  getMovementStartTileId,
+  getRemainingMovePoints,
 } from './ClientStateHelpers'
 import log from '../lib/log'
+import { start } from 'repl'
 
 export interface IClientStateAndActions {
   nextState?: IClientState
@@ -148,6 +151,28 @@ function clickOnTile(
   return { nextState: s }
 }
 
+function clickOnUnitSpawnSelection(
+  s: IClientState,
+  { unitTypeId }: ClickOnUnitSpawnSelection,
+): IClientState {
+  s = deselectUnit(s)
+
+  const alreadySelected = s.ui.selectedUnitSpawnTypeId === unitTypeId
+  const selectedUnitSpawnTypeId = alreadySelected ? null : unitTypeId
+
+  return updateUI(s, { selectedUnitSpawnTypeId })
+}
+
+function clickOnEndTurn(s: IClientState): IClientStateAndActions {
+  if (!isMyTurn(s)) {
+    return {}
+  }
+
+  return {
+    action: { type: 'EndTurn' },
+  }
+}
+
 function selectUnit(s: IClientState, unitId: string): IClientState {
   s = updateUI(s, { selectedUnitId: unitId, selectedUnitSpawnTypeId: null })
   s = updateTileHighlights(s)
@@ -180,27 +205,34 @@ function moveUnit(s: IClientState, tileId: string): IClientStateAndActions {
   }
 }
 
-function clickOnUnitSpawnSelection(
+function createMovementPathToTile(
   s: IClientState,
-  { unitTypeId }: ClickOnUnitSpawnSelection,
+  targetTileId: string,
 ): IClientState {
-  s = deselectUnit(s)
+  const startTileId = getMovementStartTileId(s)
+  if (!startTileId) return s
 
-  const alreadySelected = s.ui.selectedUnitSpawnTypeId === unitTypeId
-  const selectedUnitSpawnTypeId = alreadySelected ? null : unitTypeId
-
-  return updateUI(s, { selectedUnitSpawnTypeId })
+  const path = getPathToTarget(s.game, startTileId, targetTileId) || []
+  const movementPathTileIds = [
+    ...s.ui.movementPathTileIds,
+    ...path.map(tile => tile.tileId),
+  ]
+  s = updateUI(s, { movementPathTileIds })
+  s = updateTileHighlights(s)
+  return s
 }
 
 function updateTileHighlights(s: IClientState): IClientState {
   const tileHighlights = {}
 
-  const unit = getSelectedUnit(s)
-  if (unit) {
-    const area = getValidMovementTargets(s.game, unit.unitId)
-    for (const tile of area) {
-      tileHighlights[tile.tileId] = {
-        borderColor: '#888',
+  const startTileId = getMovementStartTileId(s)
+  if (startTileId) {
+    const range = getRemainingMovePoints(s)
+    if (range) {
+      for (const tileId of getReachableTileIds(s.game, startTileId, range)) {
+        tileHighlights[tileId] = {
+          borderColor: '#888',
+        }
       }
     }
   }
@@ -215,43 +247,4 @@ function updateTileHighlights(s: IClientState): IClientState {
   }
 
   return updateUI(s, { tileHighlights })
-}
-
-function clickOnEndTurn(s: IClientState): IClientStateAndActions {
-  if (!isMyTurn(s)) {
-    return {}
-  }
-
-  return {
-    action: { type: 'EndTurn' },
-  }
-}
-
-function createMovementPathToTile(
-  s: IClientState,
-  targetTileId: string,
-): IClientState {
-  const startTileId = getMovementTargetTileId(s)
-  if (startTileId) {
-    return createMovementPath(startTileId)
-  }
-
-  const selectedUnit = getSelectedUnit(s)
-  if (selectedUnit) {
-    return createMovementPath(selectedUnit.tileId)
-  }
-
-  log.warn('createMovementPathToTile')
-  return s
-
-  function createMovementPath(startTileId: string): IClientState {
-    const path = getPathToTarget(s.game, startTileId, targetTileId) || []
-    const movementPathTileIds = [
-      ...s.ui.movementPathTileIds,
-      ...path.map(tile => tile.tileId),
-    ]
-    s = updateUI(s, { movementPathTileIds })
-    s = updateTileHighlights(s)
-    return s
-  }
 }
