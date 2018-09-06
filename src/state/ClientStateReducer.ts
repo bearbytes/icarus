@@ -12,6 +12,7 @@ import {
   ClickOnTile,
   ClickOnUnitSpawnSelection,
   UIAction,
+  RightClick,
 } from '../actions/UIActions'
 import {
   getUnitOnTile,
@@ -59,6 +60,8 @@ export function ClientStateReducer(
       return unitUpdated(s, a)
 
     // Actions
+    case 'RightClick':
+      return rightClick(s, a)
     case 'ClickOnTile':
       return clickOnTile(s, a)
     case 'ClickOnUnitSpawnSelection':
@@ -129,6 +132,12 @@ function unitUpdated(
     s = updateTileHighlights(s)
   }
 
+  return s
+}
+
+function rightClick(s: IClientState, a: RightClick): IClientState {
+  s = updateUI(s, { movementPathTileIds: [] })
+  s = updateTileHighlights(s)
   return s
 }
 

@@ -37,6 +37,7 @@ class Wrapper extends React.Component<WrapperProps> {
         {Object.keys(map.tiles).map(tileId => (
           <HexagonMapTile key={tileId} tileId={tileId} tileSize={tileSize} />
         ))}
+        {/* <MovementPath tileSize={tileSize} /> */}
       </SvgViewer>
     )
   }
@@ -47,4 +48,22 @@ class Wrapper extends React.Component<WrapperProps> {
       this.props.viewerProps != nextProps.viewerProps
     )
   }
+}
+
+function MovementPath(props: { tileSize: number }) {
+  return withClientState(
+    s => ({
+      path: s.ui.movementPathTileIds,
+    }),
+    s => {
+      let polyline = ''
+      for (const tileId of s.path) {
+        const coord = HexCoord.fromId(tileId)
+        const pixel = coord.toPixel(props.tileSize)
+        polyline += pixel.x + ',' + pixel.y + ' '
+      }
+
+      return <polyline points={polyline} stroke="white" fill="none" />
+    },
+  )
 }

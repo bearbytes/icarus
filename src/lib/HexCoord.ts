@@ -12,6 +12,11 @@ export class HexCoord {
     this.b = b
   }
 
+  static fromId(id: string): HexCoord {
+    const [a, b] = id.split(' ')
+    return new HexCoord(parseInt(a), parseInt(b))
+  }
+
   get c(): number {
     return -this.a - this.b
   }

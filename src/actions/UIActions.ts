@@ -1,4 +1,8 @@
-export type UIAction = ClickOnTile | ClickOnUnitSpawnSelection | ClickOnEndTurn
+export type UIAction =
+  | ClickOnTile
+  | ClickOnUnitSpawnSelection
+  | ClickOnEndTurn
+  | RightClick
 
 export interface ClickOnTile {
   type: 'ClickOnTile'
@@ -12,4 +16,8 @@ export interface ClickOnUnitSpawnSelection {
 
 export interface ClickOnEndTurn {
   type: 'ClickOnEndTurn'
+}
+
+export interface RightClick {
+  type: 'RightClick'
 }

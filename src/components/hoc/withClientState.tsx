@@ -31,3 +31,13 @@ export function withClientStateAndDispatch<S>(
     </ClientContext.Consumer>
   )
 }
+
+export function withDispatch(
+  render: (dispatch: (action: UIAction) => void) => React.ReactNode,
+) {
+  return (
+    <ClientContext.Consumer>
+      {ctx => render(ctx.dispatch)}
+    </ClientContext.Consumer>
+  )
+}

@@ -9,6 +9,7 @@ export interface SvgViewerProps {
   initialViewRect: Rect
   scrollSpeed: number
   scrollBorderSize: number
+  onRightClick: () => void
 }
 
 interface State {
@@ -38,6 +39,7 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
         onWheel={e => this.onWheel(e)}
         onMouseMove={e => this.onMouseMove(e)}
         onMouseLeave={e => this.onMouseLeave(e)}
+        onMouseDown={e => this.onMouseDown(e)}
       >
         {this.props.children}
       </svg>
@@ -95,6 +97,12 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
 
   onMouseLeave(e: React.MouseEvent<SVGSVGElement>) {
     this.setState({ scrollInfo: null })
+  }
+
+  onMouseDown(e: React.MouseEvent<SVGSVGElement>) {
+    if (e.button == 2) {
+      this.props.onRightClick()
+    }
   }
 
   calculateScroll() {
