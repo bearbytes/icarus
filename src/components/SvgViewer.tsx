@@ -1,80 +1,143 @@
 import * as React from 'react'
 import { Rect, Point, Size } from '../types'
-import { withState } from './hoc/withState'
 import { formatRect } from '../lib/svg'
+import log from '../lib/log'
 
 export interface SvgViewerProps {
   minViewSize: Size
   maxViewSize: Size
   initialViewRect: Rect
+  scrollSpeed: number
+  scrollBorderSize: number
 }
 
-export default function SvgViewer(
-  props: SvgViewerProps & { children: React.ReactNode },
-) {
-  const { initialViewRect, children, minViewSize, maxViewSize } = props
+interface State {
+  viewRect: Rect
+  scrollInfo: ScrollInfo | null
+}
 
-  const initialState = {
-    viewRect: initialViewRect,
-    lastScreenPos: null as Point | null,
+interface ScrollInfo {
+  direction: Point
+  startTime: Date
+  startOffset: Point
+}
+
+export default class SvgViewer extends React.Component<SvgViewerProps, State> {
+  constructor(props: SvgViewerProps) {
+    super(props)
+    this.state = {
+      viewRect: this.props.initialViewRect,
+      scrollInfo: null,
+    }
   }
-  return withState(initialState, (state, setState) => {
-    function onWheel(e: React.WheelEvent<SVGSVGElement>) {
-      e.preventDefault()
-      const worldPos = worldPosFromEvent(e)
-      const zoomFactor = e.deltaY > 0 ? 1.2 : 1 / 1.2
-      let { viewRect } = state
-      viewRect = zoomViewRect(
-        viewRect,
-        worldPos,
-        zoomFactor,
-        minViewSize,
-        maxViewSize,
-      )
-      setState({ viewRect })
-    }
 
-    function onMouseDown(e: React.MouseEvent<SVGSVGElement>) {
-      if (e.button != 2) return
-      const lastScreenPos = screenPosFromEvent(e)
-      setState({ lastScreenPos })
-    }
-
-    function onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
-      if (e.buttons != 2) return
-
-      const { lastScreenPos } = state
-      if (!lastScreenPos) return
-
-      const screenPos = screenPosFromEvent(e)
-      const svg = e.currentTarget
-
-      const viewRect = dragViewRect(
-        state.viewRect,
-        worldPosFromScreenPos(svg, lastScreenPos),
-        worldPosFromScreenPos(svg, screenPos),
-      )
-
-      setState({ viewRect, lastScreenPos: screenPos })
-    }
-
-    function onMouseUp(e: React.MouseEvent<SVGSVGElement>) {
-      if (e.button != 2) return
-      setState({ lastScreenPos: null })
-    }
-
+  render() {
     return (
       <svg
-        viewBox={formatRect(state.viewRect)}
-        onWheel={onWheel}
-        onMouseDownCapture={onMouseDown}
-        onMouseMoveCapture={onMouseMove}
-        onMouseUpCapture={onMouseUp}
+        viewBox={formatRect(this.state.viewRect)}
+        onWheel={e => this.onWheel(e)}
+        onMouseMove={e => this.onMouseMove(e)}
+        onMouseLeave={e => this.onMouseLeave(e)}
       >
-        {children}
+        {this.props.children}
       </svg>
     )
-  })
+  }
+
+  onWheel(e: React.WheelEvent<SVGSVGElement>) {
+    e.preventDefault()
+    const worldPos = worldPosFromEvent(e)
+    const zoomFactor = e.deltaY > 0 ? 1.2 : 1 / 1.2
+    const viewRect = zoomViewRect(
+      this.state.viewRect,
+      worldPos,
+      zoomFactor,
+      this.props.minViewSize,
+      this.props.maxViewSize,
+    )
+    this.setState({ viewRect })
+  }
+
+  onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
+    const rect = e.currentTarget.getBoundingClientRect()
+
+    let x = 0
+    if (e.pageX - rect.left < this.props.scrollBorderSize) x = -1
+    else if (rect.right - e.pageX < this.props.scrollBorderSize) x = +1
+
+    let y = 0
+    if (e.pageY - rect.top < this.props.scrollBorderSize) y = -1
+    if (rect.bottom - e.pageY < this.props.scrollBorderSize) y = +1
+
+    if (x == 0 && y == 0) {
+      this.setState({ scrollInfo: null })
+    }
+
+    const scrollInfo = this.state.scrollInfo
+    if (
+      scrollInfo &&
+      scrollInfo.direction.x == x &&
+      scrollInfo.direction.y == y
+    ) {
+      return
+    }
+
+    this.setState({
+      scrollInfo: {
+        direction: { x, y },
+        startTime: new Date(),
+        startOffset: this.state.viewRect.topLeft,
+      },
+    })
+
+    this.startScrollTimer()
+  }
+
+  onMouseLeave(e: React.MouseEvent<SVGSVGElement>) {
+    this.setState({ scrollInfo: null })
+  }
+
+  scrollTimerId: number | null
+
+  calculateScroll() {
+    const scrollInfo = this.state.scrollInfo
+    if (!scrollInfo) {
+      this.stopScrollTimer()
+      return
+    }
+
+    const dt = new Date().getTime() - scrollInfo.startTime.getTime()
+
+    const dx = scrollInfo.direction.x * this.props.scrollSpeed * dt
+    const dy = scrollInfo.direction.y * this.props.scrollSpeed * dt
+
+    const topLeft = {
+      x: scrollInfo.startOffset.x + dx,
+      y: scrollInfo.startOffset.y + dy,
+    }
+
+    const viewRect = { ...this.state.viewRect, topLeft }
+    this.setState({ viewRect })
+  }
+
+  startScrollTimer() {
+    if (this.scrollTimerId) return
+    this.scrollTimerId = window.setInterval(
+      () => this.calculateScroll(),
+      1000 / 60,
+    )
+  }
+
+  stopScrollTimer() {
+    if (this.scrollTimerId) {
+      window.clearInterval(this.scrollTimerId)
+      this.scrollTimerId = null
+    }
+  }
+
+  componentWillUnmount() {
+    this.stopScrollTimer()
+  }
 }
 
 function screenPosFromEvent(e: React.MouseEvent<SVGSVGElement>) {

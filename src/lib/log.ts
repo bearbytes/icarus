@@ -1,6 +1,6 @@
 function createLogger(logLevel: string) {
   return function(message: string, ...args: any[]) {
-    console.log(`[${logLevel}] ${message}`, args)
+    console.log(`[${logLevel}] ${message}`, ...args)
   }
 }
 
