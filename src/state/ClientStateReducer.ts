@@ -117,7 +117,11 @@ function unitUpdated(
   { unitId, actionPoints, movePoints }: UnitUpdated,
 ): IClientState {
   s = updateGame(s, g => {
-    g = updateUnit(g, unitId, { movePoints, actionPoints })
+    g = updateUnit(g, unitId, unit => {
+      if (actionPoints == undefined) actionPoints = unit.actionPoints
+      if (movePoints == undefined) movePoints = unit.movePoints
+      return { actionPoints, movePoints }
+    })
     return g
   })
 

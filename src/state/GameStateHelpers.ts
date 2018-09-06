@@ -32,10 +32,17 @@ export function updateTile(
 export function updateUnit(
   s: IGameState,
   unitId: string,
-  partial: Partial<IUnit>,
+  partialOrUpdater: Partial<IUnit> | ((unit: IUnit) => Partial<IUnit>),
 ): IGameState {
   let units = s.units
-  let unit = { ...units[unitId], ...partial }
+  let unit = units[unitId]
+
+  let partial = partialOrUpdater
+  if (typeof partialOrUpdater == 'function') {
+    partial = partialOrUpdater(unit)
+  }
+
+  unit = { ...unit, ...partial }
   units = { ...units, [unitId]: unit }
   return { ...s, units }
 }
