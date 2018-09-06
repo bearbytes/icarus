@@ -82,7 +82,7 @@ function turnStarted(
 
 function unitMoved(
   s: IClientState,
-  { unitId, path, remainingMovePoints }: UnitMoved,
+  { unitId, path, remainingMovePoints, remainingActionPoints }: UnitMoved,
 ): IClientState {
   const unit = s.game.units[unitId]
 
@@ -91,7 +91,11 @@ function unitMoved(
   s = updateGame(s, g => {
     g = updateTile(g, unit.tileId, { unitId: undefined })
     g = updateTile(g, tileId, { unitId })
-    g = updateUnit(g, unitId, { tileId, movePoints: remainingMovePoints })
+    g = updateUnit(g, unitId, {
+      tileId,
+      movePoints: remainingMovePoints,
+      actionPoints: remainingActionPoints,
+    })
     return g
   })
 

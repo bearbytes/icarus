@@ -81,7 +81,9 @@ export function canMoveUnit(
   unitId: string,
   path: string[],
 ): boolean {
-  if (s.units[unitId].movePoints < path.length) return false
+  const unit = s.units[unitId]
+  if (unit.actionPoints == 0) return false
+  if (unit.movePoints < path.length) return false
 
   const startTile = getTileOfUnit(s, unitId)
   // TODO test if path is connected and adjacent to unit tile

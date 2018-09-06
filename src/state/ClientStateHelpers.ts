@@ -57,10 +57,8 @@ export function getMovementTargetTileId(s: IClientState): string | null {
 }
 
 export function getRemainingMovePoints(s: IClientState): number | null {
-  const selectedUnit = getSelectedUnit(s)
-  if (selectedUnit) {
-    return selectedUnit.movePoints - s.ui.movementPathTileIds.length
-  }
-
-  return null
+  const unit = getSelectedUnit(s)
+  if (!unit) return null
+  if (unit.actionPoints == 0) return null
+  return unit.movePoints - s.ui.movementPathTileIds.length
 }

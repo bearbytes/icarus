@@ -17,6 +17,7 @@ export interface UnitMoved {
   unitId: string
   path: string[]
   remainingMovePoints: number
+  remainingActionPoints: number
 }
 
 export interface TurnStarted {

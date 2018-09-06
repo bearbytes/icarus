@@ -110,12 +110,14 @@ function moveUnit(
   const targetTileId = last(path)!
 
   const remainingMovePoints = unit.movePoints - path.length
+  const remainingActionPoints = unit.actionPoints - 1
 
   s = updateTile(s, unit.tileId, { unitId: undefined })
   s = updateTile(s, targetTileId, { unitId })
   s = updateUnit(s, unitId, {
     tileId: targetTileId,
     movePoints: remainingMovePoints,
+    actionPoints: remainingActionPoints,
   })
 
   return {
@@ -125,6 +127,7 @@ function moveUnit(
       unitId,
       path,
       remainingMovePoints,
+      remainingActionPoints,
     }),
   }
 }
