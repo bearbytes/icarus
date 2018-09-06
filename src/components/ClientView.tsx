@@ -38,6 +38,6 @@ export default function ClientView(props: {
 
 const HexMapContainer = styled.div`
   width: 50vw;
-  height: 80vh;
+  height: 50vw;
   margin: auto;
 `
