@@ -25,6 +25,10 @@ export function updateUI(
   return { ...s, ui }
 }
 
+export function getSelectedUnitId(s: IClientState): string | null {
+  return s.ui.selectedUnitId
+}
+
 export function getSelectedUnit(s: IClientState): IUnit | null {
   const unitId = s.ui.selectedUnitId
   if (!unitId) return null

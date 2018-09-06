@@ -40,6 +40,20 @@ export function updateUnit(
   return { ...s, units }
 }
 
+export function updateUnits(
+  s: IGameState,
+  updater: (unit: IUnit) => Partial<IUnit> | null,
+) {
+  const updates = {}
+  for (const unitId of Object.keys(s.units)) {
+    const unit = s.units[unitId]
+    const update = updater(unit)
+    if (!update) continue
+    updates[unitId] = { ...unit, ...update }
+  }
+  return { ...s, units: { ...s.units, ...updates } }
+}
+
 export function updatePlayer(
   s: IGameState,
   playerId: string,

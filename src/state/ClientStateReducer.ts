@@ -4,6 +4,7 @@ import {
   UnitMoved,
   UnitSpawned,
   TurnStarted,
+  UnitUpdated,
 } from '../actions/GameEvents'
 import { IClientState } from '../models'
 import { PlayerAction } from '../actions/PlayerActions'
@@ -29,6 +30,7 @@ import {
   getMovementTargetTileId,
   getMovementStartTileId,
   getRemainingMovePoints,
+  getSelectedUnitId,
 } from './ClientStateHelpers'
 import log from '../lib/log'
 import { last } from 'ramda'
@@ -53,6 +55,8 @@ export function ClientStateReducer(
       return unitMoved(s, a)
     case 'UnitSpawned':
       return unitSpawned(s, a)
+    case 'UnitUpdated':
+      return unitUpdated(s, a)
 
     // Actions
     case 'ClickOnTile':
@@ -80,10 +84,7 @@ function turnStarted(
   return s
 }
 
-function unitMoved(
-  s: IClientState,
-  { unitId, path, remainingMovePoints, remainingActionPoints }: UnitMoved,
-): IClientState {
+function unitMoved(s: IClientState, { unitId, path }: UnitMoved): IClientState {
   const unit = s.game.units[unitId]
 
   const tileId = last(path)!
@@ -91,11 +92,7 @@ function unitMoved(
   s = updateGame(s, g => {
     g = updateTile(g, unit.tileId, { unitId: undefined })
     g = updateTile(g, tileId, { unitId })
-    g = updateUnit(g, unitId, {
-      tileId,
-      movePoints: remainingMovePoints,
-      actionPoints: remainingActionPoints,
-    })
+    g = updateUnit(g, unitId, { tileId })
     return g
   })
 
@@ -107,10 +104,28 @@ function unitMoved(
 }
 
 function unitSpawned(s: IClientState, { unit }: UnitSpawned): IClientState {
-  let g = s.game
-  g = addUnit(g, unit)
-  g = updateTile(g, unit.tileId, { unitId: unit.unitId })
-  return { ...s, game: g }
+  s = updateGame(s, g => {
+    g = addUnit(g, unit)
+    g = updateTile(g, unit.tileId, { unitId: unit.unitId })
+    return g
+  })
+  return s
+}
+
+function unitUpdated(
+  s: IClientState,
+  { unitId, actionPoints, movePoints }: UnitUpdated,
+): IClientState {
+  s = updateGame(s, g => {
+    g = updateUnit(g, unitId, { movePoints, actionPoints })
+    return g
+  })
+
+  if (unitId == getSelectedUnitId(s)) {
+    s = updateTileHighlights(s)
+  }
+
+  return s
 }
 
 function clickOnTile(

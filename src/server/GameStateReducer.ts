@@ -5,10 +5,11 @@ import {
   updateUnit,
   canSpawnUnit,
   canMoveUnit,
+  updateUnits,
 } from '../state/GameStateHelpers'
 import { PlayerAction } from '../actions/PlayerActions'
 import { IGameState, IUnit } from '../models'
-import { GameEvent } from '../actions/GameEvents'
+import { GameEvent, UnitUpdated } from '../actions/GameEvents'
 import { findIndex, tail, last } from 'ramda'
 import UnitTypes from '../resources/UnitTypes'
 
@@ -57,12 +58,35 @@ function endTurn(s: IGameState): IGameStateAndEvents {
   index = (index + 1) % playerIds.length
   const activePlayerId = playerIds[index]
   s = { ...s, activePlayerId }
+
+  // refresh units
+  const updateUnitEvents: UnitUpdated[] = []
+  updateUnits(s, unit => {
+    if (unit.playerId != activePlayerId) return null
+
+    const actionPoints = 2
+    const movePoints = UnitTypes[unit.unitTypeId].movePoints
+
+    updateUnitEvents.push({
+      type: 'UnitUpdated',
+      unitId: unit.unitId,
+      actionPoints,
+      movePoints,
+    })
+
+    return { actionPoints, movePoints }
+  })
+
   return {
     nextState: s,
-    events: sendToAllPlayers(s, {
-      type: 'TurnStarted',
-      activePlayerId,
-    }),
+    events: sendToAllPlayers(
+      s,
+      {
+        type: 'TurnStarted',
+        activePlayerId,
+      },
+      ...updateUnitEvents,
+    ),
   }
 }
 
@@ -109,25 +133,32 @@ function moveUnit(
   const unit = s.units[unitId]
   const targetTileId = last(path)!
 
-  const remainingMovePoints = unit.movePoints - path.length
-  const remainingActionPoints = unit.actionPoints - 1
+  const movePoints = unit.movePoints - path.length
+  const actionPoints = unit.actionPoints - 1
 
   s = updateTile(s, unit.tileId, { unitId: undefined })
   s = updateTile(s, targetTileId, { unitId })
   s = updateUnit(s, unitId, {
     tileId: targetTileId,
-    movePoints: remainingMovePoints,
-    actionPoints: remainingActionPoints,
+    movePoints,
+    actionPoints,
   })
 
   return {
     nextState: s,
-    events: sendToAllPlayers(s, {
-      type: 'UnitMoved',
-      unitId,
-      path,
-      remainingMovePoints,
-      remainingActionPoints,
-    }),
+    events: sendToAllPlayers(
+      s,
+      {
+        type: 'UnitMoved',
+        unitId,
+        path,
+      },
+      {
+        type: 'UnitUpdated',
+        unitId,
+        actionPoints,
+        movePoints,
+      },
+    ),
   }
 }
