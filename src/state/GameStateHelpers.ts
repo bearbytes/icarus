@@ -161,6 +161,7 @@ export function getReachableTileIds(
     for (const tile of currentTiles) {
       const dist = tileDistances[tile.tileId]
       for (const neighbor of getNeighborTiles(s, tile)) {
+        if (neighbor.blocked) continue
         const neighborDist = dist + 1
         if (neighborDist > range) continue
         if (
