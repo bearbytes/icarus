@@ -15,6 +15,11 @@ export interface SvgViewerProps {
 interface State {
   viewRect: Rect
   scrollInfo: ScrollInfo | null
+
+  wKey: boolean
+  aKey: boolean
+  sKey: boolean
+  dKey: boolean
 }
 
 interface ScrollInfo {
@@ -29,6 +34,10 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
     this.state = {
       viewRect: this.props.initialViewRect,
       scrollInfo: null,
+      wKey: false,
+      aKey: false,
+      sKey: false,
+      dKey: false,
     }
   }
 
@@ -61,6 +70,14 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
   }
 
   onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
+    if (
+      this.state.wKey ||
+      this.state.aKey ||
+      this.state.sKey ||
+      this.state.dKey
+    )
+      return
+
     const rect = e.currentTarget.getBoundingClientRect()
 
     let x = 0
@@ -148,14 +165,37 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
   }
 
   onKeyDown = (e: KeyboardEvent) => {
-    if (e.key == 'w') this.setScrollDirection(0, -1)
-    if (e.key == 'a') this.setScrollDirection(-1, 0)
-    if (e.key == 's') this.setScrollDirection(0, +1)
-    if (e.key == 'd') this.setScrollDirection(+1, 0)
+    this.setState(
+      state => ({
+        wKey: state.wKey || e.key == 'w',
+        aKey: state.aKey || e.key == 'a',
+        sKey: state.sKey || e.key == 's',
+        dKey: state.dKey || e.key == 'd',
+      }),
+      () => this.updateScrollFromKeys(),
+    )
   }
 
   onKeyUp = (e: KeyboardEvent) => {
-    this.setScrollDirection(0, 0)
+    this.setState(
+      state => ({
+        wKey: state.wKey && e.key != 'w',
+        aKey: state.aKey && e.key != 'a',
+        sKey: state.sKey && e.key != 's',
+        dKey: state.dKey && e.key != 'd',
+      }),
+      () => this.updateScrollFromKeys(),
+    )
+  }
+
+  updateScrollFromKeys() {
+    let x = 0
+    let y = 0
+    if (this.state.wKey) y -= 1
+    if (this.state.aKey) x -= 1
+    if (this.state.sKey) y += 1
+    if (this.state.dKey) x += 1
+    this.setScrollDirection(x, y)
   }
 
   componentDidMount() {
