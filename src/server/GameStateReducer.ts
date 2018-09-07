@@ -7,6 +7,7 @@ import {
   updateUnits,
   canAttack,
   updateUnit,
+  removeUnit,
 } from '../state/GameStateHelpers'
 import { PlayerAction } from '../actions/PlayerActions'
 import { IGameState, IUnit } from '../models'
@@ -179,29 +180,39 @@ function attackUnit(
     throw 'invalid attackUnit'
   }
 
+  const events: GameEvent[] = []
+
   const attacker = s.units[attackingUnitId]
   const attacked = s.units[attackedUnitId]
 
   const damage = UnitTypes[attacker.unitTypeId].attackDamage
   const remainingHitpoints = attacked.hitPoints - damage
+  const killed = remainingHitpoints < 0
 
   s = updateUnit(s, attackingUnitId, { actionPoints: 0 })
-  s = updateUnit(s, attackedUnitId, { hitPoints: remainingHitpoints })
+  events.push({
+    type: 'UnitUpdated',
+    unitId: attackingUnitId,
+    actionPoints: 0,
+  })
+
+  if (killed) {
+    s = removeUnit(s, attackedUnitId)
+    events.push({
+      type: 'UnitRemoved',
+      unitId: attackedUnitId,
+    })
+  } else {
+    s = updateUnit(s, attackedUnitId, { hitPoints: remainingHitpoints })
+    events.push({
+      type: 'UnitUpdated',
+      unitId: attackedUnitId,
+      hitPoints: remainingHitpoints,
+    })
+  }
 
   return {
     nextState: s,
-    events: sendToAllPlayers(
-      s,
-      {
-        type: 'UnitUpdated',
-        unitId: attackingUnitId,
-        actionPoints: 0,
-      },
-      {
-        type: 'UnitUpdated',
-        unitId: attackedUnitId,
-        hitPoints: remainingHitpoints,
-      },
-    ),
+    events: sendToAllPlayers(s, ...events),
   }
 }

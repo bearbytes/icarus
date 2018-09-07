@@ -16,6 +16,11 @@ export function addUnit(s: IGameState, unit: IUnit) {
   return { ...s, units }
 }
 
+export function removeUnit(s: IGameState, unitId: string) {
+  const { [unitId]: removedUnit, ...units } = s.units
+  return { ...s, units }
+}
+
 export function updateTile(
   s: IGameState,
   tileId: string,

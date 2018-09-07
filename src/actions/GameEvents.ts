@@ -6,6 +6,7 @@ export type GameEvent =
   | UnitSpawned
   | UnitMoved
   | UnitUpdated
+  | UnitRemoved
 
 export interface GameStarted {
   type: 'GameStarted'
@@ -34,4 +35,9 @@ export interface UnitUpdated {
   movePoints?: number
   actionPoints?: number
   hitPoints?: number
+}
+
+export interface UnitRemoved {
+  type: 'UnitRemoved'
+  unitId: string
 }

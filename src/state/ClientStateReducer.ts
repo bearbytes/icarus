@@ -5,6 +5,7 @@ import {
   UnitSpawned,
   TurnStarted,
   UnitUpdated,
+  UnitRemoved,
 } from '../actions/GameEvents'
 import { IClientState, IPathHighlight } from '../models'
 import { PlayerAction } from '../actions/PlayerActions'
@@ -23,6 +24,7 @@ import {
   addUnit,
   getReachableTileIds,
   canAttack,
+  removeUnit,
 } from './GameStateHelpers'
 import {
   getSelectedUnit,
@@ -63,6 +65,8 @@ export function ClientStateReducer(
       return unitSpawned(s, a)
     case 'UnitUpdated':
       return unitUpdated(s, a)
+    case 'UnitRemoved':
+      return unitRemoved(s, a)
 
     // Actions
     case 'HoverTile':
@@ -147,6 +151,12 @@ function unitUpdated(
     s = updateTileHighlights(s)
   }
 
+  return s
+}
+
+function unitRemoved(s: IClientState, { unitId }: UnitRemoved): IClientState {
+  s = updateGame(s, g => removeUnit(g, unitId))
+  s = updateTileHighlights(s)
   return s
 }
 
