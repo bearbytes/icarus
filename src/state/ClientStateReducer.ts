@@ -120,13 +120,15 @@ function unitSpawned(s: IClientState, { unit }: UnitSpawned): IClientState {
 
 function unitUpdated(
   s: IClientState,
-  { unitId, actionPoints, movePoints }: UnitUpdated,
+  { unitId, actionPoints, movePoints, hitPoints }: UnitUpdated,
 ): IClientState {
   s = updateGame(s, g => {
     g = updateUnit(g, unitId, unit => {
-      if (actionPoints == undefined) actionPoints = unit.actionPoints
-      if (movePoints == undefined) movePoints = unit.movePoints
-      return { actionPoints, movePoints }
+      return {
+        actionPoints: actionPoints != null ? actionPoints : unit.actionPoints,
+        movePoints: movePoints != null ? movePoints : unit.movePoints,
+        hitPoints: hitPoints != null ? hitPoints : unit.hitPoints,
+      }
     })
     return g
   })
@@ -290,15 +292,6 @@ function updateTileHighlights(s: IClientState): IClientState {
       }
     }
   }
-
-  // const movementPath = s.ui.movementPathTileIds
-  // if (movementPath) {
-  //   for (const tileId of movementPath) {
-  //     tileHighlights[tileId] = {
-  //       borderColor: '#fff',
-  //     }
-  //   }
-  // }
 
   return updateUI(s, { tileHighlights })
 }

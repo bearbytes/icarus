@@ -58,10 +58,13 @@ export interface IUnit {
 
   actionPoints: number
   movePoints: number
+  hitPoints: number
 }
 
 export interface IUnitType {
   unitTypeId: string
   svgPath: string
+
   movePoints: number
+  hitPoints: number
 }

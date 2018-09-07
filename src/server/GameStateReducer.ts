@@ -108,6 +108,7 @@ function spawnUnit(
     tileId: tileId,
     actionPoints: 2,
     movePoints: UnitTypes[unitTypeId].movePoints,
+    hitPoints: UnitTypes[unitTypeId].hitPoints,
   }
   s = addUnit(s, unit)
   s = updateTile(s, tileId, { unitId })

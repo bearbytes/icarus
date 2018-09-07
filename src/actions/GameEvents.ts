@@ -33,4 +33,5 @@ export interface UnitUpdated {
   unitId: string
   movePoints?: number
   actionPoints?: number
+  hitPoints?: number
 }
