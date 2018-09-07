@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { withClientState } from './hoc/withClientState'
-import UnitTypes from '../resources/UnitTypes'
+import UnitTypes, { unitTypeOf } from '../resources/UnitTypes'
 import { HexCoord } from '../types'
 
 export default function Units() {
@@ -25,7 +25,8 @@ function Unit(props: { unitId: string }) {
       const isSelected = s.ui.selectedUnitId == unitId
       const color = player.color
       const pos = HexCoord.fromId(unit.tileId).toPixel()
-      return { unit, color, isSelected, pos }
+      const isHovered = s.ui.hoveredTileId == unit.tileId
+      return { unit, color, isSelected, pos, isHovered }
     },
     s => (
       <g transform={`translate(${s.pos.x}, ${s.pos.y})`}>
@@ -36,32 +37,54 @@ function Unit(props: { unitId: string }) {
           stroke={s.color}
           strokeWidth={10}
         />
-        <g transform={'translate(0 0.65)'}>
-          <path
-            transform={'translate(-0.15 0) scale(0.0007) translate(-256 -256)'}
-            d={HeartPath}
-            fill={s.isSelected ? 'white' : 'black'}
-            stroke={'none'}
-          />
-          <text
-            transform={'translate(0.05 0.13) scale(0.025)'}
-            fill={s.isSelected ? 'white' : 'black'}
-          >
-            {s.unit.hitPoints}
-          </text>
-        </g>
-        <g>
-          <rect
-            x={-0.5}
-            y={-0.5}
-            width={1}
-            height={1}
-            fill={'red'}
-            stroke={'none'}
-          />
-        </g>
+        <HealthBar
+          hitPoints={s.unit.hitPoints}
+          maxHitPoints={unitTypeOf(s.unit).hitPoints}
+          showNumber={s.isHovered}
+        />
       </g>
     ),
+  )
+}
+
+function HealthBar(props: {
+  hitPoints: number
+  maxHitPoints: number
+  showNumber: boolean
+}) {
+  const { hitPoints, maxHitPoints, showNumber } = props
+  return (
+    <g transform={'translate(0 0.8)'}>
+      <rect
+        x={-0.5}
+        y={-0.1}
+        width={1}
+        height={0.2}
+        fill={'red'}
+        stroke={'none'}
+      />
+      <rect
+        x={-0.5}
+        y={-0.1}
+        width={hitPoints / maxHitPoints}
+        height={0.2}
+        fill={'green'}
+        stroke={'none'}
+      />
+      {showNumber && (
+        <text
+          transform={'scale(0.03)'}
+          x={0}
+          y={18}
+          textAnchor={'middle'}
+          fill={'green'}
+          stroke={'black'}
+          strokeWidth={0.5}
+        >
+          {hitPoints} HP
+        </text>
+      )}
+    </g>
   )
 }
 
