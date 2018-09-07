@@ -50,6 +50,16 @@ function Unit(props: { unitId: string }) {
             {s.unit.hitPoints}
           </text>
         </g>
+        <g>
+          <rect
+            x={-0.5}
+            y={-0.5}
+            width={1}
+            height={1}
+            fill={'red'}
+            stroke={'none'}
+          />
+        </g>
       </g>
     ),
   )

@@ -1,15 +1,19 @@
 import * as React from 'react'
 import { ServerContextProvider } from '../contexts/ServerContext'
 import ClientView from './ClientView'
-import { HBox } from './layout'
+import { HBox, VBox } from './layout'
+import DebugPanel from './DebugPanel'
 
 export default function App() {
   return (
     <ServerContextProvider>
-      <HBox>
-        <ClientView playerName="Mond" playerColor="blue" />
-        <ClientView playerName="Stern" playerColor="red" />
-      </HBox>
+      <VBox>
+        <HBox>
+          <ClientView playerName="Mond" playerColor="blue" />
+          <ClientView playerName="Stern" playerColor="red" />
+        </HBox>
+        <DebugPanel />
+      </VBox>
     </ServerContextProvider>
   )
 }

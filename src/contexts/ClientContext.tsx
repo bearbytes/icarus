@@ -12,6 +12,7 @@ import {
   IClientStateAndActions,
 } from '../state/ClientStateReducer'
 import { connectDevTools } from '../lib/ReduxDevTools'
+import { storeState, fetchState } from '../lib/persistState'
 
 export interface IClientContext {
   clientState: IClientState
@@ -79,7 +80,8 @@ function ClientStateChangeHandler(
 } {
   const devTools = connectDevTools(playerId)
 
-  const initialState = createClientState(playerId)
+  const initialState =
+    fetchState<IClientState>(playerId) || createClientState(playerId)
   const clientStateSubject = new BehaviorSubject<IClientState>(initialState)
   const playerActionSubject = new Subject<PlayerAction>()
 
@@ -92,6 +94,7 @@ function ClientStateChangeHandler(
     function sendToDevTool(nextState: any) {
       if (ignoreInDevTools(e)) return
       devTools.send(e, nextState)
+      storeState(playerId, nextState)
     }
 
     if (!update.nextState && !update.actions && !update.action) {
