@@ -35,7 +35,9 @@ import {
   getSelectedUnitId,
 } from './ClientStateHelpers'
 import log from '../lib/log'
-import { last } from 'ramda'
+import { last, values, partition } from 'ramda'
+import { HexCoord } from '../types'
+import UnitTypes from '../resources/UnitTypes'
 
 export interface IClientStateAndActions {
   nextState?: IClientState
@@ -102,9 +104,7 @@ function unitMoved(s: IClientState, { unitId, path }: UnitMoved): IClientState {
     return g
   })
 
-  if (unit.unitId == s.ui.selectedUnitId) {
-    s = updateTileHighlights(s)
-  }
+  s = updateTileHighlights(s)
 
   return s
 }
@@ -115,6 +115,9 @@ function unitSpawned(s: IClientState, { unit }: UnitSpawned): IClientState {
     g = updateTile(g, unit.tileId, { unitId: unit.unitId })
     return g
   })
+
+  s = updateTileHighlights(s)
+
   return s
 }
 
@@ -281,6 +284,7 @@ function createMovementPathToTile(
 function updateTileHighlights(s: IClientState): IClientState {
   const tileHighlights = {}
 
+  // tiles where we can move to
   const startTileId = getMovementStartTileId(s)
   if (startTileId) {
     const range = getRemainingMovePoints(s)
@@ -288,6 +292,27 @@ function updateTileHighlights(s: IClientState): IClientState {
       for (const tileId of getReachableTileIds(s.game, startTileId, range)) {
         tileHighlights[tileId] = {
           borderColor: '#ccc',
+        }
+      }
+    }
+  }
+
+  // tiles with units that we can attack
+  const [myUnits, enemyUnits] = partition(
+    unit => unit.playerId == s.ui.localPlayerId,
+    values(s.game.units),
+  )
+
+  for (const myUnit of myUnits) {
+    const myCoord = HexCoord.fromId(myUnit.tileId)
+    const range = UnitTypes[myUnit.unitTypeId].attackRange
+
+    for (const enemyUnit of enemyUnits) {
+      const theirCoord = HexCoord.fromId(enemyUnit.tileId)
+      const dist = myCoord.distance(theirCoord)
+      if (dist <= range) {
+        tileHighlights[enemyUnit.tileId] = {
+          borderColor: 'red',
         }
       }
     }
