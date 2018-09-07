@@ -5,7 +5,7 @@ import { ServerContext } from './ServerContext'
 import { Subject, Observable, BehaviorSubject } from 'rxjs'
 import { PlayerAction } from '../actions/PlayerActions'
 import { GameEvent } from '../actions/GameEvents'
-import { UIAction } from '../actions/UIActions'
+import { UIAction, ignoreInDevTools } from '../actions/UIActions'
 import { createClientState } from '../state/createClientState'
 import {
   ClientStateReducer,
@@ -89,11 +89,16 @@ function ClientStateChangeHandler(
     const update = updateOrState as IClientStateAndActions
     const state = updateOrState as IClientState
 
+    function sendToDevTool(nextState: any) {
+      if (ignoreInDevTools(e)) return
+      devTools.send(e, nextState)
+    }
+
     if (!update.nextState && !update.actions && !update.action) {
-      devTools.send(e, state)
+      sendToDevTool(state)
       clientStateSubject.next(state)
     } else {
-      devTools.send(e, update.nextState || clientStateSubject.value)
+      sendToDevTool(update.nextState || clientStateSubject.value)
 
       if (update.nextState) {
         clientStateSubject.next(update.nextState)

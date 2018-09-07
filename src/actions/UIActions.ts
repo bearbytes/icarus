@@ -1,3 +1,12 @@
+export function ignoreInDevTools(a: { type: string }) {
+  switch (a.type) {
+    case 'HoverTile':
+      return true
+    default:
+      return false
+  }
+}
+
 export type UIAction =
   | HoverTile
   | ClickOnTile

@@ -25,7 +25,7 @@ function MovementPath() {
     s => {
       if (!s.targetTileId) return null
       const path = [s.targetTileId, ...s.path]
-      return PathHighlight({ path, color: '#fff3' })
+      return <PathHighlight pathHighlight={{ path, color: '#fff3' }} />
     },
   )
 }
@@ -35,11 +35,19 @@ function PathHighlights() {
     s => ({
       pathHighlights: s.ui.pathHighlights,
     }),
-    s => <g>{s.pathHighlights.map(PathHighlight)}</g>,
+    s => (
+      <g>
+        {s.pathHighlights.map((ph, index) => (
+          <PathHighlight key={index} pathHighlight={ph} />
+        ))}
+      </g>
+    ),
   )
 }
 
-function PathHighlight(pathHighlight: IPathHighlight) {
+function PathHighlight(props: { pathHighlight: IPathHighlight }) {
+  const { pathHighlight } = props
+
   let polyline = ''
   for (const tileId of pathHighlight.path) {
     const coord = HexCoord.fromId(tileId)
@@ -52,8 +60,8 @@ function PathHighlight(pathHighlight: IPathHighlight) {
       points={polyline}
       stroke={pathHighlight.color}
       strokeWidth={0.3}
-      // stroke-dasharray="0.3"
       strokeLinecap="round"
+      strokeLinejoin="round"
       fill="none"
     />
   )

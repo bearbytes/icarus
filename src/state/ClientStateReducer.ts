@@ -156,7 +156,7 @@ function hoverTile(s: IClientState, { tileId }: HoverTile): IClientState {
 }
 
 function rightClick(s: IClientState, a: RightClick): IClientState {
-  s = updateUI(s, { movementPathTileIds: [] })
+  s = updateUI(s, { movementPathTileIds: [], attackTargetTileId: null })
   s = updateTileHighlights(s)
   return s
 }
@@ -168,14 +168,28 @@ function clickOnTile(
   // Try to select or attack a unit on that tile
   const unit = getUnitOnTile(s.game, tileId)
   if (unit) {
+    // If the unit on the tile can be attacked, do so
     const selectedUnitId = getSelectedUnitId(s)
     if (canAttack(s.game, selectedUnitId, unit.unitId, s.ui.localPlayerId)) {
-      return {
-        action: {
-          type: 'AttackUnit',
-          attackingUnitId: selectedUnitId!,
-          attackedUnitId: unit.unitId,
-        },
+      if (tileId != s.ui.attackTargetTileId) {
+        // First click mark as attack target
+        s = updateUI(s, { attackTargetTileId: tileId })
+        s = updateTileHighlights(s)
+        return {
+          nextState: s,
+        }
+      } else {
+        // Second click attack
+        s = updateUI(s, { attackTargetTileId: null })
+        s = updateTileHighlights(s)
+        return {
+          nextState: s,
+          action: {
+            type: 'AttackUnit',
+            attackingUnitId: selectedUnitId!,
+            attackedUnitId: unit.unitId,
+          },
+        }
       }
     }
 
@@ -309,7 +323,7 @@ function updateTileHighlights(s: IClientState): IClientState {
     if (range) {
       for (const tileId of getReachableTileIds(s.game, startTileId, range)) {
         tileHighlights[tileId] = {
-          borderColor: '#ccc',
+          borderColor: '#aaa',
         }
       }
     }
@@ -328,11 +342,11 @@ function updateTileHighlights(s: IClientState): IClientState {
     for (const enemyUnit of enemyUnits) {
       const theirCoord = HexCoord.fromId(enemyUnit.tileId)
       const dist = myCoord.distance(theirCoord)
-      if (dist <= range) {
-        tileHighlights[enemyUnit.tileId] = {
-          borderColor: 'red',
-        }
-      }
+      if (dist > range) continue
+
+      const isAttackTargetTile = enemyUnit.tileId == s.ui.attackTargetTileId
+      const borderColor = isAttackTargetTile ? '#f00' : '#f80'
+      tileHighlights[enemyUnit.tileId] = { borderColor }
     }
   }
 

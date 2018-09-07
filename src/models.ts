@@ -17,6 +17,7 @@ export interface IUIState {
   pathHighlights: IPathHighlight[]
 
   movementPathTileIds: string[]
+  attackTargetTileId: string | null
 
   selectedUnitId: string | null
   selectedUnitSpawnTypeId: string | null
