@@ -4,7 +4,11 @@ import { getSelectedUnit } from '../state/ClientStateHelpers'
 import { HexCoord } from '../types'
 
 export default function MovementPaths() {
-  return <MovementPath />
+  return (
+    <g pointerEvents={'none'}>
+      <MovementPath />
+    </g>
+  )
 }
 
 function MovementPath() {

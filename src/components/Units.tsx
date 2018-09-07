@@ -7,7 +7,7 @@ export default function Units() {
   return withClientState(
     s => ({ unitIds: Object.keys(s.game.units) }),
     s => (
-      <g>
+      <g pointerEvents={'none'}>
         {s.unitIds.map(unitId => (
           <Unit key={unitId} unitId={unitId} />
         ))}
@@ -29,7 +29,6 @@ function Unit(props: { unitId: string }) {
     },
     s => (
       <path
-        pointerEvents={'none'}
         transform={
           `translate(${s.pos.x}, ${s.pos.y})` +
           ' scale(0.0025) translate(-256 -256)'
