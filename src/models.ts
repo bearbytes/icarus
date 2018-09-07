@@ -12,7 +12,10 @@ export interface IUIState {
   localPlayerId: string
 
   hoveredTileId: string | null
+
   tileHighlights: { [tileId: string]: IHexagonMapTileHighlight }
+  pathHighlights: IPathHighlight[]
+
   movementPathTileIds: string[]
 
   selectedUnitId: string | null
@@ -48,6 +51,11 @@ export interface IHexagonMapTile {
 
 export interface IHexagonMapTileHighlight {
   borderColor: string
+}
+
+export interface IPathHighlight {
+  path: string[]
+  color: string
 }
 
 export interface IUnit {

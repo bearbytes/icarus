@@ -4,6 +4,7 @@ import {
   IUIState,
   IGameState,
   IHexagonMapTile,
+  IPathHighlight,
 } from '../models'
 
 export function updateGame(
@@ -23,6 +24,14 @@ export function updateUI(
 ): IClientState {
   const ui = { ...s.ui, ...partial }
   return { ...s, ui }
+}
+
+export function addPathHighlight(
+  s: IClientState,
+  pathHighlight: IPathHighlight,
+) {
+  const pathHighlights = [...s.ui.pathHighlights, pathHighlight]
+  return updateUI(s, { pathHighlights })
 }
 
 export function getSelectedUnitId(s: IClientState): string | null {

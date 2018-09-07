@@ -13,6 +13,7 @@ export function createClientState(playerId: string): IClientState {
       selectedUnitId: null,
       selectedUnitSpawnTypeId: null,
       tileHighlights: {},
+      pathHighlights: [],
       movementPathTileIds: [],
       hoveredTileId: null,
     },

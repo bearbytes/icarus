@@ -6,7 +6,7 @@ import {
   TurnStarted,
   UnitUpdated,
 } from '../actions/GameEvents'
-import { IClientState } from '../models'
+import { IClientState, IPathHighlight } from '../models'
 import { PlayerAction } from '../actions/PlayerActions'
 import {
   ClickOnTile,
@@ -34,6 +34,7 @@ import {
   getMovementStartTileId,
   getRemainingMovePoints,
   getSelectedUnitId,
+  addPathHighlight,
 } from './ClientStateHelpers'
 import log from '../lib/log'
 import { last, values, partition } from 'ramda'
@@ -90,6 +91,7 @@ function turnStarted(
   { activePlayerId }: TurnStarted,
 ): IClientState {
   s = updateGame(s, { activePlayerId })
+  s = updateUI(s, { pathHighlights: [] })
   return s
 }
 
@@ -104,6 +106,10 @@ function unitMoved(s: IClientState, { unitId, path }: UnitMoved): IClientState {
     g = updateUnit(g, unitId, { tileId })
     return g
   })
+
+  if (unit.playerId != s.ui.localPlayerId) {
+    s = addPathHighlight(s, { path, color: '#f883' })
+  }
 
   s = updateTileHighlights(s)
 
