@@ -31,7 +31,9 @@ function MovementPath() {
         <polyline
           points={polyline}
           stroke="#fff3"
-          strokeWidth={0.5}
+          strokeWidth={0.3}
+          // stroke-dasharray="0.3"
+          stroke-linecap="round"
           fill="none"
         />
       )
