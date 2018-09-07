@@ -70,7 +70,7 @@ function endTurn(s: IGameState): IGameStateAndEvents {
 
   // refresh units
   const updateUnitEvents: UnitUpdated[] = []
-  updateUnits(s, unit => {
+  s = updateUnits(s, unit => {
     let actionPoints, movePoints
 
     if (unit.playerId == activePlayerId) {

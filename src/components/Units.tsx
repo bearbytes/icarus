@@ -74,7 +74,7 @@ function ActionPointIndicator(props: {
   return (
     <g transform={'translate(0 -0.7)'}>
       {positions.map(({ x, color }) => (
-        <circle cx={x} cy={0} r={0.15} fill={color} stroke={'none'} />
+        <circle key={x} cx={x} cy={0} r={0.15} fill={color} stroke={'none'} />
       ))}
     </g>
   )
