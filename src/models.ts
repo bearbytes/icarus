@@ -68,4 +68,5 @@ export interface IUnitType {
   movePoints: number
   hitPoints: number
   attackRange: number
+  attackDamage: number
 }

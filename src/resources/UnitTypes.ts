@@ -9,6 +9,7 @@ const units: IUnitType[] = [
     movePoints: 3,
     hitPoints: 50,
     attackRange: 3,
+    attackDamage: 5,
   },
   {
     unitTypeId: 'assassin',
@@ -17,6 +18,7 @@ const units: IUnitType[] = [
     movePoints: 6,
     hitPoints: 20,
     attackRange: 2,
+    attackDamage: 15,
   },
 ]
 

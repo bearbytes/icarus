@@ -2,10 +2,11 @@ import { createId } from '../lib/createId'
 import {
   addUnit,
   updateTile,
-  updateUnit,
   canSpawnUnit,
   canMoveUnit,
   updateUnits,
+  canAttack,
+  updateUnit,
 } from '../state/GameStateHelpers'
 import { PlayerAction } from '../actions/PlayerActions'
 import { IGameState, IUnit } from '../models'
@@ -34,6 +35,13 @@ export function GameStateReducer(
       return spawnUnit(s, a.unitTypeId, a.tileId, executingPlayerId)
     case 'MoveUnit':
       return moveUnit(s, a.unitId, a.path)
+    case 'AttackUnit':
+      return attackUnit(
+        s,
+        a.attackingUnitId,
+        a.attackedUnitId,
+        executingPlayerId,
+      )
   }
 }
 
@@ -128,7 +136,7 @@ function moveUnit(
   path: string[],
 ): IGameStateAndEvents {
   if (!canMoveUnit(s, unitId, path)) {
-    throw Error('Tried to move unit where it can not')
+    throw Error('Invalid moveUnit')
   }
 
   const unit = s.units[unitId]
@@ -156,6 +164,43 @@ function moveUnit(
         type: 'UnitUpdated',
         unitId,
         actionPoints,
+      },
+    ),
+  }
+}
+
+function attackUnit(
+  s: IGameState,
+  attackingUnitId: string,
+  attackedUnitId: string,
+  executingPlayerId: string,
+): IGameStateAndEvents {
+  if (!canAttack(s, attackingUnitId, attackedUnitId, executingPlayerId)) {
+    throw 'invalid attackUnit'
+  }
+
+  const attacker = s.units[attackingUnitId]
+  const attacked = s.units[attackedUnitId]
+
+  const damage = UnitTypes[attacker.unitTypeId].attackDamage
+  const remainingHitpoints = attacked.hitPoints - damage
+
+  s = updateUnit(s, attackingUnitId, { actionPoints: 0 })
+  s = updateUnit(s, attackedUnitId, { hitPoints: remainingHitpoints })
+
+  return {
+    nextState: s,
+    events: sendToAllPlayers(
+      s,
+      {
+        type: 'UnitUpdated',
+        unitId: attackingUnitId,
+        actionPoints: 0,
+      },
+      {
+        type: 'UnitUpdated',
+        unitId: attackedUnitId,
+        hitPoints: remainingHitpoints,
       },
     ),
   }

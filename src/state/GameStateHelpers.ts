@@ -112,6 +112,34 @@ export function canMoveUnit(
   return true
 }
 
+export function canAttack(
+  s: IGameState,
+  attackerUnitId: string | null,
+  attackedUnitId: string | null,
+  attackerPlayerId: string,
+): boolean {
+  if (!attackerUnitId) return false
+  if (!attackedUnitId) return false
+
+  if (s.activePlayerId != attackerPlayerId) return false
+
+  const attackerUnit = s.units[attackerUnitId]
+  const attackedUnit = s.units[attackedUnitId]
+
+  if (attackerUnit.playerId != attackerPlayerId) return false
+  if (attackedUnit.playerId == attackerPlayerId) return false
+
+  if (attackerUnit.actionPoints == 0) return false
+
+  const attackerTile = s.map.tiles[attackerUnit.tileId]
+  const attackedTile = s.map.tiles[attackedUnit.tileId]
+
+  const dist = attackerTile.coord.distance(attackedTile.coord)
+  const range = UnitTypes[attackerUnit.unitTypeId].attackRange
+
+  return dist <= range
+}
+
 export function getPathToTarget(
   s: IGameState,
   startTileId: string,

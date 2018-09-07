@@ -22,6 +22,7 @@ import {
   updateUnit,
   addUnit,
   getReachableTileIds,
+  canAttack,
 } from './GameStateHelpers'
 import {
   getSelectedUnit,
@@ -158,9 +159,20 @@ function clickOnTile(
   s: IClientState,
   { tileId }: ClickOnTile,
 ): IClientStateAndActions {
-  // Try to select a unit on that tile
+  // Try to select or attack a unit on that tile
   const unit = getUnitOnTile(s.game, tileId)
   if (unit) {
+    const selectedUnitId = getSelectedUnitId(s)
+    if (canAttack(s.game, selectedUnitId, unit.unitId, s.ui.localPlayerId)) {
+      return {
+        action: {
+          type: 'AttackUnit',
+          attackingUnitId: selectedUnitId!,
+          attackedUnitId: unit.unitId,
+        },
+      }
+    }
+
     s = selectUnit(s, unit.unitId)
     return { nextState: s }
   }

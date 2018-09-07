@@ -37,7 +37,7 @@ function MovementPath() {
           stroke="#fff3"
           strokeWidth={0.3}
           // stroke-dasharray="0.3"
-          stroke-linecap="round"
+          strokeLinecap="round"
           fill="none"
         />
       )
