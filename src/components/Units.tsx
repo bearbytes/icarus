@@ -26,7 +26,8 @@ function Unit(props: { unitId: string }) {
       const color = player.color
       const pos = HexCoord.fromId(unit.tileId).toPixel()
       const isHovered = s.ui.hoveredTileId == unit.tileId
-      return { unit, color, isSelected, pos, isHovered }
+      const isMyUnit = unit.playerId == s.ui.localPlayerId
+      return { unit, color, isSelected, pos, isHovered, isMyUnit }
     },
     s => (
       <g transform={`translate(${s.pos.x}, ${s.pos.y})`}>
@@ -37,15 +38,17 @@ function Unit(props: { unitId: string }) {
           stroke={s.color}
           strokeWidth={10}
         />
-        <ActionPointIndicator
-          actionPoints={s.unit.actionPoints}
-          maxActionPoints={2}
-        />
         <HealthBar
           hitPoints={s.unit.hitPoints}
           maxHitPoints={unitTypeOf(s.unit).hitPoints}
           showNumber={s.isHovered}
         />
+        {s.isMyUnit && (
+          <ActionPointIndicator
+            actionPoints={s.unit.actionPoints}
+            maxActionPoints={2}
+          />
+        )}
       </g>
     ),
   )
