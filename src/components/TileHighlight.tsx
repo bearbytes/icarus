@@ -4,7 +4,7 @@ import { withClientState } from './hoc/withClientState'
 
 export default function TileHighlight(props: { tileId: string }) {
   const { tileId } = props
-  const pos = HexCoord.fromId(tileId).toPixel(100)
+  const pos = HexCoord.fromId(tileId).toPixel()
 
   return withClientState(
     s => ({

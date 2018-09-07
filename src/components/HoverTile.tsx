@@ -9,7 +9,7 @@ export default function HoverTile() {
     }),
     s => {
       if (!s.hoveredTileId) return null
-      const pos = HexCoord.fromId(s.hoveredTileId).toPixel(100)
+      const pos = HexCoord.fromId(s.hoveredTileId).toPixel()
       return (
         <use
           transform={`translate(${pos.x}, ${pos.y})`}

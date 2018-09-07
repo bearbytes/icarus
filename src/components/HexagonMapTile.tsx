@@ -4,7 +4,7 @@ import { HexCoord } from '../types'
 
 export default function HexagonMapTile(props: { tileId: string }) {
   const { tileId } = props
-  const pos = HexCoord.fromId(tileId).toPixel(100)
+  const pos = HexCoord.fromId(tileId).toPixel()
 
   return withClientStateAndDispatch(
     s => ({ tile: s.game.map.tiles[tileId] }),

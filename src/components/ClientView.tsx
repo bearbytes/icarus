@@ -21,12 +21,12 @@ export default function ClientView(props: {
             <HexagonMap
               viewerProps={{
                 initialViewRect: {
-                  topLeft: { x: -1250, y: -1250 },
-                  size: { w: 2500, h: 2500 },
+                  topLeft: { x: -12.5, y: -12.5 },
+                  size: { w: 25, h: 25 },
                 },
-                minViewSize: { w: 2000, h: 2000 },
-                maxViewSize: { w: 3000, h: 3000 },
-                scrollSpeed: 1,
+                minViewSize: { w: 20, h: 20 },
+                maxViewSize: { w: 30, h: 30 },
+                scrollSpeed: 0.01,
                 scrollBorderSize: 50,
                 onRightClick: () => dispatch({ type: 'RightClick' }),
               }}

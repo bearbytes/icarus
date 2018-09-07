@@ -24,7 +24,7 @@ function Unit(props: { unitId: string }) {
       const player = s.game.players[unit.playerId]
       const isSelected = s.ui.selectedUnitId == unitId
       const color = player.color
-      const pos = HexCoord.fromId(unit.tileId).toPixel(100)
+      const pos = HexCoord.fromId(unit.tileId).toPixel()
       return { unit, color, isSelected, pos }
     },
     s => (
@@ -32,7 +32,7 @@ function Unit(props: { unitId: string }) {
         pointerEvents={'none'}
         transform={
           `translate(${s.pos.x}, ${s.pos.y})` +
-          ' scale(0.25) translate(-256 -256)'
+          ' scale(0.0025) translate(-256 -256)'
         }
         d={UnitTypes[s.unit.unitTypeId].svgPath}
         fill={s.isSelected ? 'white' : 'black'}

@@ -34,8 +34,8 @@ class Wrapper extends React.Component<WrapperProps> {
         <defs>
           <polygon
             id={'hexagon'}
-            points={formatPoints(HexCoord.corners(100))}
-            strokeWidth={100 * 0.05}
+            points={formatPoints(HexCoord.corners())}
+            strokeWidth={0.05}
           />
         </defs>
         {tileIds.map(tileId => (
@@ -72,7 +72,7 @@ function MovementPath() {
       let polyline = ''
       for (const tileId of path) {
         const coord = HexCoord.fromId(tileId)
-        const pixel = coord.toPixel(100)
+        const pixel = coord.toPixel()
         polyline += pixel.x + ',' + pixel.y + ' '
       }
 
