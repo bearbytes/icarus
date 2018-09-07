@@ -1,5 +1,3 @@
-import { HexCoord } from './types'
-
 export interface IGameState {
   map: IHexagonMap
   units: { [unitId: string]: IUnit }
@@ -44,7 +42,6 @@ export interface IHexagonMap {
 
 export interface IHexagonMapTile {
   tileId: string
-  coord: HexCoord
   color: string
   unitId?: string
   blocked?: boolean

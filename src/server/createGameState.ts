@@ -48,7 +48,6 @@ function createHexagonMapTile(
 
   return {
     tileId: coord.id,
-    coord,
     color,
     blocked,
   }

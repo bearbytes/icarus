@@ -1,5 +1,5 @@
 import { zipObj } from 'ramda'
-import { IUnitType } from '../models'
+import { IUnitType, IUnit } from '../models'
 
 const units: IUnitType[] = [
   {
@@ -22,4 +22,9 @@ const units: IUnitType[] = [
   },
 ]
 
-export default zipObj(units.map(u => u.unitTypeId), units)
+const UnitTypes = zipObj(units.map(u => u.unitTypeId), units)
+export default UnitTypes
+
+export function unitTypeOf(unit: IUnit) {
+  return UnitTypes[unit.unitTypeId]
+}
