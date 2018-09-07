@@ -28,16 +28,32 @@ function Unit(props: { unitId: string }) {
       return { unit, color, isSelected, pos }
     },
     s => (
-      <path
-        transform={
-          `translate(${s.pos.x}, ${s.pos.y})` +
-          ' scale(0.0025) translate(-256 -256)'
-        }
-        d={UnitTypes[s.unit.unitTypeId].svgPath}
-        fill={s.isSelected ? 'white' : 'black'}
-        stroke={s.color}
-        strokeWidth={10}
-      />
+      <g transform={`translate(${s.pos.x}, ${s.pos.y})`}>
+        <path
+          transform={'scale(0.0025) translate(-256 -256)'}
+          d={UnitTypes[s.unit.unitTypeId].svgPath}
+          fill={s.isSelected ? 'white' : 'black'}
+          stroke={s.color}
+          strokeWidth={10}
+        />
+        <g transform={'translate(0 0.65)'}>
+          <path
+            transform={'translate(-0.15 0) scale(0.0007) translate(-256 -256)'}
+            d={HeartPath}
+            fill={s.isSelected ? 'white' : 'black'}
+            stroke={'none'}
+          />
+          <text
+            transform={'translate(0.05 0.13) scale(0.025)'}
+            fill={s.isSelected ? 'white' : 'black'}
+          >
+            {s.unit.hitPoints}
+          </text>
+        </g>
+      </g>
     ),
   )
 }
+
+const HeartPath =
+  'M480.25 156.355c0 161.24-224.25 324.43-224.25 324.43S31.75 317.595 31.75 156.355c0-91.41 70.63-125.13 107.77-125.13 77.65 0 116.48 65.72 116.48 65.72s38.83-65.73 116.48-65.73c37.14.01 107.77 33.72 107.77 125.14z'
