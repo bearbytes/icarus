@@ -255,6 +255,9 @@ function createMovementPathToTile(
   s: IClientState,
   targetTileId: string,
 ): IClientState {
+  const targetTile = s.game.map.tiles[targetTileId]
+  if (targetTile.blocked) return s
+
   const movePoints = getRemainingMovePoints(s)
   if (!movePoints) return s
 
