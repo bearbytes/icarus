@@ -71,10 +71,15 @@ function endTurn(s: IGameState): IGameStateAndEvents {
   // refresh units
   const updateUnitEvents: UnitUpdated[] = []
   updateUnits(s, unit => {
-    if (unit.playerId != activePlayerId) return null
+    let actionPoints, movePoints
 
-    const actionPoints = 2
-    const movePoints = UnitTypes[unit.unitTypeId].movePoints
+    if (unit.playerId == activePlayerId) {
+      actionPoints = 2
+      movePoints = UnitTypes[unit.unitTypeId].movePoints
+    } else {
+      actionPoints = 0
+      movePoints = 0
+    }
 
     updateUnitEvents.push({
       type: 'UnitUpdated',
