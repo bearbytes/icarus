@@ -23,7 +23,12 @@ export default function ClientView(props: {
           s => {
             if (s.visibleClientView == 'active' && !s.isActive) return null
             if (s.visibleClientView == 'inactive' && s.isActive) return null
-            return <ClientViewContainer playerColor={playerColor} />
+            return (
+              <ClientViewContainer
+                playerColor={playerColor}
+                isDisabled={!s.isActive}
+              />
+            )
           },
         )
       })}
@@ -31,9 +36,15 @@ export default function ClientView(props: {
   )
 }
 
-function ClientViewContainer(props: { playerColor: string }) {
+function ClientViewContainer(props: {
+  playerColor: string
+  isDisabled: boolean
+}) {
   return (
-    <StyledClientViewContainer borderColor={props.playerColor}>
+    <StyledClientViewContainer
+      borderColor={props.playerColor}
+      isDisabled={props.isDisabled}
+    >
       <HexMapContainer>
         {withDispatch(dispatch => (
           <HexagonMap
@@ -56,11 +67,15 @@ function ClientViewContainer(props: { playerColor: string }) {
   )
 }
 
-const StyledClientViewContainer = styled.div<{ borderColor: string }>`
+const StyledClientViewContainer = styled.div<{
+  borderColor: string
+  isDisabled: boolean
+}>`
   flex: 1;
   display: flex;
   flex-direction: column;
   border: 5px solid ${p => p.borderColor};
+  ${p => (p.isDisabled ? 'filter: blur(2px) grayscale(75%)' : '')};
 `
 
 const HexMapContainer = styled.div`
