@@ -60,8 +60,8 @@ function ActionPointIndicator(props: {
 }) {
   const { actionPoints, maxActionPoints } = props
 
-  const minX = -0.75
-  const maxX = +0.75
+  const minX = -0.5
+  const maxX = +0.5
   const n = maxActionPoints + 1
 
   const positions = []
@@ -72,9 +72,9 @@ function ActionPointIndicator(props: {
   }
 
   return (
-    <g transform={'translate(0 -0.7)'}>
+    <g transform={'rotate(-60) translate(0 -0.7)'}>
       {positions.map(({ x, color }) => (
-        <circle key={x} cx={x} cy={0} r={0.15} fill={color} stroke={'none'} />
+        <circle key={x} cx={x} cy={0} r={0.1} fill={color} stroke={'none'} />
       ))}
     </g>
   )
