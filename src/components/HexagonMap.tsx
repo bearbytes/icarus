@@ -7,6 +7,7 @@ import { withClientState } from './hoc/withClientState'
 import { IHexagonMap } from '../models'
 import Units from './Units'
 import MovementPaths from './MovementPaths'
+import Animations from './Animations'
 
 interface HexagonMapProps {
   viewerProps: SvgViewerProps
@@ -41,6 +42,7 @@ class Wrapper extends React.Component<WrapperProps> {
         ))}
         <MovementPaths />
         <Units />
+        <Animations />
       </SvgViewer>
     )
   }

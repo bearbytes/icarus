@@ -7,7 +7,7 @@ import {
   UnitUpdated,
   UnitRemoved,
 } from '../actions/GameEvents'
-import { IClientState, IPathHighlight } from '../models'
+import { IClientState, IPathHighlight, IAnimation } from '../models'
 import { PlayerAction } from '../actions/PlayerActions'
 import {
   ClickOnTile,
@@ -42,6 +42,7 @@ import log from '../lib/log'
 import { last, values, partition } from 'ramda'
 import { HexCoord } from '../types'
 import UnitTypes from '../resources/UnitTypes'
+import { AnimationData } from '../animations'
 
 export interface IClientStateAndActions {
   nextState?: IClientState
@@ -136,6 +137,19 @@ function unitUpdated(
   s: IClientState,
   { unitId, actionPoints, movePoints, hitPoints }: UnitUpdated,
 ): IClientState {
+  if (hitPoints != null) {
+    const unit = s.game.units[unitId]
+    const hitPointsBefore = unit.hitPoints
+    const damage = hitPointsBefore - hitPoints
+    if (damage > 0) {
+      s = addAnimation(s, {
+        type: 'DamageAnimation',
+        damage,
+        tileId: unit.tileId,
+      })
+    }
+  }
+
   s = updateGame(s, g => {
     g = updateUnit(g, unitId, unit => {
       return {
@@ -361,4 +375,17 @@ function updateTileHighlights(s: IClientState): IClientState {
   }
 
   return updateUI(s, { tileHighlights })
+}
+
+function addAnimation(s: IClientState, data: AnimationData): IClientState {
+  const startTime = new Date().getTime()
+  const index = s.ui.animations.length
+  const id = startTime + ':' + index
+
+  const animation: IAnimation = { id, startTime, data }
+  const animations = [...s.ui.animations, animation]
+
+  // TODO remove old animations
+  s = updateUI(s, { animations })
+  return s
 }

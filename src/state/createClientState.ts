@@ -17,6 +17,7 @@ export function createClientState(playerId: string): IClientState {
       movementPathTileIds: [],
       hoveredTileId: null,
       attackTargetTileId: null,
+      animations: [],
     },
   }
 }

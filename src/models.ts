@@ -1,24 +1,7 @@
-export interface IGameState {
-  map: IHexagonMap
-  units: { [unitId: string]: IUnit }
-  players: { [playerId: string]: IPlayer }
+import { AnimationData } from './animations'
 
-  activePlayerId: string
-}
-
-export interface IUIState {
-  localPlayerId: string
-
-  hoveredTileId: string | null
-
-  tileHighlights: { [tileId: string]: IHexagonMapTileHighlight }
-  pathHighlights: IPathHighlight[]
-
-  movementPathTileIds: string[]
-  attackTargetTileId: string | null
-
-  selectedUnitId: string | null
-  selectedUnitSpawnTypeId: string | null
+export interface IServerState {
+  game: IGameState
 }
 
 export interface IClientState {
@@ -26,34 +9,12 @@ export interface IClientState {
   ui: IUIState
 }
 
-export interface IServerState {
-  game: IGameState
-}
+export interface IGameState {
+  map: IHexagonMap
+  units: { [unitId: string]: IUnit }
+  players: { [playerId: string]: IPlayer }
 
-export interface IPlayer {
-  playerId: string
-  name: string
-  color: string
-}
-
-export interface IHexagonMap {
-  tiles: { [id: string]: IHexagonMapTile }
-}
-
-export interface IHexagonMapTile {
-  tileId: string
-  color: string
-  unitId?: string
-  blocked?: boolean
-}
-
-export interface IHexagonMapTileHighlight {
-  borderColor: string
-}
-
-export interface IPathHighlight {
-  path: string[]
-  color: string
+  activePlayerId: string
 }
 
 export interface IUnit {
@@ -75,4 +36,53 @@ export interface IUnitType {
   hitPoints: number
   attackRange: number
   attackDamage: number
+}
+
+export interface IPlayer {
+  playerId: string
+  name: string
+  color: string
+}
+
+export interface IHexagonMap {
+  tiles: { [id: string]: IHexagonMapTile }
+}
+
+export interface IHexagonMapTile {
+  tileId: string
+  color: string
+  unitId?: string
+  blocked?: boolean
+}
+
+export interface IUIState {
+  localPlayerId: string
+
+  hoveredTileId: string | null
+
+  tileHighlights: { [tileId: string]: IHexagonMapTileHighlight }
+  pathHighlights: IPathHighlight[]
+
+  movementPathTileIds: string[]
+  attackTargetTileId: string | null
+
+  selectedUnitId: string | null
+  selectedUnitSpawnTypeId: string | null
+
+  animations: IAnimation[]
+}
+
+export interface IHexagonMapTileHighlight {
+  borderColor: string
+}
+
+export interface IPathHighlight {
+  path: string[]
+  color: string
+}
+
+export interface IAnimation {
+  id: string
+  startTime: number
+  data: AnimationData
 }
