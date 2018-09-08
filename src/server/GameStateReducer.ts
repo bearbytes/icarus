@@ -204,6 +204,11 @@ function attackUnit(
   if (killed) {
     s = removeUnit(s, attackedUnitId)
     events.push({
+      type: 'UnitUpdated',
+      unitId: attackedUnitId,
+      hitPoints: 0,
+    })
+    events.push({
       type: 'UnitRemoved',
       unitId: attackedUnitId,
     })

@@ -383,7 +383,11 @@ function addAnimation(s: IClientState, data: AnimationData): IClientState {
   const id = startTime + ':' + index
 
   const animation: IAnimation = { id, startTime, data }
-  const animations = [...s.ui.animations, animation]
+
+  const now = new Date().getTime()
+  const expireBefore = now - 5000
+  let animations = s.ui.animations.filter(a => a.startTime > expireBefore)
+  animations = [...animations, animation]
 
   // TODO remove old animations
   s = updateUI(s, { animations })
