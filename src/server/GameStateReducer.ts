@@ -192,7 +192,7 @@ function attackUnit(
 
   const damage = UnitTypes[attacker.unitTypeId].attackDamage
   const remainingHitpoints = attacked.hitPoints - damage
-  const killed = remainingHitpoints < 0
+  const killed = remainingHitpoints <= 0
 
   s = updateUnit(s, attackingUnitId, { actionPoints: 0 })
   events.push({
