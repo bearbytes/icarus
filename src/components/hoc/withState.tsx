@@ -7,7 +7,7 @@ type SetState<S> = (
 
 type StateUpdate<S> = S | Partial<S> | null
 
-export function withState<S>(
+export function withState<S extends object>(
   defaultState: S,
   render: (state: S, setState: SetState<S>) => React.ReactNode,
 ) {

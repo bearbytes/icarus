@@ -3,17 +3,20 @@ import { ServerContextProvider } from '../contexts/ServerContext'
 import ClientView from './ClientView'
 import { HBox, VBox } from './layout'
 import DebugPanel from './DebugPanel'
+import DebugContextProvider from '../contexts/DebugContext'
 
 export default function App() {
   return (
-    <ServerContextProvider>
-      <VBox>
-        <HBox>
-          <ClientView playerName="Mond" playerColor="blue" />
-          <ClientView playerName="Stern" playerColor="red" />
-        </HBox>
-        <DebugPanel />
-      </VBox>
-    </ServerContextProvider>
+    <DebugContextProvider>
+      <ServerContextProvider>
+        <VBox>
+          <HBox>
+            <ClientView playerName="Mond" playerColor="blue" />
+            <ClientView playerName="Stern" playerColor="red" />
+          </HBox>
+          <DebugPanel />
+        </VBox>
+      </ServerContextProvider>
+    </DebugContextProvider>
   )
 }
