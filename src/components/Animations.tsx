@@ -3,6 +3,7 @@ import styled, { keyframes } from 'styled-components'
 import { withClientState } from './hoc/withClientState'
 import { AnimationData, DamageAnimation } from '../animations'
 import { HexCoord } from '../types'
+import { IAnimation } from '../models'
 
 export default function Animations() {
   return withClientState(
@@ -13,7 +14,7 @@ export default function Animations() {
       return (
         <g>
           {s.animations.map(animation => (
-            <Animation key={animation.id} data={animation.data} />
+            <Animation key={animation.id} animation={animation} />
           ))}
         </g>
       )
@@ -21,10 +22,14 @@ export default function Animations() {
   )
 }
 
-function Animation(props: { data: AnimationData }) {
-  switch (props.data.type) {
+function Animation(props: { animation: IAnimation }) {
+  // Don't play animations older than 0.5 seconds
+  const now = new Date().getTime()
+  if (now - props.animation.startTime > 500) return null
+
+  switch (props.animation.data.type) {
     case 'DamageAnimation':
-      return <DamageAnimation data={props.data} />
+      return <DamageAnimation data={props.animation.data} />
   }
 }
 
@@ -38,7 +43,6 @@ function DamageAnimation(props: { data: DamageAnimation }) {
           fill={'red'}
           stroke={'black'}
           strokeWidth={0.5}
-          strokeLinejoin={'miter'}
         >
           -{props.data.damage} HP
         </text>
