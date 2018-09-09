@@ -2,6 +2,7 @@ import * as React from 'react'
 import { withClientState } from '../hoc/withClientState'
 import UnitTypes, { unitTypeOf } from '../../resources/UnitTypes'
 import { HexCoord } from '../../types'
+import CenterOnTile from '../helper/CenterOnTile'
 
 export default function Units() {
   return withClientState(
@@ -24,13 +25,12 @@ function Unit(props: { unitId: string }) {
       const player = s.game.players[unit.playerId]
       const isSelected = s.ui.selectedUnitId == unitId
       const color = player.color
-      const pos = HexCoord.fromId(unit.tileId).toPixel()
       const isHovered = s.ui.hoveredTileId == unit.tileId
       const isMyUnit = unit.playerId == s.ui.localPlayerId
-      return { unit, color, isSelected, pos, isHovered, isMyUnit }
+      return { unit, color, isSelected, isHovered, isMyUnit }
     },
     s => (
-      <g transform={`translate(${s.pos.x}, ${s.pos.y})`}>
+      <CenterOnTile tileId={s.unit.tileId}>
         <path
           transform={'scale(0.0025) translate(-256 -256)'}
           d={UnitTypes[s.unit.unitTypeId].svgPath}
@@ -49,7 +49,7 @@ function Unit(props: { unitId: string }) {
             maxActionPoints={2}
           />
         )}
-      </g>
+      </CenterOnTile>
     ),
   )
 }

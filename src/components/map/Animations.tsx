@@ -1,9 +1,9 @@
 import React from 'react'
 import styled, { keyframes } from 'styled-components'
 import { withClientState } from '../hoc/withClientState'
-import { AnimationData, DamageAnimation } from '../../animations'
-import { HexCoord } from '../../types'
+import { DamageAnimation } from '../../animations'
 import { IAnimation } from '../../models'
+import CenterOnTile from '../helper/CenterOnTile'
 
 export default function Animations() {
   return withClientState(
@@ -49,13 +49,6 @@ function DamageAnimation(props: { data: DamageAnimation }) {
       </GoingUp>
     </CenterOnTile>
   )
-}
-
-// TODO this is useful, use it somewhere else
-function CenterOnTile(props: { tileId: string; children: React.ReactNode }) {
-  const pos = HexCoord.fromId(props.tileId).toPixel()
-  const transform = `translate(${pos.x}, ${pos.y})`
-  return <g transform={transform}>{props.children}</g>
 }
 
 const GoingUpAnimation = keyframes`

@@ -389,7 +389,6 @@ function addAnimation(s: IClientState, data: AnimationData): IClientState {
   let animations = s.ui.animations.filter(a => a.startTime > expireBefore)
   animations = [...animations, animation]
 
-  // TODO remove old animations
   s = updateUI(s, { animations })
   return s
 }
