@@ -18,6 +18,7 @@ export interface SvgViewerProps {
 
 interface State {
   center: Point
+  aspectRatio: number | null
 
   scrollInfo: ScrollInfo | null
   wKey: boolean
@@ -39,6 +40,7 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
     super(props)
     this.state = {
       center: props.center,
+      aspectRatio: null,
       scrollInfo: null,
       wKey: false,
       aKey: false,
@@ -49,22 +51,34 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
   }
 
   render() {
-    const size =
-      this.props.size * Math.pow(this.props.zoomFactor, this.state.zoomStep)
+    const renderSvg = () => {
+      if (!this.state.aspectRatio) return null
 
-    const left = this.state.center.x - size / 2
-    const top = this.state.center.y - size / 2
-    const width = size
-    const height = size
+      const size =
+        this.props.size * Math.pow(this.props.zoomFactor, this.state.zoomStep)
+
+      const w = Math.floor(size)
+      const h = Math.floor(size / this.state.aspectRatio)
+
+      const left = this.state.center.x - w / 2
+      const top = this.state.center.y - h / 2
+
+      return (
+        <svg
+          viewBox={`${left} ${top} ${w} ${h}`}
+          preserveAspectRatio={'xMidyMid'}
+          onWheel={e => this.onWheel(e)}
+          onMouseDown={e => this.onMouseDown(e)}
+        >
+          {this.props.children}
+        </svg>
+      )
+    }
 
     return (
-      <svg
-        viewBox={`${left} ${top} ${width} ${height}`}
-        onWheel={e => this.onWheel(e)}
-        onMouseDown={e => this.onMouseDown(e)}
-      >
-        {this.props.children}
-      </svg>
+      <div style={{ flex: 1 }} ref={domNode => this.onMountContainer(domNode)}>
+        {renderSvg()}
+      </div>
     )
   }
 
@@ -188,11 +202,30 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
   componentDidMount() {
     window.addEventListener('keydown', this.onKeyDown)
     window.addEventListener('keyup', this.onKeyUp)
+
+    console.log()
   }
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.onKeyDown)
     window.removeEventListener('keyup', this.onKeyUp)
     this.stopScrollTimer()
+  }
+
+  onMountContainer(domNode: HTMLElement | null) {
+    if (!domNode) return
+
+    const w = domNode.clientWidth
+    const h = domNode.clientHeight
+    const aspectRatio = w / h
+    console.log(w, h, aspectRatio)
+
+    if (this.state.aspectRatio) {
+      if (Math.abs(aspectRatio - this.state.aspectRatio) < 0.01) {
+        return
+      }
+    }
+
+    this.setState({ aspectRatio })
   }
 }

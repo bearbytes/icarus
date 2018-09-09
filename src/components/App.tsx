@@ -28,4 +28,5 @@ export default function App() {
 const FullScreen = styled(VBox)`
   height: 100vh;
   max-height: 100vh;
+  overflow: hidden;
 `

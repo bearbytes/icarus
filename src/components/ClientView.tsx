@@ -63,23 +63,19 @@ function ClientViewContainer(props: {
 }
 
 function HexMap() {
-  return (
-    <HexMapContainer>
-      {withDispatch(dispatch => (
-        <HexagonMap
-          viewerProps={{
-            center: { x: 0, y: 0 },
-            size: 25,
-            scrollSpeed: 0.01,
-            zoomFactor: 1.2,
-            zoomInSteps: 3,
-            zoomOutSteps: 5,
-            onRightClick: () => dispatch({ type: 'RightClick' }),
-          }}
-        />
-      ))}
-    </HexMapContainer>
-  )
+  return withDispatch(dispatch => (
+    <HexagonMap
+      viewerProps={{
+        center: { x: 0, y: 0 },
+        size: 25,
+        scrollSpeed: 0.01,
+        zoomFactor: 1.2,
+        zoomInSteps: 3,
+        zoomOutSteps: 5,
+        onRightClick: () => dispatch({ type: 'RightClick' }),
+      }}
+    />
+  ))
 }
 
 const StyledClientViewContainer = styled(HBox)<{
@@ -89,12 +85,4 @@ const StyledClientViewContainer = styled(HBox)<{
   flex: 1;
   border: 5px solid ${p => p.borderColor};
   ${p => (p.isDisabled ? 'filter: blur(2px) grayscale(75%)' : '')};
-`
-
-const HexMapContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  max-width: 80vmin;
-  max-height: 80vmin;
-  margin: auto;
 `
