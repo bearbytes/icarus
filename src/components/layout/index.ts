@@ -12,3 +12,15 @@ export const VBox = styled.div`
 export const Spacer = styled.div`
   flex: 1;
 `
+
+export const CenteredHBox = styled(HBox)`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`
+
+export const CenteredVBox = styled(VBox)`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`

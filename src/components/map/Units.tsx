@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { withClientState } from '../hoc/withClientState'
 import UnitTypes, { unitTypeOf } from '../../resources/UnitTypes'
-import { HexCoord } from '../../types'
 import CenterOnTile from '../helper/CenterOnTile'
 
 export default function Units() {

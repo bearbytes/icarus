@@ -77,7 +77,11 @@ export function updatePlayer(
   return { ...s, players }
 }
 
-export function getUnitOnTile(s: IGameState, tileId: string): IUnit | null {
+export function getUnitOnTile(
+  s: IGameState,
+  tileId: string | null,
+): IUnit | null {
+  if (!tileId) return null
   const unitId = s.map.tiles[tileId].unitId
   if (!unitId) return null
   return s.units[unitId]

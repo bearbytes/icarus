@@ -7,6 +7,7 @@ import { withDebugContext } from '../contexts/DebugContext'
 import { HBox, Spacer, VBox } from './layout'
 import UnitSpawnSelectionArea from './UnitSpawnSelectionArea'
 import EndTurnButton from './EndTurnButton'
+import AttackPreview from './AttackPreview'
 
 export default function ClientView(props: {
   playerName: string
@@ -53,6 +54,7 @@ function ClientViewContainer(props: {
       </VBox>
       <HexMap />
       <VBox>
+        <AttackPreview />
         <Spacer />
         <EndTurnButton />
       </VBox>
