@@ -68,14 +68,12 @@ function HexMap() {
       {withDispatch(dispatch => (
         <HexagonMap
           viewerProps={{
-            initialViewRect: {
-              topLeft: { x: -12.5, y: -12.5 },
-              size: { w: 25, h: 25 },
-            },
-            minViewSize: { w: 20, h: 20 },
-            maxViewSize: { w: 30, h: 30 },
+            center: { x: 0, y: 0 },
+            size: 25,
             scrollSpeed: 0.01,
-            scrollBorderSize: 50,
+            zoomFactor: 1.2,
+            zoomInSteps: 3,
+            zoomOutSteps: 5,
             onRightClick: () => dispatch({ type: 'RightClick' }),
           }}
         />
