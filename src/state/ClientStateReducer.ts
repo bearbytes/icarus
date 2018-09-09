@@ -180,7 +180,14 @@ function hoverTile(s: IClientState, { tileId }: HoverTile): IClientState {
 }
 
 function rightClick(s: IClientState, a: RightClick): IClientState {
-  s = updateUI(s, { movementPathTileIds: [], attackTargetTileId: null })
+  if (s.ui.attackTargetTileId) {
+    s = updateUI(s, { attackTargetTileId: null })
+  } else if (s.ui.movementPathTileIds.length > 0) {
+    s = updateUI(s, { movementPathTileIds: [] })
+  } else if (s.ui.selectedUnitId) {
+    s = updateUI(s, { selectedUnitId: null })
+  }
+
   s = updateTileHighlights(s)
   return s
 }
