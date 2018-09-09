@@ -1,5 +1,5 @@
 import React from 'react'
-import HexagonMap from './HexagonMap'
+import HexagonMap from './map/HexagonMap'
 import { ClientContextProvider } from '../contexts/ClientContext'
 import styled from 'styled-components'
 import { withDispatch, withClientState } from './hoc/withClientState'

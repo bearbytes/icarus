@@ -6,7 +6,7 @@ import {
   withDebugContext,
 } from '../contexts/DebugContext'
 import styled from 'styled-components'
-import Button from './Button'
+import Button from './ui/Button'
 
 export default function DebugPanel() {
   return (

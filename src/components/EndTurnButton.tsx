@@ -1,6 +1,6 @@
 import React from 'react'
 import { withClientStateAndDispatch } from './hoc/withClientState'
-import Button from './Button'
+import Button from './ui/Button'
 
 export default function EndTurnButton() {
   return withClientStateAndDispatch(

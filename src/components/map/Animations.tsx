@@ -1,9 +1,9 @@
 import React from 'react'
 import styled, { keyframes } from 'styled-components'
-import { withClientState } from './hoc/withClientState'
-import { AnimationData, DamageAnimation } from '../animations'
-import { HexCoord } from '../types'
-import { IAnimation } from '../models'
+import { withClientState } from '../hoc/withClientState'
+import { AnimationData, DamageAnimation } from '../../animations'
+import { HexCoord } from '../../types'
+import { IAnimation } from '../../models'
 
 export default function Animations() {
   return withClientState(

@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { Rect, Point, Size } from '../types'
-import { formatRect } from '../lib/svg'
-import log from '../lib/log'
+import { Rect, Point, Size } from '../../types'
+import { formatRect } from '../../lib/svg'
+import log from '../../lib/log'
 
 export interface SvgViewerProps {
   minViewSize: Size

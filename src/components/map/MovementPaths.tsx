@@ -1,8 +1,8 @@
 import React from 'react'
-import { withClientState } from './hoc/withClientState'
-import { getSelectedUnit } from '../state/ClientStateHelpers'
-import { HexCoord } from '../types'
-import { IPathHighlight } from '../models'
+import { withClientState } from '../hoc/withClientState'
+import { getSelectedUnit } from '../../state/ClientStateHelpers'
+import { HexCoord } from '../../types'
+import { IPathHighlight } from '../../models'
 
 export default function MovementPaths() {
   return (

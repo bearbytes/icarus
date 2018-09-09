@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { withClientState } from './hoc/withClientState'
-import UnitTypes, { unitTypeOf } from '../resources/UnitTypes'
-import { HexCoord } from '../types'
+import { withClientState } from '../hoc/withClientState'
+import UnitTypes, { unitTypeOf } from '../../resources/UnitTypes'
+import { HexCoord } from '../../types'
 
 export default function Units() {
   return withClientState(
