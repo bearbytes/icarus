@@ -1,10 +1,12 @@
 import React from 'react'
 import HexagonMap from './HexagonMap'
-import ControlPanel from './ControlPanel'
 import { ClientContextProvider } from '../contexts/ClientContext'
 import styled from 'styled-components'
 import { withDispatch, withClientState } from './hoc/withClientState'
 import { withDebugContext } from '../contexts/DebugContext'
+import { HBox, Spacer, VBox } from './layout'
+import UnitSpawnSelectionArea from './UnitSpawnSelectionArea'
+import EndTurnButton from './EndTurnButton'
 
 export default function ClientView(props: {
   playerName: string
@@ -45,35 +47,46 @@ function ClientViewContainer(props: {
       borderColor={props.playerColor}
       isDisabled={props.isDisabled}
     >
-      <HexMapContainer>
-        {withDispatch(dispatch => (
-          <HexagonMap
-            viewerProps={{
-              initialViewRect: {
-                topLeft: { x: -12.5, y: -12.5 },
-                size: { w: 25, h: 25 },
-              },
-              minViewSize: { w: 20, h: 20 },
-              maxViewSize: { w: 30, h: 30 },
-              scrollSpeed: 0.01,
-              scrollBorderSize: 50,
-              onRightClick: () => dispatch({ type: 'RightClick' }),
-            }}
-          />
-        ))}
-      </HexMapContainer>
-      <ControlPanel />
+      <VBox>
+        <UnitSpawnSelectionArea />
+        <Spacer />
+      </VBox>
+      <HexMap />
+      <VBox>
+        <Spacer />
+        <EndTurnButton />
+      </VBox>
     </StyledClientViewContainer>
   )
 }
 
-const StyledClientViewContainer = styled.div<{
+function HexMap() {
+  return (
+    <HexMapContainer>
+      {withDispatch(dispatch => (
+        <HexagonMap
+          viewerProps={{
+            initialViewRect: {
+              topLeft: { x: -12.5, y: -12.5 },
+              size: { w: 25, h: 25 },
+            },
+            minViewSize: { w: 20, h: 20 },
+            maxViewSize: { w: 30, h: 30 },
+            scrollSpeed: 0.01,
+            scrollBorderSize: 50,
+            onRightClick: () => dispatch({ type: 'RightClick' }),
+          }}
+        />
+      ))}
+    </HexMapContainer>
+  )
+}
+
+const StyledClientViewContainer = styled(HBox)<{
   borderColor: string
   isDisabled: boolean
 }>`
   flex: 1;
-  display: flex;
-  flex-direction: column;
   border: 5px solid ${p => p.borderColor};
   ${p => (p.isDisabled ? 'filter: blur(2px) grayscale(75%)' : '')};
 `
