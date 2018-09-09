@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { ServerContextProvider } from '../contexts/ServerContext'
 import ClientView from './ClientView'
-import { HBox, VBox } from './layout'
+import { HBox, VBox, ExpandingHBox } from './layout'
 import DebugPanel from './DebugPanel'
 import DebugContextProvider from '../contexts/DebugContext'
 import ErrorBoundary from './ErrorBoundary'
@@ -13,10 +13,10 @@ export default function App() {
       <DebugContextProvider>
         <ServerContextProvider>
           <FullScreen>
-            <HBox>
+            <ExpandingHBox>
               <ClientView playerName="Mond" playerColor="blue" />
               <ClientView playerName="Stern" playerColor="red" />
-            </HBox>
+            </ExpandingHBox>
             <DebugPanel />
           </FullScreen>
         </ServerContextProvider>
@@ -27,4 +27,5 @@ export default function App() {
 
 const FullScreen = styled(VBox)`
   height: 100vh;
+  max-height: 100vh;
 `
