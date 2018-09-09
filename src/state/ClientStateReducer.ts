@@ -354,7 +354,7 @@ function updateTileHighlights(s: IClientState): IClientState {
     if (range) {
       for (const tileId of getReachableTileIds(s.game, startTileId, range)) {
         tileHighlights[tileId] = {
-          borderColor: '#aaa',
+          highlightColor: '#fff2',
         }
       }
     }

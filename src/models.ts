@@ -73,7 +73,8 @@ export interface IUIState {
 }
 
 export interface IHexagonMapTileHighlight {
-  borderColor: string
+  borderColor?: string
+  highlightColor?: string
 }
 
 export interface IPathHighlight {

@@ -2,6 +2,7 @@ import * as React from 'react'
 import { withClientStateAndDispatch } from '../hoc/withClientState'
 import { HexCoord } from '../../types'
 import { formatPoints } from '../../lib/svg'
+import Color from 'color'
 import styled from 'styled-components'
 
 export default function HexagonMapTile(props: { tileId: string }) {
@@ -23,14 +24,21 @@ export default function HexagonMapTile(props: { tileId: string }) {
     s => (
       <StyledPolygon
         points={points}
-        fill={s.tile.color}
-        stroke={s.highlight ? s.highlight.borderColor : s.tile.color}
+        fill={getColor(s.tile.color, s.highlight && s.highlight.highlightColor)}
+        stroke={getColor(s.tile.color, s.highlight && s.highlight.borderColor)}
         strokeWidth={0.05}
         onMouseEnter={() => s.dispatch({ type: 'HoverTile', tileId })}
         onClick={() => s.dispatch({ type: 'ClickOnTile', tileId })}
       />
     ),
   )
+}
+
+function getColor(color: string, highlightColor?: string): string {
+  if (!highlightColor) return color
+  const cColor = Color(color)
+  const cHighlight = Color(highlightColor)
+  return cColor.mix(cHighlight.alpha(1), cHighlight.alpha()).toString()
 }
 
 const StyledPolygon = styled.polygon`
