@@ -10,13 +10,13 @@ import Button from './Button'
 
 export default function DebugPanel() {
   return (
-    <HBox>
+    <StyledDebugPanel>
       <ResetButton />
       <Spacer />
       <ToggleVisibileButton setting={'active'} />
       <ToggleVisibileButton setting={'inactive'} />
       <ToggleVisibileButton setting={'both'} />
-    </HBox>
+    </StyledDebugPanel>
   )
 }
 
@@ -43,3 +43,8 @@ function ToggleVisibileButton(props: { setting: VisibleClientViewSetting }) {
     />
   ))
 }
+
+const StyledDebugPanel = styled(HBox)`
+  margin-top: auto;
+  border: 5px solid orange;
+`
