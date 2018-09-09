@@ -48,12 +48,10 @@ function ClientViewContainer(props: {
       borderColor={props.playerColor}
       isDisabled={props.isDisabled}
     >
+      <HexMap />
       <VBox>
         <UnitSpawnSelectionArea />
         <Spacer />
-      </VBox>
-      <HexMap />
-      <VBox>
         <AttackPreview />
         <Spacer />
         <EndTurnButton />
@@ -67,11 +65,11 @@ function HexMap() {
     <HexagonMap
       viewerProps={{
         center: { x: 0, y: 0 },
-        size: 25,
+        size: 40,
         scrollSpeed: 0.01,
         zoomFactor: 1.2,
-        zoomInSteps: 3,
-        zoomOutSteps: 5,
+        zoomInSteps: 4,
+        zoomOutSteps: 4,
         onRightClick: () => dispatch({ type: 'RightClick' }),
       }}
     />
