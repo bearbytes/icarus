@@ -12,26 +12,28 @@ import { Gavel } from 'styled-icons/fa-solid/Gavel'
 export default function AttackPreview() {
   return withClientState(
     s => {
-      let selectedUnit = getSelectedUnit(s)
-      if (selectedUnit && selectedUnit.playerId != s.ui.localPlayerId) {
-        selectedUnit = null
+      let myUnit = getSelectedUnit(s)
+      if (myUnit && myUnit.playerId != s.ui.localPlayerId) {
+        myUnit = null
       }
 
-      let hoverUnit = getUnitOnTile(s.game, s.ui.hoveredTileId)
-      if (hoverUnit && hoverUnit.playerId == s.ui.localPlayerId) {
-        hoverUnit = null
+      let enemyUnit =
+        getUnitOnTile(s.game, s.ui.attackTargetTileId) ||
+        getUnitOnTile(s.game, s.ui.hoveredTileId)
+      if (enemyUnit && enemyUnit.playerId == s.ui.localPlayerId) {
+        enemyUnit = null
       }
 
       return {
-        myUnit: selectedUnit,
-        enemyUnit: hoverUnit,
+        myUnit,
+        enemyUnit,
       }
     },
     s => (
       <StyledAttackPreview>
         <UnitPreview unit={s.myUnit} />
         <CenteredHBox>
-          <AttackText />
+          <AttackText attackerUnit={s.myUnit} attackedUnit={s.enemyUnit} />
         </CenteredHBox>
         <UnitPreview unit={s.enemyUnit} />
       </StyledAttackPreview>
@@ -39,7 +41,13 @@ export default function AttackPreview() {
   )
 }
 
-function AttackText(props: {}) {
+function AttackText(props: {
+  attackerUnit: IUnit | null
+  attackedUnit: IUnit | null
+}) {
+  const { attackerUnit, attackedUnit } = props
+  if (!attackerUnit || !attackedUnit) return null
+
   return (
     <VBox>
       {Row(Crosshairs, '73%')}
