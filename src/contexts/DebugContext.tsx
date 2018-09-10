@@ -19,7 +19,7 @@ export default function DebugContextProvider(props: {
   return withState(
     {
       visibleClientView: 'active' as VisibleClientViewSetting,
-      expandedEditor: true,
+      expandedEditor: false,
     },
     (state, setState) => (
       <DebugContext.Provider

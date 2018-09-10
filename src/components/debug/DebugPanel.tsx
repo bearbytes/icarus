@@ -27,7 +27,11 @@ function ResetButton() {
 
 function ToggleButton() {
   return withDebugContext(ctx => (
-    <Button text={'Toggle Editor'} onClick={ctx.toggleEditor} />
+    <Button
+      text={'Toggle Editor'}
+      down={ctx.expandedEditor}
+      onClick={ctx.toggleEditor}
+    />
   ))
 }
 
