@@ -33,4 +33,8 @@ const StyledButton = styled.div<{ down: boolean; disabled: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  :hover {
+    background-color: #ccc;
+  }
 `

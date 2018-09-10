@@ -18,4 +18,5 @@ export default function DebugEditor() {
 
 const StyledDebugEditor = styled(VBox)`
   border: 5px solid orange;
+  width: 350px;
 `
