@@ -5,9 +5,9 @@ import styled from 'styled-components'
 import { IUnit } from '../models'
 import { getUnitOnTile } from '../state/GameStateHelpers'
 import { HBox, VBox, CenteredHBox } from './layout'
-import UnitTypes from '../resources/UnitTypes'
+import UnitTypes, { unitTypeOf } from '../resources/UnitTypes'
 import { Crosshairs, StyledIcon } from 'styled-icons/fa-solid/Crosshairs'
-import { Gavel } from 'styled-icons/fa-solid/Gavel'
+import { Zap } from 'styled-icons/octicons/Zap'
 
 export default function AttackPreview() {
   return withClientState(
@@ -50,8 +50,8 @@ function AttackText(props: {
 
   return (
     <VBox>
-      {Row(Crosshairs, '73%')}
-      {Row(Gavel, '2-4')}
+      {Row(Crosshairs, '100%')}
+      {Row(Zap, unitTypeOf(attackerUnit).attackDamage.toString())}
     </VBox>
   )
 
