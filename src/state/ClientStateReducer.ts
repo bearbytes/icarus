@@ -224,7 +224,12 @@ function clickOnTile(
       }
     }
 
-    s = selectUnit(s, unit.unitId)
+    // Only our own units can be selected
+    if (unit.playerId == s.ui.localPlayerId) {
+      s = selectUnit(s, unit.unitId)
+      s = updateUI(s, { attackTargetTileId: null })
+      s = updateTileHighlights(s)
+    }
     return { nextState: s }
   }
 
@@ -376,8 +381,10 @@ function updateTileHighlights(s: IClientState): IClientState {
       if (dist > range) continue
 
       const isAttackTargetTile = enemyUnit.tileId == s.ui.attackTargetTileId
-      const borderColor = isAttackTargetTile ? '#f00' : '#f80'
-      tileHighlights[enemyUnit.tileId] = { borderColor }
+      tileHighlights[enemyUnit.tileId] = {
+        highlightColor: '#f005',
+        borderColor: isAttackTargetTile && '#f00',
+      }
     }
   }
 
