@@ -392,7 +392,7 @@ function addAnimation(s: IClientState, data: AnimationData): IClientState {
   const animation: IAnimation = { id, startTime, data }
 
   const now = new Date().getTime()
-  const expireBefore = now - 5000 // TODO: max animation time?!
+  const expireBefore = now - 10000 // no animation should be longer than 10 seconds.. :o
   let animations = s.ui.animations.filter(a => a.startTime > expireBefore)
   animations = [...animations, animation]
 
