@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { Spacer } from '../layout'
 
 interface ButtonProps {
   text: string

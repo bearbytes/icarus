@@ -80,6 +80,8 @@ export function ClientStateReducer(
       return clickOnUnitSpawnSelection(s, a)
     case 'ClickOnEndTurn':
       return clickOnEndTurn(s)
+    case 'ToggleAutoEndTurn':
+      return clickOnAutoEndTurn(s)
   }
 }
 
@@ -289,6 +291,10 @@ function clickOnEndTurn(s: IClientState): IClientStateAndActions {
     nextState: s,
     action: { type: 'EndTurn' },
   }
+}
+
+function clickOnAutoEndTurn(s: IClientState): IClientState {
+  return updateUI(s, { autoEndTurn: !s.ui.autoEndTurn })
 }
 
 function selectUnit(s: IClientState, unitId: string): IClientState {

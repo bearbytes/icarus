@@ -18,6 +18,7 @@ export function createClientState(playerId: string): IClientState {
       hoveredTileId: null,
       attackTargetTileId: null,
       animations: [],
+      autoEndTurn: true,
     },
   }
 }

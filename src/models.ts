@@ -70,6 +70,8 @@ export interface IUIState {
   selectedUnitSpawnTypeId: string | null
 
   animations: IAnimation[]
+
+  autoEndTurn: boolean
 }
 
 export interface IHexagonMapTileHighlight {

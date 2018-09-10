@@ -13,6 +13,7 @@ export type UIAction =
   | ClickOnUnitSpawnSelection
   | ClickOnEndTurn
   | RightClick
+  | ToggleAutoEndTurn
 
 export interface HoverTile {
   type: 'HoverTile'
@@ -35,4 +36,8 @@ export interface ClickOnEndTurn {
 
 export interface RightClick {
   type: 'RightClick'
+}
+
+export interface ToggleAutoEndTurn {
+  type: 'ToggleAutoEndTurn'
 }
