@@ -99,7 +99,9 @@ function turnStarted(
   { activePlayerId }: TurnStarted,
 ): IClientState {
   s = updateGame(s, { activePlayerId })
-  s = updateUI(s, { pathHighlights: [] })
+  if (!isMyTurn(s)) {
+    s = updateUI(s, { pathHighlights: [] })
+  }
   return s
 }
 
