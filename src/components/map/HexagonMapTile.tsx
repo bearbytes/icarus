@@ -10,7 +10,7 @@ export default function HexagonMapTile(props: { tileId: string }) {
 
   const pos = HexCoord.fromId(tileId).toPixel()
   const points = formatPoints(
-    HexCoord.corners(0.975).map(({ x, y }) => ({
+    HexCoord.corners(0.96).map(({ x, y }) => ({
       x: x + pos.x,
       y: y + pos.y,
     })),
@@ -26,7 +26,7 @@ export default function HexagonMapTile(props: { tileId: string }) {
         points={points}
         fill={getColor(s.tile.color, s.highlight && s.highlight.highlightColor)}
         stroke={getColor(s.tile.color, s.highlight && s.highlight.borderColor)}
-        strokeWidth={0.05}
+        strokeWidth={0.08}
         onMouseEnter={() => s.dispatch({ type: 'HoverTile', tileId })}
         onClick={() => s.dispatch({ type: 'ClickOnTile', tileId })}
       />

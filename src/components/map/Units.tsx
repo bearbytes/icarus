@@ -22,18 +22,16 @@ function Unit(props: { unitId: string }) {
     s => {
       const unit = s.game.units[unitId]
       const player = s.game.players[unit.playerId]
-      const isSelected = s.ui.selectedUnitId == unitId
       const color = player.color
       const isHovered = s.ui.hoveredTileId == unit.tileId
       const isMyUnit = unit.playerId == s.ui.localPlayerId
-      return { unit, color, isSelected, isHovered, isMyUnit }
+      return { unit, color, isHovered, isMyUnit }
     },
     s => (
       <CenterOnTile tileId={s.unit.tileId}>
         <path
           transform={'scale(0.0025) translate(-256 -256)'}
           d={UnitTypes[s.unit.unitTypeId].svgPath}
-          fill={s.isSelected ? 'white' : 'black'}
           stroke={s.color}
           strokeWidth={10}
         />

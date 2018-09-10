@@ -381,6 +381,14 @@ function updateTileHighlights(s: IClientState): IClientState {
     }
   }
 
+  const selectedUnit = getSelectedUnit(s)
+  if (selectedUnit) {
+    tileHighlights[selectedUnit.tileId] = {
+      borderColor: '#fff',
+      highlightColor: '#fff8',
+    }
+  }
+
   return updateUI(s, { tileHighlights })
 }
 
