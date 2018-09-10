@@ -4,6 +4,9 @@ import { withState } from '../components/hoc/withState'
 export type VisibleClientViewSetting = 'active' | 'inactive' | 'both'
 
 interface IDebugContext {
+  expandedEditor: boolean
+  toggleEditor(): void
+
   visibleClientView: VisibleClientViewSetting
   setVisibleClientView(setting: VisibleClientViewSetting): void
 }
@@ -14,10 +17,17 @@ export default function DebugContextProvider(props: {
   children: React.ReactNode
 }) {
   return withState(
-    { visibleClientView: 'active' as VisibleClientViewSetting },
+    {
+      visibleClientView: 'active' as VisibleClientViewSetting,
+      expandedEditor: true,
+    },
     (state, setState) => (
       <DebugContext.Provider
         value={{
+          expandedEditor: state.expandedEditor,
+          toggleEditor: () =>
+            setState({ expandedEditor: !state.expandedEditor }),
+
           visibleClientView: state.visibleClientView,
           setVisibleClientView: visibleClientView =>
             setState({ visibleClientView }),

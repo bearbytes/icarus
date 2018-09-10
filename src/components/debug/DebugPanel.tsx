@@ -1,17 +1,18 @@
 import React from 'react'
-import { clearState } from '../lib/persistState'
-import { HBox, Spacer } from './layout'
+import { HBox, Spacer } from '../layout'
 import {
   VisibleClientViewSetting,
   withDebugContext,
-} from '../contexts/DebugContext'
+} from '../../contexts/DebugContext'
 import styled from 'styled-components'
-import Button from './ui/Button'
+import Button from '../ui/Button'
+import { clearCacheAndReload } from './ErrorBoundary'
 
 export default function DebugPanel() {
   return (
     <StyledDebugPanel>
       <ResetButton />
+      <ToggleButton />
       <Spacer />
       <ToggleVisibileButton setting={'active'} />
       <ToggleVisibileButton setting={'inactive'} />
@@ -21,17 +22,13 @@ export default function DebugPanel() {
 }
 
 function ResetButton() {
-  return (
-    <Button
-      text={'Reset'}
-      onClick={() => {
-        clearState('game')
-        clearState('mond')
-        clearState('stern')
-        location.reload()
-      }}
-    />
-  )
+  return <Button text={'Reset'} onClick={clearCacheAndReload} />
+}
+
+function ToggleButton() {
+  return withDebugContext(ctx => (
+    <Button text={'Toggle Editor'} onClick={ctx.toggleEditor} />
+  ))
 }
 
 function ToggleVisibileButton(props: { setting: VisibleClientViewSetting }) {

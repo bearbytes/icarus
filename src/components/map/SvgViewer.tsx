@@ -66,7 +66,6 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
       return (
         <svg
           viewBox={`${left} ${top} ${w} ${h}`}
-          preserveAspectRatio={'xMidyMid'}
           onWheel={e => this.onWheel(e)}
           onMouseDown={e => this.onMouseDown(e)}
         >
@@ -202,8 +201,6 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
   componentDidMount() {
     window.addEventListener('keydown', this.onKeyDown)
     window.addEventListener('keyup', this.onKeyUp)
-
-    console.log()
   }
 
   componentWillUnmount() {
@@ -218,7 +215,6 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
     const w = domNode.clientWidth
     const h = domNode.clientHeight
     const aspectRatio = w / h
-    console.log(w, h, aspectRatio)
 
     if (this.state.aspectRatio) {
       if (Math.abs(aspectRatio - this.state.aspectRatio) < 0.01) {

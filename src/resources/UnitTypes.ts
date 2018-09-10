@@ -1,5 +1,6 @@
 import { zipObj } from 'ramda'
 import { IUnitType, IUnit } from '../models'
+import { storeState, fetchState } from '../lib/persistState'
 
 const units: IUnitType[] = [
   {
@@ -22,8 +23,19 @@ const units: IUnitType[] = [
   },
 ]
 
-const UnitTypes = zipObj(units.map(u => u.unitTypeId), units)
+type UnitTypes = { [unitTypeId: string]: IUnitType }
+
+const DefaultUnitTypes = zipObj(units.map(u => u.unitTypeId), units)
+
+let UnitTypes = fetchState<UnitTypes>('UnitTypes') || DefaultUnitTypes
 export default UnitTypes
+
+export { DefaultUnitTypes }
+
+export function updateUnitTypes(unitTypes: UnitTypes) {
+  UnitTypes = unitTypes
+  storeState('UnitTypes', UnitTypes)
+}
 
 export function unitTypeOf(unit: IUnit) {
   return UnitTypes[unit.unitTypeId]

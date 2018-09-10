@@ -1,5 +1,5 @@
 import React, { ErrorInfo } from 'react'
-import { clearState } from '../lib/persistState'
+import { clearState } from '../../lib/persistState'
 
 interface Props {}
 interface State {
@@ -29,7 +29,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
   }
 }
 
-function clearCacheAndReload() {
+export function clearCacheAndReload() {
   clearState('game')
   clearState('mond')
   clearState('stern')
