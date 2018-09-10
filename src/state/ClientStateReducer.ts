@@ -37,9 +37,10 @@ import {
   getRemainingMovePoints,
   getSelectedUnitId,
   addPathHighlight,
+  getMyUnits,
 } from './ClientStateHelpers'
 import log from '../lib/log'
-import { last, values, partition } from 'ramda'
+import { last, values, partition, all } from 'ramda'
 import { HexCoord } from '../types'
 import UnitTypes from '../resources/UnitTypes'
 import { AnimationData } from '../animations'
@@ -138,7 +139,7 @@ function unitSpawned(s: IClientState, { unit }: UnitSpawned): IClientState {
 function unitUpdated(
   s: IClientState,
   { unitId, actionPoints, movePoints, hitPoints }: UnitUpdated,
-): IClientState {
+): IClientStateAndActions {
   if (hitPoints != null) {
     const unit = s.game.units[unitId]
     const hitPointsBefore = unit.hitPoints
@@ -167,7 +168,20 @@ function unitUpdated(
     s = updateTileHighlights(s)
   }
 
-  return s
+  // check if we should end turn
+  if (s.ui.autoEndTurn && isMyTurn(s) && isMyUnit(s, unitId)) {
+    const units = getMyUnits(s)
+    if (units.length > 0) {
+      if (all(unit => unit.actionPoints == 0, units)) {
+        return {
+          nextState: s,
+          action: { type: 'EndTurn' },
+        }
+      }
+    }
+  }
+
+  return { nextState: s }
 }
 
 function unitRemoved(s: IClientState, { unitId }: UnitRemoved): IClientState {

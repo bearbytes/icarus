@@ -6,6 +6,7 @@ import {
   IHexagonMapTile,
   IPathHighlight,
 } from '../models'
+import { values } from 'ramda'
 
 export function updateGame(
   s: IClientState,
@@ -42,6 +43,12 @@ export function getSelectedUnit(s: IClientState): IUnit | null {
   const unitId = s.ui.selectedUnitId
   if (!unitId) return null
   return s.game.units[unitId]
+}
+
+export function getMyUnits(s: IClientState): IUnit[] {
+  return values(s.game.units).filter(
+    unit => unit.playerId == s.ui.localPlayerId,
+  )
 }
 
 export function isMyTurn(s: IClientState): boolean {
