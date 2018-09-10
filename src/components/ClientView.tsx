@@ -48,7 +48,6 @@ function ClientViewContainer(props: {
       borderColor={props.playerColor}
       isDisabled={props.isDisabled}
     >
-      <HexMap />
       <VBox>
         <UnitSpawnSelectionArea />
         <Spacer />
@@ -56,6 +55,7 @@ function ClientViewContainer(props: {
         <Spacer />
         <EndTurnButton />
       </VBox>
+      <HexMap />
     </StyledClientViewContainer>
   )
 }
