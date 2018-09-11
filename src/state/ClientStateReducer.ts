@@ -339,7 +339,11 @@ function clickOnSkill(
 }
 
 function selectUnit(s: IClientState, unitId: string): IClientState {
-  s = updateUI(s, { selectedUnitId: unitId, selectedUnitSpawnTypeId: null })
+  s = updateUI(s, {
+    selectedUnitId: unitId,
+    selectedUnitSpawnTypeId: null,
+    selectedSkillId: null,
+  })
   s = updateTileHighlights(s)
   return s
 }
