@@ -35,15 +35,6 @@ export default function UnitTypeEditor() {
 }
 
 function onEdit(props: InteractionProps) {
-  const editableFields = [
-    'movePoints',
-    'hitPoints',
-    'attackRangeCutOff',
-    'attackRangeMax',
-    'attackDamage',
-  ]
-  if (!contains(props.name, editableFields)) return false
-
   const path = props.namespace.map(x => x as string)
   path.push(props.name!)
 
