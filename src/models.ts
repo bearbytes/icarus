@@ -34,9 +34,14 @@ export interface IUnitType {
 
   movePoints: number
   hitPoints: number
-  attackRangeCutOff: number
-  attackRangeMax: number
-  attackDamage: number
+  weapon: IWeapon
+}
+
+export interface IWeapon {
+  rangeCutOff: number
+  rangeMax: number
+  damageMin: number
+  damageMax: number
 }
 
 export interface IPlayer {

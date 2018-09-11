@@ -408,7 +408,7 @@ function updateTileHighlights(s: IClientState): IClientState {
 
   for (const myUnit of myUnits) {
     const myCoord = HexCoord.fromId(myUnit.tileId)
-    const range = UnitTypes[myUnit.unitTypeId].attackRangeMax
+    const range = UnitTypes[myUnit.unitTypeId].weapon.rangeMax
 
     for (const enemyUnit of enemyUnits) {
       const theirCoord = HexCoord.fromId(enemyUnit.tileId)

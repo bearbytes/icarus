@@ -207,7 +207,10 @@ function attackUnit(
       defenderUnitId,
     })
   } else {
-    const damage = UnitTypes[attacker.unitTypeId].attackDamage
+    const weapon = UnitTypes[attacker.unitTypeId].weapon
+    const damage = Math.round(
+      Math.random() * (weapon.damageMax - weapon.damageMin) + weapon.damageMin,
+    )
     const remainingHitpoints = defender.hitPoints - damage
     const killed = remainingHitpoints <= 0
 

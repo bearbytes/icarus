@@ -17,7 +17,7 @@ export default function MyUnits() {
       selectedUnit: getSelectedUnit(s),
     }),
     s => (
-      <VBox>
+      <StyledMyUnits>
         {s.units.map((unit, index) => (
           <MyUnit
             key={unit.unitId}
@@ -32,7 +32,7 @@ export default function MyUnits() {
             }
           />
         ))}
-      </VBox>
+      </StyledMyUnits>
     ),
   )
 }
@@ -54,37 +54,34 @@ function MyUnit(props: {
       },
     },
     () => (
-      <StyledMyUnit>
-        <svg viewBox={`${x - 1.5} ${y - 1} 2.5 2`}>
-          <Tile
-            tileId={props.unit.tileId}
-            fillColor={props.isSelected ? '#fff' : '#888'}
-            strokeColor={'transparent'}
-            onClick={props.onClick}
-          />
-          <g pointerEvents={'none'}>
-            <Unit unitId={props.unit.unitId} static={true} />
-          </g>
-          <CenterOnTile tileId={props.unit.tileId}>
-            <text
-              transform={'scale(0.04)'}
-              x={-35}
-              y={17}
-              fill={'white'}
-              stroke={'black'}
-              strokeWidth={0.5}
-              textAnchor={'right'}
-            >
-              {props.hotkey}
-            </text>
-          </CenterOnTile>
-        </svg>
-      </StyledMyUnit>
+      <svg viewBox={`${x - 1.5} ${y - 1} 2.5 2`}>
+        <Tile
+          tileId={props.unit.tileId}
+          fillColor={props.isSelected ? '#fff' : '#888'}
+          strokeColor={'transparent'}
+          onClick={props.onClick}
+        />
+        <g pointerEvents={'none'}>
+          <Unit unitId={props.unit.unitId} static={true} />
+        </g>
+        <CenterOnTile tileId={props.unit.tileId}>
+          <text
+            transform={'scale(0.04)'}
+            x={-35}
+            y={17}
+            fill={'white'}
+            stroke={'black'}
+            strokeWidth={0.5}
+            textAnchor={'right'}
+          >
+            {props.hotkey}
+          </text>
+        </CenterOnTile>
+      </svg>
     ),
   )
 }
 
-const StyledMyUnit = styled.div`
+const StyledMyUnits = styled(VBox)`
   width: 100px;
-  height: 60px;
 `

@@ -146,7 +146,7 @@ export function canAttack(
   const attackedTile = s.map.tiles[attackedUnit.tileId]
 
   const dist = hexCoordOf(attackerTile).distance(hexCoordOf(attackedTile))
-  const range = UnitTypes[attackerUnit.unitTypeId].attackRangeMax
+  const range = UnitTypes[attackerUnit.unitTypeId].weapon.rangeMax
 
   return dist <= range
 }
@@ -245,7 +245,7 @@ export function getHitChance(
   const defenderCoord = hexCoordOf(getTileOfUnit(s, defender))
   const dist = attackerCoord.distance(defenderCoord)
 
-  const cutoffDist = unitTypeOf(asUnit(s, attacker)).attackRangeCutOff
+  const cutoffDist = unitTypeOf(asUnit(s, attacker)).weapon.rangeCutOff
 
   let hitChance = 1.0
   for (let d = 0; d < dist; d++) {

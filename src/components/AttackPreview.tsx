@@ -48,6 +48,8 @@ function AttackText(props: {
   const { attackerUnit, attackedUnit } = props
   if (!attackerUnit || !attackedUnit) return null
 
+  const weapon = unitTypeOf(attackerUnit).weapon
+
   return withClientState(
     s => ({
       hitChance: getHitChance(s.game, attackerUnit, attackedUnit),
@@ -55,7 +57,7 @@ function AttackText(props: {
     s => (
       <VBox>
         {Row(Crosshairs, Math.floor(100 * s.hitChance) + '%')}
-        {Row(Zap, unitTypeOf(attackerUnit).attackDamage.toString())}
+        {Row(Zap, weapon.damageMin + '-' + weapon.damageMax)}
       </VBox>
     ),
   )
