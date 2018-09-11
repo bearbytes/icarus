@@ -5,7 +5,7 @@ import {
   IUnitType,
   IGameState,
 } from '../models'
-import UnitTypes from '../resources/UnitTypes'
+import UnitTypes, { unitTypeOf } from '../resources/UnitTypes'
 import { HexCoord } from '../lib/HexCoord'
 import aStar from 'a-star'
 import { tail } from 'ramda'
@@ -146,7 +146,7 @@ export function canAttack(
   const attackedTile = s.map.tiles[attackedUnit.tileId]
 
   const dist = hexCoordOf(attackerTile).distance(hexCoordOf(attackedTile))
-  const range = UnitTypes[attackerUnit.unitTypeId].attackRange
+  const range = UnitTypes[attackerUnit.unitTypeId].attackRangeMax
 
   return dist <= range
 }
@@ -245,7 +245,7 @@ export function getHitChance(
   const defenderCoord = hexCoordOf(getTileOfUnit(s, defender))
   const dist = attackerCoord.distance(defenderCoord)
 
-  const cutoffDist = 3
+  const cutoffDist = unitTypeOf(asUnit(s, attacker)).attackRangeCutOff
 
   let hitChance = 1.0
   for (let d = 0; d < dist; d++) {

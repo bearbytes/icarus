@@ -38,7 +38,8 @@ function onEdit(props: InteractionProps) {
   const editableFields = [
     'movePoints',
     'hitPoints',
-    'attackRange',
+    'attackRangeCutOff',
+    'attackRangeMax',
     'attackDamage',
   ]
   if (!contains(props.name, editableFields)) return false
