@@ -3,7 +3,7 @@ import { withClientState } from './hoc/withClientState'
 import { getSelectedUnit } from '../state/ClientStateHelpers'
 import styled from 'styled-components'
 import { IUnit } from '../models'
-import { getUnitOnTile } from '../state/GameStateHelpers'
+import { getUnitOnTile, getHitChance } from '../state/GameStateHelpers'
 import { HBox, VBox, CenteredHBox } from './layout'
 import UnitTypes, { unitTypeOf } from '../resources/UnitTypes'
 import { Crosshairs, StyledIcon } from 'styled-icons/fa-solid/Crosshairs'
@@ -48,11 +48,16 @@ function AttackText(props: {
   const { attackerUnit, attackedUnit } = props
   if (!attackerUnit || !attackedUnit) return null
 
-  return (
-    <VBox>
-      {Row(Crosshairs, '100%')}
-      {Row(Zap, unitTypeOf(attackerUnit).attackDamage.toString())}
-    </VBox>
+  return withClientState(
+    s => ({
+      hitChance: getHitChance(s.game, attackerUnit, attackedUnit),
+    }),
+    s => (
+      <VBox>
+        {Row(Crosshairs, Math.floor(100 * s.hitChance) + '%')}
+        {Row(Zap, unitTypeOf(attackerUnit).attackDamage.toString())}
+      </VBox>
+    ),
   )
 
   function Row(Icon: StyledIcon<any>, text: string) {

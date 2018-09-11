@@ -8,7 +8,7 @@ import {
 import UnitTypes from '../resources/UnitTypes'
 import { HexCoord } from '../lib/HexCoord'
 import aStar from 'a-star'
-import { contains, head, tail } from 'ramda'
+import { tail } from 'ramda'
 
 export function addUnit(s: IGameState, unit: IUnit) {
   let units = s.units
@@ -92,11 +92,13 @@ export function hexCoordOf(tile: IHexagonMapTile | string): HexCoord {
   return HexCoord.fromId(tileId)
 }
 
-export function getTileOfUnit(s: IGameState, unitId: string): IHexagonMapTile {
-  const unit = s.units[unitId]
+export function getTileOfUnit(
+  s: IGameState,
+  unit: IUnit | string,
+): IHexagonMapTile {
+  unit = asUnit(s, unit)
   return s.map.tiles[unit.tileId]
 }
-
 export function getTypeOfUnit(s: IGameState, unitId: string): IUnitType {
   const unit = s.units[unitId]
   return UnitTypes[unit.unitTypeId]
@@ -116,7 +118,6 @@ export function canMoveUnit(
   if (unit.actionPoints == 0) return false
   if (unit.movePoints < path.length) return false
 
-  const startTile = getTileOfUnit(s, unitId)
   // TODO test if path is connected and adjacent to unit tile
 
   return true
@@ -233,4 +234,31 @@ export function getReachableTileIdsForUnit(
   const unitTile = getTileOfUnit(s, unitId)
   const movePoints = getTypeOfUnit(s, unitId).movePoints
   return getReachableTileIds(s, unitTile.tileId, movePoints)
+}
+
+export function getHitChance(
+  s: IGameState,
+  attacker: IUnit | string,
+  defender: IUnit | string,
+): number {
+  const attackerCoord = hexCoordOf(getTileOfUnit(s, attacker))
+  const defenderCoord = hexCoordOf(getTileOfUnit(s, defender))
+  const dist = attackerCoord.distance(defenderCoord)
+
+  const cutoffDist = 3
+
+  let hitChance = 1.0
+  for (let d = 0; d < dist; d++) {
+    hitChance = hitChance * 0.9
+    if (d >= cutoffDist) {
+      hitChance = hitChance * 0.9
+    }
+  }
+
+  return hitChance
+}
+
+function asUnit(s: IGameState, unit: IUnit | string): IUnit {
+  if (typeof unit == 'object') return unit
+  return s.units[unit]
 }
