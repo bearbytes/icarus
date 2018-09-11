@@ -9,6 +9,7 @@ import UnitSpawnSelectionArea from './UnitSpawnSelectionArea'
 import EndTurnButton from './EndTurnButton'
 import AttackPreview from './AttackPreview'
 import MyUnits from './MyUnits'
+import SkillBar from './SkillBar'
 
 export default function ClientView(props: {
   playerName: string
@@ -63,6 +64,7 @@ function ControlBar() {
       <Spacer />
       <AttackPreview />
       <Spacer />
+      <SkillBar />
       <EndTurnButton />
     </VBox>
   )
