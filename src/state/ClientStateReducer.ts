@@ -6,6 +6,7 @@ import {
   TurnStarted,
   UnitUpdated,
   UnitRemoved,
+  AttackMissed,
 } from '../actions/GameEvents'
 import { IClientState, IPathHighlight, IAnimation } from '../models'
 import { PlayerAction } from '../actions/PlayerActions'
@@ -25,6 +26,7 @@ import {
   getReachableTileIds,
   canAttack,
   removeUnit,
+  getTileOfUnit,
 } from './GameStateHelpers'
 import {
   getSelectedUnit,
@@ -69,6 +71,8 @@ export function ClientStateReducer(
       return unitUpdated(s, a)
     case 'UnitRemoved':
       return unitRemoved(s, a)
+    case 'AttackMissed':
+      return attackMissed(s, a)
 
     // Actions
     case 'HoverTile':
@@ -192,6 +196,15 @@ function unitRemoved(s: IClientState, { unitId }: UnitRemoved): IClientState {
   return s
 }
 
+function attackMissed(
+  s: IClientState,
+  { defenderUnitId }: AttackMissed,
+): IClientState {
+  const tile = getTileOfUnit(s.game, defenderUnitId)
+  s = addAnimation(s, { type: 'MissAnimation', tileId: tile.tileId })
+  return s
+}
+
 function hoverTile(s: IClientState, { tileId }: HoverTile): IClientState {
   s = updateUI(s, { hoveredTileId: tileId })
   return s
@@ -236,7 +249,7 @@ function clickOnTile(
           action: {
             type: 'AttackUnit',
             attackingUnitId: selectedUnitId!,
-            attackedUnitId: unit.unitId,
+            defenderUnitId: unit.unitId,
           },
         }
       }

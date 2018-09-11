@@ -126,16 +126,16 @@ export function canMoveUnit(
 export function canAttack(
   s: IGameState,
   attackerUnitId: string | null,
-  attackedUnitId: string | null,
+  defenderUnitId: string | null,
   attackerPlayerId: string,
 ): boolean {
   if (!attackerUnitId) return false
-  if (!attackedUnitId) return false
+  if (!defenderUnitId) return false
 
   if (s.activePlayerId != attackerPlayerId) return false
 
   const attackerUnit = s.units[attackerUnitId]
-  const attackedUnit = s.units[attackedUnitId]
+  const attackedUnit = s.units[defenderUnitId]
 
   if (attackerUnit.playerId != attackerPlayerId) return false
   if (attackedUnit.playerId == attackerPlayerId) return false

@@ -7,6 +7,7 @@ export type GameEvent =
   | UnitMoved
   | UnitUpdated
   | UnitRemoved
+  | AttackMissed
 
 export interface GameStarted {
   type: 'GameStarted'
@@ -40,4 +41,9 @@ export interface UnitUpdated {
 export interface UnitRemoved {
   type: 'UnitRemoved'
   unitId: string
+}
+
+export interface AttackMissed {
+  type: 'AttackMissed'
+  defenderUnitId: string
 }

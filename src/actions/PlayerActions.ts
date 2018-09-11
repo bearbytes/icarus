@@ -15,7 +15,7 @@ export interface MoveUnit {
 export interface AttackUnit {
   type: 'AttackUnit'
   attackingUnitId: string
-  attackedUnitId: string
+  defenderUnitId: string
 }
 
 export interface EndTurn {

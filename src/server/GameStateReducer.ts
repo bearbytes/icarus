@@ -8,6 +8,7 @@ import {
   canAttack,
   updateUnit,
   removeUnit,
+  getHitChance,
 } from '../state/GameStateHelpers'
 import { PlayerAction } from '../actions/PlayerActions'
 import { IGameState, IUnit } from '../models'
@@ -40,7 +41,7 @@ export function GameStateReducer(
       return attackUnit(
         s,
         a.attackingUnitId,
-        a.attackedUnitId,
+        a.defenderUnitId,
         executingPlayerId,
       )
   }
@@ -178,21 +179,20 @@ function moveUnit(
 function attackUnit(
   s: IGameState,
   attackingUnitId: string,
-  attackedUnitId: string,
+  defenderUnitId: string,
   executingPlayerId: string,
 ): IGameStateAndEvents {
-  if (!canAttack(s, attackingUnitId, attackedUnitId, executingPlayerId)) {
+  if (!canAttack(s, attackingUnitId, defenderUnitId, executingPlayerId)) {
     throw 'invalid attackUnit'
   }
 
   const events: GameEvent[] = []
 
   const attacker = s.units[attackingUnitId]
-  const attacked = s.units[attackedUnitId]
+  const defender = s.units[defenderUnitId]
 
-  const damage = UnitTypes[attacker.unitTypeId].attackDamage
-  const remainingHitpoints = attacked.hitPoints - damage
-  const killed = remainingHitpoints <= 0
+  const hitChance = getHitChance(s, attacker, defender)
+  const hit = Math.random() < hitChance
 
   s = updateUnit(s, attackingUnitId, { actionPoints: 0 })
   events.push({
@@ -201,24 +201,35 @@ function attackUnit(
     actionPoints: 0,
   })
 
-  if (killed) {
-    s = removeUnit(s, attackedUnitId)
+  if (!hit) {
     events.push({
-      type: 'UnitUpdated',
-      unitId: attackedUnitId,
-      hitPoints: 0,
-    })
-    events.push({
-      type: 'UnitRemoved',
-      unitId: attackedUnitId,
+      type: 'AttackMissed',
+      defenderUnitId,
     })
   } else {
-    s = updateUnit(s, attackedUnitId, { hitPoints: remainingHitpoints })
-    events.push({
-      type: 'UnitUpdated',
-      unitId: attackedUnitId,
-      hitPoints: remainingHitpoints,
-    })
+    const damage = UnitTypes[attacker.unitTypeId].attackDamage
+    const remainingHitpoints = defender.hitPoints - damage
+    const killed = remainingHitpoints <= 0
+
+    if (killed) {
+      s = removeUnit(s, defenderUnitId)
+      events.push({
+        type: 'UnitUpdated',
+        unitId: defenderUnitId,
+        hitPoints: 0,
+      })
+      events.push({
+        type: 'UnitRemoved',
+        unitId: defenderUnitId,
+      })
+    } else {
+      s = updateUnit(s, defenderUnitId, { hitPoints: remainingHitpoints })
+      events.push({
+        type: 'UnitUpdated',
+        unitId: defenderUnitId,
+        hitPoints: remainingHitpoints,
+      })
+    }
   }
 
   return {
