@@ -64,7 +64,7 @@ function MissAnimation(props: { data: MissAnimation }) {
           stroke={'black'}
           strokeWidth={0.5}
         >
-          missed
+          miss
         </text>
       </GoingUp>
     </CenterOnTile>
