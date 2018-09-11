@@ -16,7 +16,7 @@ export default function Units() {
   )
 }
 
-function Unit(props: { unitId: string }) {
+export function Unit(props: { unitId: string; static?: boolean }) {
   const { unitId } = props
   return withClientState(
     s => {
@@ -38,7 +38,7 @@ function Unit(props: { unitId: string }) {
         <HealthBar
           hitPoints={s.unit.hitPoints}
           maxHitPoints={unitTypeOf(s.unit).hitPoints}
-          showNumber={s.isHovered}
+          showNumber={s.isHovered && !props.static}
         />
         {s.isMyUnit && (
           <ActionPointIndicator

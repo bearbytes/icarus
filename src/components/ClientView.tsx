@@ -8,6 +8,7 @@ import { HBox, Spacer, VBox } from './layout'
 import UnitSpawnSelectionArea from './UnitSpawnSelectionArea'
 import EndTurnButton from './EndTurnButton'
 import AttackPreview from './AttackPreview'
+import MyUnits from './MyUnits'
 
 export default function ClientView(props: {
   playerName: string
@@ -48,15 +49,22 @@ function ClientViewContainer(props: {
       borderColor={props.playerColor}
       isDisabled={props.isDisabled}
     >
-      <VBox>
-        <UnitSpawnSelectionArea />
-        <Spacer />
-        <AttackPreview />
-        <Spacer />
-        <EndTurnButton />
-      </VBox>
+      <ControlBar />
+      <MyUnits />
       <HexMap />
     </StyledClientViewContainer>
+  )
+}
+
+function ControlBar() {
+  return (
+    <VBox>
+      <UnitSpawnSelectionArea />
+      <Spacer />
+      <AttackPreview />
+      <Spacer />
+      <EndTurnButton />
+    </VBox>
   )
 }
 

@@ -87,7 +87,7 @@ export function getUnitOnTile(
   return s.units[unitId]
 }
 
-export function getTileCoord(tile: IHexagonMapTile | string): HexCoord {
+export function hexCoordOf(tile: IHexagonMapTile | string): HexCoord {
   const tileId = typeof tile == 'string' ? tile : tile.tileId
   return HexCoord.fromId(tileId)
 }
@@ -144,7 +144,7 @@ export function canAttack(
   const attackerTile = s.map.tiles[attackerUnit.tileId]
   const attackedTile = s.map.tiles[attackedUnit.tileId]
 
-  const dist = getTileCoord(attackerTile).distance(getTileCoord(attackedTile))
+  const dist = hexCoordOf(attackerTile).distance(hexCoordOf(attackedTile))
   const range = UnitTypes[attackerUnit.unitTypeId].attackRange
 
   return dist <= range
@@ -155,14 +155,14 @@ export function getPathToTarget(
   startTileId: string,
   targetTileId: string,
 ): IHexagonMapTile[] | null {
-  const targetCoord = getTileCoord(targetTileId)
+  const targetCoord = hexCoordOf(targetTileId)
 
   const result = aStar<IHexagonMapTile>({
     start: s.map.tiles[startTileId],
     isEnd: tile => tile.tileId === targetTileId,
     neighbor: tile => getNeighborTiles(s, tile),
     distance: (from, to) => (to.blocked ? 1000000 : 1),
-    heuristic: node => getTileCoord(node).distance(targetCoord),
+    heuristic: node => hexCoordOf(node).distance(targetCoord),
     hash: tile => tile.tileId,
   })
 
@@ -178,7 +178,7 @@ export function getNeighborTiles(
   tile: IHexagonMapTile,
 ): IHexagonMapTile[] {
   const result: IHexagonMapTile[] = []
-  const neighborIds = getTileCoord(tile)
+  const neighborIds = hexCoordOf(tile)
     .neighbors()
     .map(c => c.id)
   for (const id of neighborIds) {
