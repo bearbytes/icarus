@@ -1,14 +1,26 @@
 import React from 'react'
 import { HBox } from './layout'
 import styled from 'styled-components'
-import { withClientStateAndDispatch } from './hoc/withClientState'
+import {
+  withClientStateAndDispatch,
+  withClientState,
+} from './hoc/withClientState'
 import withEventListeners, { withHotkeys } from './hoc/withEventListeners'
 
 export default function SkillBar() {
-  return (
-    <StyledSkillBar>
-      <SkillButton hotkey={'1'} skillId={'attack'} />
-    </StyledSkillBar>
+  return withClientState(
+    s => ({
+      isUnitSelected: s.ui.selectedUnitId != null,
+    }),
+    s => (
+      <StyledSkillBarContainer>
+        {s.isUnitSelected && (
+          <StyledSkillBar>
+            <SkillButton hotkey={'1'} skillId={'attack'} />
+          </StyledSkillBar>
+        )}
+      </StyledSkillBarContainer>
+    ),
   )
 }
 
@@ -42,9 +54,12 @@ function SkillButton(props: { hotkey: string; skillId: string }) {
   )
 }
 
+const StyledSkillBarContainer = styled.div`
+  height: 120px;
+`
+
 const StyledSkillBar = styled(HBox)`
   padding: 10px;
-  margin: 20px;
   border: 1px solid white;
   border-radius: 10px;
 `
