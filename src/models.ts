@@ -75,6 +75,9 @@ export interface IUIState {
   selectedUnitId: string | null
   selectedUnitSpawnTypeId: string | null
 
+  selectedSkillId: string | null
+
+  // TODO: move them out of the state
   animations: IAnimation[]
 
   autoEndTurn: boolean

@@ -16,6 +16,7 @@ import {
   UIAction,
   RightClick,
   HoverTile,
+  ClickOnSkill,
 } from '../actions/UIActions'
 import {
   getUnitOnTile,
@@ -87,6 +88,8 @@ export function ClientStateReducer(
       return clickOnEndTurn(s)
     case 'ToggleAutoEndTurn':
       return clickOnAutoEndTurn(s)
+    case 'ClickOnSkill':
+      return clickOnSkill(s, a)
   }
 }
 
@@ -211,7 +214,9 @@ function hoverTile(s: IClientState, { tileId }: HoverTile): IClientState {
 }
 
 function rightClick(s: IClientState, a: RightClick): IClientState {
-  if (s.ui.attackTargetTileId) {
+  if (s.ui.selectedSkillId) {
+    s = updateUI(s, { selectedSkillId: null })
+  } else if (s.ui.attackTargetTileId) {
     s = updateUI(s, { attackTargetTileId: null })
   } else if (s.ui.movementPathTileIds.length > 0) {
     s = updateUI(s, { movementPathTileIds: [] })
@@ -324,6 +329,13 @@ function clickOnEndTurn(s: IClientState): IClientStateAndActions {
 
 function clickOnAutoEndTurn(s: IClientState): IClientState {
   return updateUI(s, { autoEndTurn: !s.ui.autoEndTurn })
+}
+
+function clickOnSkill(
+  s: IClientState,
+  { skillId }: ClickOnSkill,
+): IClientState {
+  return updateUI(s, { selectedSkillId: skillId })
 }
 
 function selectUnit(s: IClientState, unitId: string): IClientState {

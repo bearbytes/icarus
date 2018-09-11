@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import { hexCoordOf } from '../state/GameStateHelpers'
 import Tile from './map/Tile'
 import CenterOnTile from './helper/CenterOnTile'
-import withEventListeners from './hoc/withEventListeners'
+import { withHotkeys } from './hoc/withEventListeners'
 
 export default function MyUnits() {
   return withClientStateAndDispatch(
@@ -44,14 +44,9 @@ function MyUnit(props: {
   onClick: () => void
 }) {
   const { x, y } = hexCoordOf(props.unit.tileId).toPixel()
-  return withEventListeners(
+  return withHotkeys(
     {
-      keydown: (e: KeyboardEvent) => {
-        if (e.key != props.hotkey) return
-        e.stopPropagation()
-        e.preventDefault()
-        props.onClick()
-      },
+      [props.hotkey]: props.onClick,
     },
     () => (
       <svg viewBox={`${x - 1.5} ${y - 1} 2.5 2`}>

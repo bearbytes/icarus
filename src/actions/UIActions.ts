@@ -14,6 +14,7 @@ export type UIAction =
   | ClickOnEndTurn
   | RightClick
   | ToggleAutoEndTurn
+  | ClickOnSkill
 
 export interface HoverTile {
   type: 'HoverTile'
@@ -40,4 +41,9 @@ export interface RightClick {
 
 export interface ToggleAutoEndTurn {
   type: 'ToggleAutoEndTurn'
+}
+
+export interface ClickOnSkill {
+  type: 'ClickOnSkill'
+  skillId: string
 }

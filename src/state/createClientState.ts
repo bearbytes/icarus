@@ -19,6 +19,7 @@ export function createClientState(playerId: string): IClientState {
       attackTargetTileId: null,
       animations: [],
       autoEndTurn: true,
+      selectedSkillId: null,
     },
   }
 }

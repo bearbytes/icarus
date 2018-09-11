@@ -27,3 +27,23 @@ export default function withEventListeners(
 
   return <LifecycleComponent />
 }
+
+export function withHotkeys(
+  hotkeys: { [key: string]: () => void },
+  render: () => React.ReactNode,
+) {
+  return withEventListeners(
+    {
+      keydown: (e: KeyboardEvent) => {
+        for (const key of Object.keys(hotkeys)) {
+          if (e.key == key) {
+            e.stopPropagation()
+            e.preventDefault()
+            hotkeys[key]()
+          }
+        }
+      },
+    },
+    render,
+  )
+}
