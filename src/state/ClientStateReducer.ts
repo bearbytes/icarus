@@ -28,6 +28,9 @@ import {
   canAttack,
   removeUnit,
   getTileOfUnit,
+  hexCoordOf,
+  getHitChance,
+  getHitChanceForTile,
 } from './GameStateHelpers'
 import {
   getSelectedUnit,
@@ -45,8 +48,10 @@ import {
 import log from '../lib/log'
 import { last, values, partition, all } from 'ramda'
 import { HexCoord } from '../types'
-import UnitTypes from '../resources/UnitTypes'
+import UnitTypes, { unitTypeOf } from '../resources/UnitTypes'
 import { AnimationData } from '../animations'
+import Color from 'color'
+import { isUndefined } from 'util'
 
 export interface IClientStateAndActions {
   nextState?: IClientState
@@ -232,74 +237,108 @@ function clickOnTile(
   s: IClientState,
   { tileId }: ClickOnTile,
 ): IClientStateAndActions {
-  // Try to select or attack a unit on that tile
-  const unit = getUnitOnTile(s.game, tileId)
-  if (unit) {
-    // If the unit on the tile can be attacked, do so
-    const selectedUnitId = getSelectedUnitId(s)
-    if (canAttack(s.game, selectedUnitId, unit.unitId, s.ui.localPlayerId)) {
-      if (tileId != s.ui.attackTargetTileId) {
-        // First click mark as attack target
-        s = updateUI(s, { attackTargetTileId: tileId })
-        s = updateTileHighlights(s)
-        return {
-          nextState: s,
-        }
-      } else {
-        // Second click attack
-        s = updateUI(s, { attackTargetTileId: null })
-        s = updateTileHighlights(s)
-        return {
-          nextState: s,
-          action: {
-            type: 'AttackUnit',
-            attackingUnitId: selectedUnitId!,
-            defenderUnitId: unit.unitId,
-          },
-        }
+  const selectedUnit = getSelectedUnit(s)
+  const unitOnTile = getUnitOnTile(s.game, tileId)
+
+  if (canAttackTile()) {
+    return attackTile()
+  }
+  if (canSelectUnitOnTile()) {
+    return selectUnitOnTile()
+  }
+  if (canSpawnUnitOnTile()) {
+    return spawnUnitOnTile()
+  }
+  if (canMoveUnitToTile()) {
+    return moveUnitToTile()
+  }
+  return { nextState: s }
+
+  function canAttackTile() {
+    return (
+      selectedUnit &&
+      unitOnTile &&
+      s.ui.selectedSkillId &&
+      canAttack(
+        s.game,
+        selectedUnit.unitId,
+        unitOnTile.unitId,
+        s.ui.localPlayerId,
+      )
+    )
+  }
+
+  function attackTile(): IClientStateAndActions {
+    if (isMarkedAsTarget()) {
+      return executeAttack()
+    } else {
+      return markAsTarget()
+    }
+
+    function isMarkedAsTarget() {
+      return tileId == s.ui.attackTargetTileId
+    }
+
+    function markAsTarget(): IClientStateAndActions {
+      s = updateUI(s, { attackTargetTileId: tileId })
+      s = updateTileHighlights(s)
+      return {
+        nextState: s,
       }
     }
 
-    // Only our own units can be selected
-    if (unit.playerId == s.ui.localPlayerId) {
-      s = selectUnit(s, unit.unitId)
-      s = updateUI(s, { attackTargetTileId: null })
+    function executeAttack(): IClientStateAndActions {
+      s = updateUI(s, { attackTargetTileId: null, selectedSkillId: null })
       s = updateTileHighlights(s)
-    }
-    return { nextState: s }
-  }
-
-  // Try to spawn a unit on that tile
-  const spawnUnitTypeId = s.ui.selectedUnitSpawnTypeId
-  if (spawnUnitTypeId) {
-    if (isMyTurn(s)) {
       return {
         nextState: s,
         action: {
-          type: 'SpawnUnit',
-          tileId,
-          unitTypeId: spawnUnitTypeId,
+          type: 'AttackUnit',
+          attackingUnitId: selectedUnit!.unitId,
+          defenderUnitId: unitOnTile!.unitId,
         },
       }
     }
   }
 
-  // Try to move a selected unit to that tile
-  const selectedUnit = getSelectedUnit(s)
-  if (selectedUnit && isMyUnit(s, selectedUnit.unitId)) {
-    // If we previously selected that tile as target, move the unit
-    if (getMovementTargetTileId(s) == tileId) {
-      if (isMyTurn(s)) {
-        return moveUnit(s)
-      }
-    }
+  function canSelectUnitOnTile() {
+    return unitOnTile && unitOnTile.playerId == s.ui.localPlayerId
+  }
 
-    // otherwise, first click only selects the tile as target
-    s = createMovementPathToTile(s, tileId)
+  function selectUnitOnTile(): IClientStateAndActions {
+    s = selectUnit(s, unitOnTile!.unitId)
+    s = updateUI(s, { attackTargetTileId: null })
+    s = updateTileHighlights(s)
     return { nextState: s }
   }
 
-  return { nextState: s }
+  function canSpawnUnitOnTile() {
+    return isMyTurn(s) && s.ui.selectedUnitSpawnTypeId
+  }
+
+  function spawnUnitOnTile(): IClientStateAndActions {
+    return {
+      nextState: s,
+      action: {
+        type: 'SpawnUnit',
+        tileId,
+        unitTypeId: s.ui.selectedUnitSpawnTypeId!,
+      },
+    }
+  }
+
+  function canMoveUnitToTile() {
+    return selectedUnit != null && isMyTurn(s) && s.ui.selectedSkillId == null
+  }
+
+  function moveUnitToTile(): IClientStateAndActions {
+    if (getMovementTargetTileId(s) == tileId) {
+      return moveUnit(s)
+    } else {
+      s = createMovementPathToTile(s, tileId)
+      return { nextState: s }
+    }
+  }
 }
 
 function clickOnUnitSpawnSelection(
@@ -335,7 +374,9 @@ function clickOnSkill(
   s: IClientState,
   { skillId }: ClickOnSkill,
 ): IClientState {
-  return updateUI(s, { selectedSkillId: skillId })
+  s = updateUI(s, { selectedSkillId: skillId })
+  s = updateTileHighlights(s)
+  return s
 }
 
 function selectUnit(s: IClientState, unitId: string): IClientState {
@@ -401,49 +442,73 @@ function createMovementPathToTile(
 }
 
 function updateTileHighlights(s: IClientState): IClientState {
+  const selectedUnit = getSelectedUnit(s)
+
   const tileHighlights = {}
 
-  // tiles where we can move to
-  const startTileId = getMovementStartTileId(s)
-  if (startTileId) {
-    const range = getRemainingMovePoints(s)
-    if (range) {
-      for (const tileId of getReachableTileIds(s.game, startTileId, range)) {
+  if (s.ui.selectedSkillId == null) {
+    // no skill selected: show tiles where we can move to
+    const startTileId = getMovementStartTileId(s)
+    if (startTileId) {
+      const range = getRemainingMovePoints(s)
+      if (range) {
+        for (const tileId of getReachableTileIds(s.game, startTileId, range)) {
+          tileHighlights[tileId] = {
+            highlightColor: '#fff2',
+          }
+        }
+      }
+    }
+  } else {
+    // skill selected (assume attack): show tiles where we can attack
+    if (selectedUnit) {
+      const range = unitTypeOf(selectedUnit).weapon.rangeMax
+      const unitTile = getTileOfUnit(s.game, selectedUnit)
+      for (const coord of hexCoordOf(unitTile).area(range)) {
+        const tileId = coord.id
+        const tile = s.game.map.tiles[tileId]
+        if (!tile || tile.blocked) continue
+        const hitChance = getHitChanceForTile(s.game, selectedUnit, tileId)
         tileHighlights[tileId] = {
-          highlightColor: '#fff2',
+          highlightColor: Color('white').alpha(hitChance),
         }
       }
     }
   }
 
-  // tiles with units that we can attack
-  const [myUnits, enemyUnits] = partition(
-    unit => unit.playerId == s.ui.localPlayerId,
-    values(s.game.units),
-  )
+  // // tiles with units that we can attack
+  // const [myUnits, enemyUnits] = partition(
+  //   unit => unit.playerId == s.ui.localPlayerId,
+  //   values(s.game.units),
+  // )
 
-  for (const myUnit of myUnits) {
-    const myCoord = HexCoord.fromId(myUnit.tileId)
-    const range = UnitTypes[myUnit.unitTypeId].weapon.rangeMax
+  // for (const myUnit of myUnits) {
+  //   const myCoord = HexCoord.fromId(myUnit.tileId)
+  //   const range = UnitTypes[myUnit.unitTypeId].weapon.rangeMax
 
-    for (const enemyUnit of enemyUnits) {
-      const theirCoord = HexCoord.fromId(enemyUnit.tileId)
-      const dist = myCoord.distance(theirCoord)
-      if (dist > range) continue
+  //   for (const enemyUnit of enemyUnits) {
+  //     const theirCoord = HexCoord.fromId(enemyUnit.tileId)
+  //     const dist = myCoord.distance(theirCoord)
+  //     if (dist > range) continue
 
-      const isAttackTargetTile = enemyUnit.tileId == s.ui.attackTargetTileId
-      tileHighlights[enemyUnit.tileId] = {
-        highlightColor: '#f005',
-        borderColor: isAttackTargetTile && '#f00',
-      }
-    }
-  }
+  //     const isAttackTargetTile = enemyUnit.tileId == s.ui.attackTargetTileId
+  //     tileHighlights[enemyUnit.tileId] = {
+  //       highlightColor: '#f005',
+  //       borderColor: isAttackTargetTile && '#f00',
+  //     }
+  //   }
+  // }
 
-  const selectedUnit = getSelectedUnit(s)
   if (selectedUnit) {
     tileHighlights[selectedUnit.tileId] = {
       borderColor: '#fff',
       highlightColor: '#fff8',
+    }
+  }
+
+  if (s.ui.attackTargetTileId) {
+    tileHighlights[s.ui.attackTargetTileId] = {
+      highlightColor: '#f005',
     }
   }
 

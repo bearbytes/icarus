@@ -241,8 +241,17 @@ export function getHitChance(
   attacker: IUnit | string,
   defender: IUnit | string,
 ): number {
+  const targetTileId = getTileOfUnit(s, defender).tileId
+  return getHitChanceForTile(s, attacker, targetTileId)
+}
+
+export function getHitChanceForTile(
+  s: IGameState,
+  attacker: IUnit | string,
+  targetTileId: string,
+) {
   const attackerCoord = hexCoordOf(getTileOfUnit(s, attacker))
-  const defenderCoord = hexCoordOf(getTileOfUnit(s, defender))
+  const defenderCoord = hexCoordOf(targetTileId)
   const dist = attackerCoord.distance(defenderCoord)
 
   const cutoffDist = unitTypeOf(asUnit(s, attacker)).weapon.rangeCutOff
