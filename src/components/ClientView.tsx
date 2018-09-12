@@ -63,7 +63,6 @@ function ControlBar() {
       <UnitSpawnSelectionArea />
       <Spacer />
       <AttackPreview />
-      <Spacer />
       <SkillBar />
       <EndTurnButton />
     </VBox>

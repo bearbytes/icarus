@@ -100,11 +100,12 @@ function UnitPreview(props: { unit: IUnit | null }) {
 const StyledAttackPreview = styled(HBox)`
   width: 300px;
   height: 100px;
-  padding: 10px;
-  margin: 10px;
-  border: 3px solid white;
-  border-radius: 20px;
   color: white;
+
+  margin: 5px;
+  padding: 10px;
+  border: 2px solid white;
+  border-radius: 10px;
 `
 
 const StyledUnitPreview = styled(VBox)`

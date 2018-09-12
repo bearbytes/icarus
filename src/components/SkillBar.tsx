@@ -59,8 +59,9 @@ const StyledSkillBarContainer = styled.div`
 `
 
 const StyledSkillBar = styled(HBox)`
+  margin: 5px;
   padding: 10px;
-  border: 1px solid white;
+  border: 2px solid white;
   border-radius: 10px;
 `
 
