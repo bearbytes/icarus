@@ -69,4 +69,7 @@ const StyledSkillButton = styled.div<{ isSelected: boolean }>`
   width: 75px;
   height: 75px;
   background-color: ${p => (p.isSelected ? '#222' : 'transparent')};
+  :hover {
+    background-color: #222;
+  }
 `
