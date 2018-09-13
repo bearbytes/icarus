@@ -162,7 +162,13 @@ export function getPathToTarget(
     start: s.map.tiles[startTileId],
     isEnd: tile => tile.tileId === targetTileId,
     neighbor: tile => getNeighborTiles(s, tile),
-    distance: (from, to) => (to.blocked ? 1000000 : 1),
+    distance: (from, to) => {
+      if (isMovementBlocked(s, from.tileId, to.tileId)) {
+        return 1000000
+      } else {
+        return 1
+      }
+    },
     heuristic: node => hexCoordOf(node).distance(targetCoord),
     hash: tile => tile.tileId,
   })
@@ -191,6 +197,22 @@ export function getNeighborTiles(
   return result
 }
 
+export function isMovementBlocked(
+  s: IGameState,
+  fromTileId: string,
+  toTileId: string,
+) {
+  if (s.map.tiles[toTileId].blocked) return false
+
+  const isBlockedByWall = s.map.walls.find(
+    wall =>
+      (wall.leftTileId == fromTileId && wall.rightTileId == toTileId) ||
+      (wall.rightTileId == fromTileId && wall.leftTileId == toTileId),
+  )
+
+  return isBlockedByWall
+}
+
 export function getReachableTileIds(
   s: IGameState,
   startTileId: string,
@@ -209,7 +231,7 @@ export function getReachableTileIds(
     for (const tile of currentTiles) {
       const dist = tileDistances[tile.tileId]
       for (const neighbor of getNeighborTiles(s, tile)) {
-        if (neighbor.blocked) continue
+        if (isMovementBlocked(s, tile.tileId, neighbor.tileId)) continue
         const neighborDist = dist + 1
         if (neighborDist > range) continue
         if (
@@ -270,4 +292,12 @@ export function getHitChanceForTile(
 function asUnit(s: IGameState, unit: IUnit | string): IUnit {
   if (typeof unit == 'object') return unit
   return s.units[unit]
+}
+
+function asTile(
+  s: IGameState,
+  tile: IHexagonMapTile | string,
+): IHexagonMapTile {
+  if (typeof tile == 'object') return tile
+  return s.map.tiles[tile]
 }
