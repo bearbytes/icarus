@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { Observable, Subscription } from 'rxjs'
+import { fetchState, storeState } from '../../lib/persistState'
 
 type SetState<S> = (
   state: StateUpdate<S> | ((prevState: S) => StateUpdate<S>),
@@ -24,6 +25,18 @@ export function withState<S extends object>(
     }
   }
   return <StateHolder />
+}
+
+export function withStickyState<S extends object>(
+  persistKey: string,
+  defaultState: S,
+  render: (state: S, setState: SetState<S>) => React.ReactNode,
+) {
+  const initialState = fetchState<S>(persistKey) || defaultState
+  return withState(initialState, (state, setState) => {
+    storeState(persistKey, state)
+    return render(state, setState)
+  })
 }
 
 export function withStateFromObservable<S>(

@@ -1,5 +1,5 @@
 import React from 'react'
-import { withState } from '../components/hoc/withState'
+import { withState, withStickyState } from '../components/hoc/withState'
 
 export type Screen =
   | 'active'
@@ -18,10 +18,9 @@ const DebugContext = React.createContext<IDebugContext>(null as any)
 export default function DebugContextProvider(props: {
   children: React.ReactNode
 }) {
-  return withState(
-    {
-      visibleScreen: 'active' as Screen,
-    },
+  return withStickyState(
+    'DebugContext',
+    { visibleScreen: 'active' as Screen },
     (state, setState) => (
       <DebugContext.Provider
         value={{
