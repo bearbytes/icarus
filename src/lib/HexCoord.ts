@@ -42,6 +42,10 @@ export class HexCoord {
     return new HexCoord(this.a + other.a, this.b + other.b)
   }
 
+  subtract(other: HexCoord): HexCoord {
+    return new HexCoord(this.a - other.a, this.b - other.b)
+  }
+
   round(): HexCoord {
     return new HexCoord(Math.round(this.a), Math.round(this.b))
   }
@@ -89,25 +93,13 @@ export class HexCoord {
     const { x, y } = this.toPixel(radius)
     const a = other.a - this.a
     const b = other.b - this.b
-    const diff = a + ' ' + b
-    console.log(diff)
-
-    switch (diff) {
-      case '1 0':
-        return withCorners(0, 1)
-      case '0 1':
-        return withCorners(1, 2)
-      case '-1 1':
-        return withCorners(2, 3)
-      case '-1 0':
-        return withCorners(3, 4)
-      case '0 -1':
-        return withCorners(4, 5)
-      case '1 -1':
-        return withCorners(5, 0)
-      default:
-        return null
-    }
+    if (a == 1 && b == 0) return withCorners(0, 1)
+    if (a == 0 && b == 1) return withCorners(1, 2)
+    if (a == -1 && b == 1) return withCorners(2, 3)
+    if (a == -1 && b == 0) return withCorners(3, 4)
+    if (a == 0 && b == -1) return withCorners(4, 5)
+    if (a == 1 && b == -1) return withCorners(5, 0)
+    return null
 
     function withCorners(i: number, j: number): [Point, Point] {
       const ci = HexCoord.corner(i)
@@ -136,5 +128,19 @@ export class HexCoord {
     const a = (point.x * 2) / 3
     const b = (-point.x + Math.sqrt(3) * point.y) / 3
     return new HexCoord(a, b)
+  }
+
+  static neighborsFromPixel(point: Point): [HexCoord, HexCoord] {
+    const coord = HexCoord.fromPixel(point)
+    const rounded = coord.round()
+    const diff = coord.subtract(rounded)
+
+    let { a, b, c } = diff
+    const max = Math.max(Math.abs(a), Math.abs(b), Math.abs(c))
+    a = Math.round(a / max)
+    b = Math.round(b / max)
+
+    const near = rounded.add(new HexCoord(a, b))
+    return [rounded, near]
   }
 }

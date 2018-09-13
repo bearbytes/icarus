@@ -13,7 +13,8 @@ export interface SvgViewerProps {
   zoomInSteps: number
   zoomOutSteps: number
 
-  onRightClick: () => void
+  onSweep?: (position: Point) => void
+  onRightClick?: () => void
 }
 
 interface State {
@@ -68,6 +69,7 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
           viewBox={`${left} ${top} ${w} ${h}`}
           onWheel={e => this.onWheel(e)}
           onMouseDown={e => this.onMouseDown(e)}
+          onMouseMove={e => this.onMouseMove(e)}
         >
           {this.props.children}
         </svg>
@@ -97,9 +99,26 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
   }
 
   onMouseDown(e: React.MouseEvent<SVGSVGElement>) {
-    if (e.button == 2) {
+    if (this.props.onSweep) {
+      this.props.onSweep(this.getMousePosition(e))
+    }
+
+    if (e.button == 2 && this.props.onRightClick) {
       this.props.onRightClick()
     }
+  }
+
+  onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
+    if (e.buttons != 0 && this.props.onSweep) {
+      this.props.onSweep(this.getMousePosition(e))
+    }
+  }
+
+  getMousePosition(e: React.MouseEvent<SVGSVGElement>): Point {
+    const pt = e.currentTarget.createSVGPoint()
+    pt.x = e.clientX
+    pt.y = e.clientY
+    return pt.matrixTransform(e.currentTarget.getScreenCTM()!.inverse())
   }
 
   setScrollDirection(x: number, y: number) {

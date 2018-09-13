@@ -23,7 +23,7 @@ export default function Tile(props: TileProps) {
   )
 
   return (
-    // <g>
+    //<g>
     <StyledPolygon
       points={points}
       fill={props.fillColor}
@@ -38,18 +38,19 @@ export default function Tile(props: TileProps) {
         props.onSweep()
       }}
     />
-    //   <CenterOnTile tileId={props.tileId}>
-    //     <text
-    //       x={0}
-    //       y={0}
-    //       fill={'white'}
-    //       transform={'scale(0.03)'}
-    //       textAnchor={'middle'}
-    //     >
-    //       {props.tileId}
-    //     </text>
-    //   </CenterOnTile>
-    // </g>
+    //  <CenterOnTile tileId={props.tileId}>
+    //    <text
+    //      pointerEvents={'none'}
+    //      x={0}
+    //      y={0}
+    //      fill={'white'}
+    //      transform={'scale(0.03)'}
+    //      textAnchor={'middle'}
+    //    >
+    //      {props.tileId}
+    //    </text>
+    //  </CenterOnTile>
+    //</g>
   )
 }
 
