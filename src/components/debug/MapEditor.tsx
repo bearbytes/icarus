@@ -1,18 +1,16 @@
 import React from 'react'
 import SvgViewer from '../map/SvgViewer'
 import Tile from '../map/Tile'
-import { VBox, ExpandingHBox, Spacer, HBox } from '../layout'
-import { SliderPicker, ColorResult, CirclePicker } from 'react-color'
+import { VBox, ExpandingHBox, Spacer } from '../layout'
+import { ColorResult, CirclePicker } from 'react-color'
 import styled from 'styled-components'
 import { IHexagonMap, IHexagonMapTile, IWall } from '../../models'
 import { createMap } from '../../lib/MapCreator'
 import { withState } from '../hoc/withState'
-import { assocPath, without } from 'ramda'
 import Button from '../ui/Button'
 import { saveAs } from 'file-saver'
 import { Point, HexCoord } from '../../types'
 import Wall from '../map/Wall'
-import TextInput from '../ui/TextInput'
 import SaveManager from '../ui/SaveManager'
 
 interface MapEditorState {
@@ -85,8 +83,6 @@ export default function MapEditor() {
     function setColor(result: ColorResult) {
       setState({ color: result.hex })
     }
-
-    function saveMap() {}
 
     function downloadMap() {
       const fileContent = JSON.stringify(state.map)

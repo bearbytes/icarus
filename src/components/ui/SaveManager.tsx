@@ -8,7 +8,7 @@ import Button from './Button'
 import { Delete } from 'styled-icons/material/Delete'
 
 interface SaveManagerProps<T> {
-  saveItem: T
+  saveItem?: T
   persistKey: string
   onLoad: (item: T) => void
 }
@@ -38,7 +38,7 @@ export default function SaveManager<T>({
 
       return (
         <StyledSaveManager>
-          <NewSaveEntry onSave={onSave} />
+          {saveItem && <NewSaveEntry onSave={onSave} />}
           {names.map(name => (
             <Entry
               key={name}
