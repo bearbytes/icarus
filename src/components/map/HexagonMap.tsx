@@ -30,13 +30,6 @@ class Wrapper extends React.Component<WrapperProps> {
     const { map, viewerProps } = this.props
     return (
       <SvgViewer {...viewerProps}>
-        <defs>
-          <polygon
-            id={'hexagon'}
-            points={formatPoints(HexCoord.corners(0.975))}
-            strokeWidth={0.05}
-          />
-        </defs>
         {Object.keys(map.tiles).map(tileId => (
           <HexagonMapTile key={tileId} tileId={tileId} />
         ))}

@@ -2,15 +2,20 @@ import React from 'react'
 import styled from 'styled-components'
 import { withDebugContext } from '../../contexts/DebugContext'
 import UnitTypeEditor from './UnitTypeEditor'
-import { VBox, ExpandingVBox } from '../layout'
+import { ExpandingVBox } from '../layout'
+import MapEditor from './MapEditor'
 
 export default function DebugScreen() {
   return withDebugContext(ctx => {
-    if (ctx.visibleScreen != 'unit-editor') return null
+    const visible =
+      ctx.visibleScreen == 'unit-editor' || ctx.visibleScreen == 'map-editor'
+
+    if (!visible) return null
 
     return (
       <StyledDebugScreen>
-        <UnitTypeEditor />
+        {ctx.visibleScreen == 'unit-editor' && <UnitTypeEditor />}
+        {ctx.visibleScreen == 'map-editor' && <MapEditor />}
       </StyledDebugScreen>
     )
   })
