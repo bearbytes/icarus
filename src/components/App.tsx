@@ -6,7 +6,7 @@ import DebugPanel from './debug/DebugPanel'
 import DebugContextProvider from '../contexts/DebugContext'
 import ErrorBoundary from './debug/ErrorBoundary'
 import styled from 'styled-components'
-import DebugEditor from './debug/DebugEditor'
+import DebugScreen from './debug/DebugScreen'
 
 export default function App() {
   return (
@@ -15,11 +15,9 @@ export default function App() {
         <ServerContextProvider>
           <FullScreen>
             <ExpandingHBox>
-              <DebugEditor />
-              <ExpandingHBox>
-                <ClientView playerName="Mond" playerColor="blue" />
-                <ClientView playerName="Stern" playerColor="red" />
-              </ExpandingHBox>
+              <DebugScreen />
+              <ClientView playerName="Mond" playerColor="blue" />
+              <ClientView playerName="Stern" playerColor="red" />
             </ExpandingHBox>
             <DebugPanel />
           </FullScreen>

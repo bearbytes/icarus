@@ -23,11 +23,16 @@ export default function ClientView(props: {
         return withClientState(
           s => ({
             isActive: s.game.activePlayerId == s.ui.localPlayerId,
-            visibleClientView: ctx.visibleClientView,
+            visibleScreen: ctx.visibleScreen,
           }),
           s => {
-            if (s.visibleClientView == 'active' && !s.isActive) return null
-            if (s.visibleClientView == 'inactive' && s.isActive) return null
+            const visible =
+              (s.visibleScreen == 'active' && s.isActive) ||
+              (s.visibleScreen == 'inactive' && !s.isActive) ||
+              s.visibleScreen == 'side-by-side'
+
+            if (!visible) return null
+
             return (
               <ClientViewContainer
                 playerColor={playerColor}

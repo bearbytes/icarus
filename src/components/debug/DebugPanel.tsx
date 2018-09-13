@@ -1,9 +1,6 @@
 import React from 'react'
 import { HBox, Spacer } from '../layout'
-import {
-  VisibleClientViewSetting,
-  withDebugContext,
-} from '../../contexts/DebugContext'
+import { Screen, withDebugContext } from '../../contexts/DebugContext'
 import styled from 'styled-components'
 import Button from '../ui/Button'
 import { clearCacheAndReload } from './ErrorBoundary'
@@ -12,11 +9,13 @@ export default function DebugPanel() {
   return (
     <StyledDebugPanel>
       <ResetButton />
-      <ToggleButton />
       <Spacer />
-      <ToggleVisibileButton setting={'active'} />
-      <ToggleVisibileButton setting={'inactive'} />
-      <ToggleVisibileButton setting={'both'} />
+      <ToggleVisibileButton screen={'unit-editor'} />
+      <ToggleVisibileButton screen={'map-editor'} />
+      <Spacer />
+      <ToggleVisibileButton screen={'active'} />
+      <ToggleVisibileButton screen={'inactive'} />
+      <ToggleVisibileButton screen={'side-by-side'} />
     </StyledDebugPanel>
   )
 }
@@ -25,22 +24,12 @@ function ResetButton() {
   return <Button text={'Reset'} onClick={clearCacheAndReload} />
 }
 
-function ToggleButton() {
+function ToggleVisibileButton(props: { screen: Screen }) {
   return withDebugContext(ctx => (
     <Button
-      text={'Toggle Editor'}
-      down={ctx.expandedEditor}
-      onClick={ctx.toggleEditor}
-    />
-  ))
-}
-
-function ToggleVisibileButton(props: { setting: VisibleClientViewSetting }) {
-  return withDebugContext(ctx => (
-    <Button
-      text={props.setting}
-      down={ctx.visibleClientView == props.setting}
-      onClick={() => ctx.setVisibleClientView(props.setting)}
+      text={props.screen}
+      down={ctx.visibleScreen == props.screen}
+      onClick={() => ctx.setVisibleScreen(props.screen)}
     />
   ))
 }

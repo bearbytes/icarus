@@ -4,19 +4,18 @@ import { withDebugContext } from '../../contexts/DebugContext'
 import UnitTypeEditor from './UnitTypeEditor'
 import { VBox, ExpandingVBox } from '../layout'
 
-export default function DebugEditor() {
+export default function DebugScreen() {
   return withDebugContext(ctx => {
-    if (!ctx.expandedEditor) return null
+    if (ctx.visibleScreen != 'unit-editor') return null
 
     return (
-      <StyledDebugEditor>
+      <StyledDebugScreen>
         <UnitTypeEditor />
-      </StyledDebugEditor>
+      </StyledDebugScreen>
     )
   })
 }
 
-const StyledDebugEditor = styled(VBox)`
+const StyledDebugScreen = styled(ExpandingVBox)`
   border: 5px solid orange;
-  width: 350px;
 `

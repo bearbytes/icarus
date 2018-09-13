@@ -1,14 +1,16 @@
 import React from 'react'
 import { withState } from '../components/hoc/withState'
 
-export type VisibleClientViewSetting = 'active' | 'inactive' | 'both'
+export type Screen =
+  | 'active'
+  | 'inactive'
+  | 'side-by-side'
+  | 'unit-editor'
+  | 'map-editor'
 
 interface IDebugContext {
-  expandedEditor: boolean
-  toggleEditor(): void
-
-  visibleClientView: VisibleClientViewSetting
-  setVisibleClientView(setting: VisibleClientViewSetting): void
+  visibleScreen: Screen
+  setVisibleScreen(screen: Screen): void
 }
 
 const DebugContext = React.createContext<IDebugContext>(null as any)
@@ -18,19 +20,13 @@ export default function DebugContextProvider(props: {
 }) {
   return withState(
     {
-      visibleClientView: 'active' as VisibleClientViewSetting,
-      expandedEditor: false,
+      visibleScreen: 'active' as Screen,
     },
     (state, setState) => (
       <DebugContext.Provider
         value={{
-          expandedEditor: state.expandedEditor,
-          toggleEditor: () =>
-            setState({ expandedEditor: !state.expandedEditor }),
-
-          visibleClientView: state.visibleClientView,
-          setVisibleClientView: visibleClientView =>
-            setState({ visibleClientView }),
+          visibleScreen: state.visibleScreen,
+          setVisibleScreen: visibleScreen => setState({ visibleScreen }),
         }}
       >
         {props.children}
