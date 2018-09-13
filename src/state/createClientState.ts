@@ -3,7 +3,7 @@ import { IClientState } from '../models'
 export function createClientState(playerId: string): IClientState {
   return {
     game: {
-      map: { tiles: {} },
+      map: { tiles: {}, walls: [] },
       activePlayerId: '',
       players: {},
       units: {},

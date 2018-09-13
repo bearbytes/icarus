@@ -1,9 +1,6 @@
 import * as React from 'react'
 import { withClientStateAndDispatch } from '../hoc/withClientState'
-import { HexCoord } from '../../types'
-import { formatPoints } from '../../lib/svg'
 import Color from 'color'
-import styled from 'styled-components'
 import Tile from './Tile'
 
 export default function HexagonMapTile(props: { tileId: string }) {

@@ -8,6 +8,7 @@ import { IHexagonMap } from '../../models'
 import Units from './Units'
 import MovementPaths from './MovementPaths'
 import Animations from './Animations'
+import Wall from './Wall'
 
 interface HexagonMapProps {
   viewerProps: SvgViewerProps
@@ -27,7 +28,6 @@ interface WrapperProps extends HexagonMapProps {
 class Wrapper extends React.Component<WrapperProps> {
   render() {
     const { map, viewerProps } = this.props
-    const tileIds = Object.keys(map.tiles)
     return (
       <SvgViewer {...viewerProps}>
         <defs>
@@ -37,8 +37,11 @@ class Wrapper extends React.Component<WrapperProps> {
             strokeWidth={0.05}
           />
         </defs>
-        {tileIds.map(tileId => (
+        {Object.keys(map.tiles).map(tileId => (
           <HexagonMapTile key={tileId} tileId={tileId} />
+        ))}
+        {map.walls.map((wall, index) => (
+          <Wall key={index} wall={wall} />
         ))}
         <MovementPaths />
         <Units />

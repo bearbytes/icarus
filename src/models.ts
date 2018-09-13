@@ -52,6 +52,12 @@ export interface IPlayer {
 
 export interface IHexagonMap {
   tiles: { [id: string]: IHexagonMapTile }
+  walls: IWall[]
+}
+
+export interface IWall {
+  leftTileId: string
+  rightTileId: string
 }
 
 export interface IHexagonMapTile {

@@ -2,6 +2,7 @@ import React from 'react'
 import { HexCoord } from '../../types'
 import { formatPoints } from '../../lib/svg'
 import styled from 'styled-components'
+import CenterOnTile from '../helper/CenterOnTile'
 
 export interface TileProps {
   tileId: string
@@ -21,6 +22,7 @@ export default function Tile(props: TileProps) {
   )
 
   return (
+    // <g>
     <StyledPolygon
       points={points}
       fill={props.fillColor}
@@ -29,6 +31,18 @@ export default function Tile(props: TileProps) {
       onMouseEnter={props.onMouseEnter}
       onClick={props.onClick}
     />
+    //   <CenterOnTile tileId={props.tileId}>
+    //     <text
+    //       x={0}
+    //       y={0}
+    //       fill={'white'}
+    //       transform={'scale(0.03)'}
+    //       textAnchor={'middle'}
+    //     >
+    //       {props.tileId}
+    //     </text>
+    //   </CenterOnTile>
+    // </g>
   )
 }
 
