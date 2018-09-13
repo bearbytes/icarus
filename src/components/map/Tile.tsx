@@ -10,6 +10,7 @@ export interface TileProps {
   strokeColor: string
   onMouseEnter?: () => void
   onClick?: () => void
+  onSweep?: () => void
 }
 
 export default function Tile(props: TileProps) {
@@ -30,6 +31,12 @@ export default function Tile(props: TileProps) {
       strokeWidth={0.08}
       onMouseEnter={props.onMouseEnter}
       onClick={props.onClick}
+      onMouseDown={props.onSweep}
+      onMouseOver={e => {
+        if (!props.onSweep) return
+        if (e.buttons != 1) return
+        props.onSweep()
+      }}
     />
     //   <CenterOnTile tileId={props.tileId}>
     //     <text
