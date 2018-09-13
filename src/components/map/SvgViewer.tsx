@@ -1,7 +1,5 @@
 import * as React from 'react'
-import { Rect, Point, Size } from '../../types'
-import { formatRect } from '../../lib/svg'
-import log from '../../lib/log'
+import { Point } from '../../types'
 
 export interface SvgViewerProps {
   center: Point

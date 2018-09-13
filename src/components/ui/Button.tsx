@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { CSSProperties } from 'react'
 import styled from 'styled-components'
 import { Spacer } from '../layout'
 
@@ -8,6 +8,7 @@ interface ButtonProps {
 
   down?: boolean
   disabled?: boolean
+  style?: CSSProperties
 }
 
 export default function Button(props: ButtonProps) {
@@ -18,6 +19,7 @@ export default function Button(props: ButtonProps) {
       }}
       down={props.down || false}
       disabled={props.disabled || false}
+      style={props.style}
     >
       {props.text}
     </StyledButton>

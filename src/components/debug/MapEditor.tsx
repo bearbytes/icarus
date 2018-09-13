@@ -1,7 +1,7 @@
 import React from 'react'
 import SvgViewer from '../map/SvgViewer'
 import Tile from '../map/Tile'
-import { VBox, ExpandingHBox, Spacer } from '../layout'
+import { VBox, ExpandingHBox, Spacer, HBox } from '../layout'
 import { SliderPicker, ColorResult, CirclePicker } from 'react-color'
 import styled from 'styled-components'
 import { IHexagonMap, IHexagonMapTile, IWall } from '../../models'
@@ -12,6 +12,8 @@ import Button from '../ui/Button'
 import { saveAs } from 'file-saver'
 import { Point, HexCoord } from '../../types'
 import Wall from '../map/Wall'
+import TextInput from '../ui/TextInput'
+import SaveManager from '../ui/SaveManager'
 
 interface MapEditorState {
   color: string
@@ -84,10 +86,20 @@ export default function MapEditor() {
       setState({ color: result.hex })
     }
 
+    function saveMap() {}
+
     function downloadMap() {
       const fileContent = JSON.stringify(state.map)
       const blob = new Blob([fileContent], { type: 'text/json;charset=utf-8' })
       saveAs(blob, 'map.json')
+    }
+
+    function ColorPicker() {
+      return (
+        <StyledColorContainer>
+          <CirclePicker color={state.color} onChangeComplete={setColor} />
+        </StyledColorContainer>
+      )
     }
 
     function ModeButton({ mode }: { mode: EditMode }) {
@@ -103,13 +115,16 @@ export default function MapEditor() {
     return (
       <ExpandingHBox>
         <StyledLeftSide>
-          <StyledColorContainer>
-            <CirclePicker color={state.color} onChangeComplete={setColor} />
-          </StyledColorContainer>
+          <ColorPicker />
           <ModeButton mode={'colored tile'} />
           <ModeButton mode={'blocked tile'} />
           <ModeButton mode={'walls'} />
           <Spacer />
+          <SaveManager
+            persistKey={'maps'}
+            saveItem={state.map}
+            onLoad={map => setState({ map })}
+          />
           <Button text={'Download'} onClick={downloadMap} />
         </StyledLeftSide>
         <Map map={state.map} onMouseInteraction={onMouseInteraction} />
