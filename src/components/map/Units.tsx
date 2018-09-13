@@ -119,7 +119,7 @@ function HealthBar(props: {
           stroke={'black'}
           strokeWidth={0.5}
         >
-          {hitPoints} HP
+          {hitPoints} hp
         </text>
       )}
     </g>

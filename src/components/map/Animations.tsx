@@ -46,7 +46,7 @@ function DamageAnimation(props: { data: DamageAnimation }) {
           stroke={'black'}
           strokeWidth={0.5}
         >
-          -{props.data.damage} HP
+          -{props.data.damage} hp
         </text>
       </GoingUp>
     </CenterOnTile>
