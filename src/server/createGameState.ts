@@ -1,8 +1,9 @@
-import { IGameState, IPlayer } from '../models'
+import { IGameState, IPlayer, IHexagonMap } from '../models'
 import { createMap } from '../lib/MapCreator'
+import { fetchState } from '../lib/persistState'
 
 export function createGameState(playerList: IPlayer[]): IGameState {
-  const map = createMap()
+  const map = fetchState<IHexagonMap>('default-map') || createMap()
 
   const units = {}
 

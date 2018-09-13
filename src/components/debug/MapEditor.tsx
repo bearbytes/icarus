@@ -12,6 +12,7 @@ import { saveAs } from 'file-saver'
 import { Point, HexCoord } from '../../types'
 import Wall from '../map/Wall'
 import SaveManager from '../ui/SaveManager'
+import { storeState } from '../../lib/persistState'
 
 interface MapEditorState {
   color: string
@@ -90,6 +91,10 @@ export default function MapEditor() {
       saveAs(blob, 'map.json')
     }
 
+    function setAsDefaultMap() {
+      storeState('default-map', state.map)
+    }
+
     function ColorPicker() {
       return (
         <StyledColorContainer>
@@ -122,6 +127,7 @@ export default function MapEditor() {
             onLoad={map => setState({ map })}
           />
           <Button text={'Download'} onClick={downloadMap} />
+          <Button text={'Set as default map'} onClick={setAsDefaultMap} />
         </StyledLeftSide>
         <Map map={state.map} onMouseInteraction={onMouseInteraction} />
       </ExpandingHBox>
