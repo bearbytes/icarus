@@ -19,7 +19,7 @@ interface MapEditorState {
   map: IHexagonMap
 }
 
-type EditMode = 'colored tile' | 'blocked tile' | 'add wall' | 'remove wall'
+type EditMode = 'colored tile' | 'blocked tile' | 'walls'
 
 function createEmptyMap(): IHexagonMap {
   return createMap()
@@ -33,16 +33,19 @@ export default function MapEditor() {
   }
 
   return withState(defaultState, (state, setState) => {
-    function onSweepTile(tileId: string, nearestTileId: string) {
+    function onMouseInteraction(
+      tileId: string,
+      nearestTileId: string,
+      rightClick: boolean,
+    ) {
       switch (state.mode) {
         case 'colored tile':
           return updateTile(tileId, { color: state.color, blocked: false })
         case 'blocked tile':
           return updateTile(tileId, { color: 'black', blocked: true })
-        case 'add wall':
-          return addWall(tileId, nearestTileId)
-        case 'remove wall':
-          return removeWall(tileId, nearestTileId)
+        case 'walls':
+          if (rightClick) return removeWall(tileId, nearestTileId)
+          else return addWall(tileId, nearestTileId)
       }
     }
 
@@ -105,12 +108,11 @@ export default function MapEditor() {
           </StyledColorContainer>
           <ModeButton mode={'colored tile'} />
           <ModeButton mode={'blocked tile'} />
-          <ModeButton mode={'add wall'} />
-          <ModeButton mode={'remove wall'} />
+          <ModeButton mode={'walls'} />
           <Spacer />
           <Button text={'Download'} onClick={downloadMap} />
         </StyledLeftSide>
-        <Map map={state.map} onSweepTile={onSweepTile} />
+        <Map map={state.map} onMouseInteraction={onMouseInteraction} />
       </ExpandingHBox>
     )
   })
@@ -126,11 +128,15 @@ const StyledLeftSide = styled(VBox)`
 
 function Map(props: {
   map: IHexagonMap
-  onSweepTile: (tileId: string, nearestTileId: string) => void
+  onMouseInteraction: (
+    tileId: string,
+    nearestTileId: string,
+    rightClick: boolean,
+  ) => void
 }) {
-  function onSweep(pos: Point) {
+  function onMouseInteraction(pos: Point, rightClick: boolean) {
     const [tile, near] = HexCoord.neighborsFromPixel(pos)
-    props.onSweepTile(tile.id, near.id)
+    props.onMouseInteraction(tile.id, near.id, rightClick)
   }
 
   return (
@@ -141,7 +147,8 @@ function Map(props: {
       zoomFactor={1.2}
       zoomInSteps={4}
       zoomOutSteps={4}
-      onSweep={onSweep}
+      onSweep={pos => onMouseInteraction(pos, false)}
+      onRightClick={pos => onMouseInteraction(pos, true)}
     >
       {Object.keys(props.map.tiles).map(tileId => (
         <Tile

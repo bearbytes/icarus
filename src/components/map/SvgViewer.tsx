@@ -14,7 +14,7 @@ export interface SvgViewerProps {
   zoomOutSteps: number
 
   onSweep?: (position: Point) => void
-  onRightClick?: () => void
+  onRightClick?: (position: Point) => void
 }
 
 interface State {
@@ -99,18 +99,20 @@ export default class SvgViewer extends React.Component<SvgViewerProps, State> {
   }
 
   onMouseDown(e: React.MouseEvent<SVGSVGElement>) {
-    if (this.props.onSweep) {
+    if (e.button == 1 && this.props.onSweep) {
       this.props.onSweep(this.getMousePosition(e))
     }
-
     if (e.button == 2 && this.props.onRightClick) {
-      this.props.onRightClick()
+      this.props.onRightClick(this.getMousePosition(e))
     }
   }
 
   onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
-    if (e.buttons != 0 && this.props.onSweep) {
+    if (e.buttons == 1 && this.props.onSweep) {
       this.props.onSweep(this.getMousePosition(e))
+    }
+    if (e.buttons == 2 && this.props.onRightClick) {
+      this.props.onRightClick(this.getMousePosition(e))
     }
   }
 

@@ -9,7 +9,6 @@ export default function Wall(props: { wall: IWall }) {
   const corners = leftCoord.sharedCorners(rightCoord)
   if (!corners) {
     return null
-    throw 'Invalid wall'
   }
 
   const x0 = corners[0].x
@@ -19,6 +18,7 @@ export default function Wall(props: { wall: IWall }) {
 
   return (
     <polyline
+      pointerEvents={'none'}
       stroke={'white'}
       strokeWidth={0.1}
       points={`${x0},${y0} ${x1},${y1}`}
