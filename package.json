@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "yarn start --cwd client"
+    "start": "yarn start --cwd client",
+    "build": "yarn build --cwd client"
   },
   "private": true,
   "workspaces": [
