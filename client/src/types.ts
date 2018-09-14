@@ -1,5 +1,3 @@
-export { HexCoord } from './lib/HexCoord'
-
 export interface Point {
   x: number
   y: number

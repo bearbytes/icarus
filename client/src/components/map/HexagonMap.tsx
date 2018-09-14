@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { formatPoints } from '../../lib/svg'
 import HexagonMapTile from './HexagonMapTile'
-import { HexCoord } from '../../types'
+import { HexCoord } from '@icarus/hexlib'
 import SvgViewer, { SvgViewerProps } from './SvgViewer'
 import { withClientState } from '../hoc/withClientState'
 import { IHexagonMap } from '../../models'

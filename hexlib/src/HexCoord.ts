@@ -1,5 +1,7 @@
-import { Point } from '../types'
-import { times } from 'ramda'
+export interface Point {
+  x: number
+  y: number
+}
 
 export class HexCoord {
   readonly a: number
@@ -86,7 +88,14 @@ export class HexCoord {
   }
 
   static corners(radius: number = 1.0): Point[] {
-    return times(n => HexCoord.corner(n, radius), 6)
+    return [
+      HexCoord.corner(0, radius),
+      HexCoord.corner(1, radius),
+      HexCoord.corner(2, radius),
+      HexCoord.corner(3, radius),
+      HexCoord.corner(4, radius),
+      HexCoord.corner(5, radius),
+    ]
   }
 
   sharedCorners(other: HexCoord, radius: number = 1.0): [Point, Point] | null {

@@ -1,6 +1,9 @@
 {
+  "scripts": {
+    "start": "yarn start --cwd client"
+  },
   "private": true,
   "workspaces": [
-    "@icarus/client"
+    "*"
   ]
 }

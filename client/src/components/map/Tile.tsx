@@ -1,5 +1,5 @@
 import React from 'react'
-import { HexCoord } from '../../types'
+import { HexCoord } from '@icarus/hexlib'
 import { formatPoints } from '../../lib/svg'
 import styled from 'styled-components'
 import CenterOnTile from '../helper/CenterOnTile'

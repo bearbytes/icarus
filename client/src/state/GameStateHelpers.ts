@@ -6,7 +6,7 @@ import {
   IGameState,
 } from '../models'
 import UnitTypes, { unitTypeOf } from '../resources/UnitTypes'
-import { HexCoord } from '../lib/HexCoord'
+import { HexCoord } from '@icarus/hexlib'
 import aStar from 'a-star'
 import { tail } from 'ramda'
 

@@ -8,7 +8,7 @@ import {
   UnitRemoved,
   AttackMissed,
 } from '../actions/GameEvents'
-import { IClientState, IPathHighlight, IAnimation } from '../models'
+import { IClientState, IAnimation } from '../models'
 import { PlayerAction } from '../actions/PlayerActions'
 import {
   ClickOnTile,
@@ -29,7 +29,6 @@ import {
   removeUnit,
   getTileOfUnit,
   hexCoordOf,
-  getHitChance,
   getHitChanceForTile,
 } from './GameStateHelpers'
 import {
@@ -45,13 +44,10 @@ import {
   addPathHighlight,
   getMyUnits,
 } from './ClientStateHelpers'
-import log from '../lib/log'
-import { last, values, partition, all } from 'ramda'
-import { HexCoord } from '../types'
-import UnitTypes, { unitTypeOf } from '../resources/UnitTypes'
+import { last, all } from 'ramda'
+import { unitTypeOf } from '../resources/UnitTypes'
 import { AnimationData } from '../animations'
 import Color from 'color'
-import { isUndefined } from 'util'
 
 export interface IClientStateAndActions {
   nextState?: IClientState
@@ -84,7 +80,7 @@ export function ClientStateReducer(
     case 'HoverTile':
       return hoverTile(s, a)
     case 'RightClick':
-      return rightClick(s, a)
+      return rightClick(s)
     case 'ClickOnTile':
       return clickOnTile(s, a)
     case 'ClickOnUnitSpawnSelection':
@@ -218,7 +214,7 @@ function hoverTile(s: IClientState, { tileId }: HoverTile): IClientState {
   return s
 }
 
-function rightClick(s: IClientState, a: RightClick): IClientState {
+function rightClick(s: IClientState): IClientState {
   if (s.ui.selectedSkillId) {
     s = updateUI(s, { selectedSkillId: null })
   } else if (s.ui.attackTargetTileId) {

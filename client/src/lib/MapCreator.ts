@@ -1,5 +1,5 @@
 import { zipObj } from 'ramda'
-import { HexCoord } from '../types'
+import { HexCoord } from '@icarus/hexlib'
 import { IWall, IHexagonMapTile, IHexagonMap } from '../models'
 import Color from 'color'
 

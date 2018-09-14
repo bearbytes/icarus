@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { ServerContextProvider } from '../contexts/ServerContext'
 import ClientView from './ClientView'
-import { VBox, ExpandingHBox, HBox } from './layout'
+import { VBox, ExpandingHBox } from './layout'
 import DebugPanel from './debug/DebugPanel'
 import DebugContextProvider from '../contexts/DebugContext'
 import ErrorBoundary from './debug/ErrorBoundary'

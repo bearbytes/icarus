@@ -1,5 +1,5 @@
 import React from 'react'
-import { HexCoord } from '../../types'
+import { HexCoord } from '@icarus/hexlib'
 
 export default function CenterOnTile(props: {
   tileId: string

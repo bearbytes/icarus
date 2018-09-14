@@ -9,10 +9,11 @@ import { createMap } from '../../lib/MapCreator'
 import { withState } from '../hoc/withState'
 import Button from '../ui/Button'
 import { saveAs } from 'file-saver'
-import { Point, HexCoord } from '../../types'
+import { Point } from '../../types'
 import Wall from '../map/Wall'
 import SaveManager from '../ui/SaveManager'
 import { storeState } from '../../lib/persistState'
+import { HexCoord } from '@icarus/hexlib'
 
 interface MapEditorState {
   color: string
