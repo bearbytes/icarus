@@ -19,7 +19,7 @@ export default function Wall(props: { wall: IWall }) {
   return (
     <polyline
       pointerEvents={'none'}
-      stroke={'white'}
+      stroke={'black'}
       strokeWidth={0.1}
       points={`${x0},${y0} ${x1},${y1}`}
     />

@@ -163,7 +163,7 @@ export function getPathToTarget(
     isEnd: tile => tile.tileId === targetTileId,
     neighbor: tile => getNeighborTiles(s, tile),
     distance: (from, to) => {
-      if (isMovementBlocked(s, from.tileId, to.tileId)) {
+      if (isBlocked(s, from.tileId, to.tileId)) {
         return 1000000
       } else {
         return 1
@@ -197,12 +197,8 @@ export function getNeighborTiles(
   return result
 }
 
-export function isMovementBlocked(
-  s: IGameState,
-  fromTileId: string,
-  toTileId: string,
-) {
-  if (s.map.tiles[toTileId].blocked) return false
+export function isBlocked(s: IGameState, fromTileId: string, toTileId: string) {
+  if (s.map.tiles[toTileId].blocked) return true
 
   const isBlockedByWall = s.map.walls.find(
     wall =>
@@ -231,7 +227,7 @@ export function getReachableTileIds(
     for (const tile of currentTiles) {
       const dist = tileDistances[tile.tileId]
       for (const neighbor of getNeighborTiles(s, tile)) {
-        if (isMovementBlocked(s, tile.tileId, neighbor.tileId)) continue
+        if (isBlocked(s, tile.tileId, neighbor.tileId)) continue
         const neighborDist = dist + 1
         if (neighborDist > range) continue
         if (
@@ -272,7 +268,10 @@ export function getHitChanceForTile(
   attacker: IUnit | string,
   targetTileId: string,
 ) {
-  const attackerCoord = hexCoordOf(getTileOfUnit(s, attacker))
+  const attackerTile = getTileOfUnit(s, attacker)
+  if (isLineBlocked(s, attackerTile.tileId, targetTileId)) return 0
+
+  const attackerCoord = hexCoordOf(attackerTile)
   const defenderCoord = hexCoordOf(targetTileId)
   const dist = attackerCoord.distance(defenderCoord)
 
@@ -287,6 +286,38 @@ export function getHitChanceForTile(
   }
 
   return hitChance
+}
+
+export function isLineBlocked(
+  s: IGameState,
+  fromTileId: string,
+  toTileId: string,
+) {
+  const fromCoord = HexCoord.fromId(fromTileId)
+  const toCoord = HexCoord.fromId(toTileId)
+  const dist = fromCoord.distance(toCoord)
+
+  const fromPixel = fromCoord.toPixel()
+  const toPixel = toCoord.toPixel()
+
+  const { x, y } = fromPixel
+  const dx = toPixel.x - fromPixel.x
+  const dy = toPixel.y - fromPixel.y
+
+  const tileIds = []
+  for (let i = 0; i <= dist; i++) {
+    const pos = {
+      x: x + (dx * i) / dist,
+      y: y + (dy * i) / dist,
+    }
+    const tileId = HexCoord.fromPixel(pos).round().id
+    tileIds.push(tileId)
+  }
+
+  for (let i = 1; i < tileIds.length; i++) {
+    if (isBlocked(s, tileIds[i - 1], tileIds[i])) return true
+  }
+  return false
 }
 
 function asUnit(s: IGameState, unit: IUnit | string): IUnit {
